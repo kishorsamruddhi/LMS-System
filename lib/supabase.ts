@@ -1,0 +1,1 @@
+// Empty file - removing Supabase since we're using Firebase
