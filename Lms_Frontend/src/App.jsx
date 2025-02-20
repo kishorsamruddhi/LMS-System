@@ -30,14 +30,6 @@ const LearnerRoutes = () => {
 const LearnerLayout = () => {
   return <div>
     <Header />
-    {/* <div className="p-4 border-b-2 border-gray-400 flex justify-between ">
-      <h1 className="font-bold text-2xl">Learner Header</h1>
-      <div className="flex gap-3">
-        <NavLink className={({ isActive }) => isActive ? "text-blue-600 font-semibold" : "text-black-300"} to={"/learners/dashboard"}>Dashboard</NavLink>
-        <NavLink className={({ isActive }) => isActive ? "text-blue-600 font-semibold" : "text-black-300"} to={"/learners/profile"}>Profile</NavLink>
-        <NavLink className={({ isActive }) => isActive ? "text-blue-600 font-semibold" : "text-black-300"} to={"/auth"}>Auth</NavLink>
-      </div>
-    </div> */}
     <div className="p-4">
       <Outlet />
     </div>
