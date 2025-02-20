@@ -1,6 +1,6 @@
 // Header.jsx
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import {
     Popover,
     PopoverContent,
@@ -15,7 +15,7 @@ const Header = () => {
                 {/* Logo */}
                 <div className="flex items-center">
                     {/* <img src="/path/to/logo.png" alt="Logo" className="h-8 mr-2" /> */}
-                    <h1 className="text-2xl font-bold">LMS</h1>
+                    <Link to={"/"} className="text-2xl font-bold">LMS</Link>
                 </div>
 
                 {/* Navigation Links */}
