@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+* {
+  box-sizing: border-box;
+}
+
+.InputField {
+  #ul_List {
+    display: none;
+  }
+  &:has(input:focus-within),
+  &:hover {
+    #ul_List {
+      display: block;
+    }
+  }
+}
