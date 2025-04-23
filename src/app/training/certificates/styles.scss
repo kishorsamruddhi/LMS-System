@@ -1,0 +1,53 @@
+.CoursesCertificates {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    margin-bottom: 50px;
+
+    h2 {
+        color: #366494;
+        font-size: 2rem;
+    }
+
+    h3 {
+        color: #366494;
+    }
+
+    .courses-list {
+        display: flex;
+        flex-wrap: wrap;
+        column-gap: 40px;
+        row-gap: 40px;
+        justify-content: center;
+
+        .card {
+            background-color: #004040;
+            padding: 2rem;
+            height: 256px;
+            width: 256px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 25px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: transform .2s ease-in-out;
+            transform-origin: center center;
+
+            h3 {
+                font-size: 1.5rem;
+                line-height: 2rem;
+                text-align: center;
+                color: white
+            }
+
+            &:hover {
+                transform: translateY(-20px) scale(1.05);
+            }
+        }
+    }
+}

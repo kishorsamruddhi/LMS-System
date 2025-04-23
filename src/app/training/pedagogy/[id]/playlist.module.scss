@@ -1,0 +1,36 @@
+.card {
+    position: relative;
+    border-bottom: 1px solid #dcdc;
+    user-select: none;
+    padding: 10px;
+    transition: background-color .2s ease-in-out;
+
+    &:hover {
+        background-color: rgb(0 0 0 / 42%)
+    }
+
+    .currentTag {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        font-size: .7rem;
+        color: #fff;
+        background-color: #06060696;
+        padding: 3px 6px;
+        border-radius: 4px;
+    }
+
+    img {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .des {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}

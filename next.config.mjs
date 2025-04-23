@@ -4,6 +4,9 @@ const nextConfig = {
   env: {
     TEST: process.env.TEST,
   },
+  images: {
+    domains: ["github.com", "avatars.githubusercontent.com"],
+  },
 };
 
 export default nextConfig;

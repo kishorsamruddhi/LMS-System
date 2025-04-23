@@ -1,0 +1,120 @@
+.Assessment {
+    width: 100%;
+    --text-color: #000;
+    --card-text-color: #fff;
+
+    .Assessment_nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 2rem;
+        border-bottom: 1px solid rgb(208 208 208);
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+
+        .breadCrumbs {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            color: var(--text-color);
+            gap: 10px;
+
+            i {
+                color: var(--text-color);
+            }
+
+            a {
+                color: var(--text-color);
+                text-decoration: none;
+                transition: color .2s ease-in-out, text-decoration .2s ease-in-out;
+
+                &:hover {
+                    color: var(--star-color, #3F51B5);
+                    text-decoration: underline;
+
+                }
+            }
+        }
+    }
+
+    .Question_Section {
+        margin: 0 auto;
+        padding-left: 2rem;
+        padding-right: 2rem;
+
+        h1 {
+            font-family: fantasy;
+            font-size: 2.5rem;
+            font-weight: 300;
+        }
+
+        .options {
+            margin-top: 2rem;
+            display: grid;
+            gap: 1.5rem;
+            align-items: center;
+
+            .option {
+                display: flex;
+                gap: .5rem;
+                align-items: center;
+
+                p {
+                    cursor: pointer;
+                }
+
+                .p-checkbox-box {
+                    background-color: #fff;
+                    transition: unset;
+                }
+
+                .p-checkbox.p-highlight .p-checkbox-box {
+                    border-color: var(--star-color);
+                    background-color: var(--star-color);
+                }
+            }
+        }
+    }
+
+    .px-2 {
+        padding-left: 2rem;
+        padding-right: 2rem;
+    }
+
+    .mt-2 {
+        margin-top: 2rem;
+    }
+
+    .actionButtons {
+        margin-top: 2rem;
+        padding: 10px 2rem;
+        display: flex;
+        gap: 2.5rem;
+        justify-content: center;
+        align-items: center;
+        border-top: 2px solid #b5b5b5;
+        border-bottom: 2px solid #b5b5b5;
+
+        button {
+            --bg-color: #000;
+            align-items: center;
+            min-width: 90px;
+            justify-content: space-evenly;
+            color: #fff;
+            background-color: var(--bg-color);
+            border-color: var(--bg-color);
+            outline-color: var(--bg-color);
+            transition: all .2.5s ease-in-out;
+
+            &:hover {
+                opacity: 1;
+                color: #000;
+                background-color: var(--star-color);
+            }
+
+            &.next {
+                flex-direction: row-reverse;
+            }
+        }
+    }
+}

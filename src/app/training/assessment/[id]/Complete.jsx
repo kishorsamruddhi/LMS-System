@@ -1,0 +1,64 @@
+import Link from "next/link";
+import "./congrats.scss"
+
+export default function LearnerCongrats({ module, totalQuestion, score }) {
+
+    const calculate_score = ((score.length / totalQuestion.length) * 100).toFixed(0)
+    return (
+        <div>
+            <div className="congrats-container">
+                <div className="congrats-header">
+                    {/* <h3 className="module-name">{module.course_name}</h3> */}
+                    <div className="breadcrumb">
+                        {/* <h3>Assessment</h3><i className="pi pi-angle-right"></i> */}
+                        <Link href={"/dashboard/Training/courses"}>My Courses</Link> <i className="pi pi-angle-right"></i>
+                        <p>{module.module_name}</p>
+                    </div>
+                    <div className="course-heading-wrap">
+                        <h2 className="module-desc">{module.module_desc}</h2>
+                    </div>
+                </div>
+
+                <div className="score-wrap">
+                    <div className="image-container">
+                        <img className="result-image" src={calculate_score >= 70 ? '/assets/test_pass.gif' : '/assets/test_fail.gif'} alt='' />
+                    </div>
+                    <div className="column">
+                        <div className="score-description">
+                            {module.module_code === 'PR' ? (
+                                <>
+                                    <h3 className="completion-heading">Congratulations on completing the pre-assessment test!</h3>
+                                    <p className="description">This is a great first step in your learning journey...</p>
+                                    <p className="description">Remember, every step you take brings you closer to being Quantum Literate. Keep pushing forward, You’ve got this!</p>
+                                </>
+                            ) : (
+                                <>
+                                    {calculate_score >= 70 ? (
+                                        <>
+                                            <h3 className="completion-heading">Congratulations on passing the post-assessment test!</h3>
+                                            <p className="description">Your hard work and dedication have truly paid off...</p>
+                                            <p className="description">Remember, this is just the beginning of many more accomplishments to come. Well done!</p>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <p className="description">Thank you for completing the post-assessment test...</p>
+                                            <p className="description">Every attempt is an opportunity to learn and grow...</p>
+                                            <p className="description">You’ve got this, and I believe in your success!</p>
+                                        </>
+                                    )}
+                                </>
+                            )}
+                        </div>
+                        <div className="score-section">
+                            <h3 className="score-heading">Your score is</h3>
+                            <h2 className="score-value">{calculate_score}/100</h2>
+                        </div>
+                        <div className="continue-learning">
+                            <Link href={"/training/my-courses"} className="continue-btn">Continue Learning</Link>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}

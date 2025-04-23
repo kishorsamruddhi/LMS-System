@@ -1,0 +1,122 @@
+.certificate-container {
+    position: relative;
+    padding: 2rem;
+    overflow-x: hidden;
+
+    .certificate-content {
+        text-align: center;
+    }
+
+    .certificate-wrapper {
+        position: relative;
+        padding-top: 5rem;
+        position: relative;
+        z-index: 2;
+        padding: 20px;
+    }
+
+    .bgImage {
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        z-index: 1;
+        width: 100%;
+        object-fit: cover;
+    }
+
+    .header-logo-container {
+        position: absolute;
+        top: 20px;
+        right: 40px;
+        bottom: 40px;
+    }
+
+    .sqc-logo {
+        height: 40px;
+        width: auto;
+    }
+
+    .certificate-info {
+        position: relative;
+        padding-top: 5rem;
+        z-index: 2;
+
+        &.desktop-view {
+            display: block;
+        }
+
+        &.mobile-view {
+            display: none;
+        }
+
+        .course-name {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2a5d2b;
+        }
+
+        .presented-to {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+
+        .user-name {
+            font-size: 2rem;
+            color: #507d2a;
+        }
+
+        .certificate-description {
+            font-size: 1rem;
+            color: #507d2a;
+            margin-top: 1rem;
+        }
+
+        .award-date {
+            font-size: 1.5rem;
+            color: #fa2222;
+            margin-top: 1rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .certificate-info.desktop-view {
+            display: none;
+        }
+
+        .certificate-info.mobile-view {
+            display: block;
+        }
+    }
+
+    .action-buttons {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 2rem;
+
+        .download-button,
+        .back-button {
+            flex: 1;
+            color: #fff;
+            margin: 0 1rem;
+        }
+
+        .download-link a,
+        .back-link {
+            display: inline-block;
+            padding: 1rem 2rem;
+            text-decoration: none;
+            background-color: #fbbf24;
+            color: #030712;
+            text-decoration: none;
+            border-radius: 30px;
+            text-align: center;
+        }
+
+        .download-link a:hover,
+        .back-link:hover {
+            filter: brightness(.9);
+        }
+    }
+}

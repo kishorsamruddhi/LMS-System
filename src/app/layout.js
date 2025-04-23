@@ -1,28 +1,30 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import { Poppins } from "next/font/google"; // Import only Poppins
 import "./globals.css";
+import { UserProvider } from "@/store/User_Context";
+import Header from "@/components/Header";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// Add Poppins font
+const poppins = Poppins({
+  variable: "--font-poppins",
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800"], // Specify the weights you need
 });
 
 export const metadata = {
-  title: "Pokémon",
-  description: "Pokemon App to know everything about pokemons",
+  title: "Shiksha",
+  description: "Learning Management System",
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${poppins.variable} antialiased`} // Use only Poppins variable
       >
-        {children}
+        <Header />
+        <div className="mt-[72px]">
+          <UserProvider>{children}</UserProvider>
+        </div>
       </body>
     </html>
   );
