@@ -2,7 +2,7 @@ const express = require("express");
 // const subscriptionPlans = require("../models/SubscriptionPacks.js");
 const UserLearningProgress = require("../LearningModels/UserLearningProgress.js");
 const Course = require("../models/Course.js");
-const User = require("../../models/User_Customer.js");
+const User = require("../models/User.model");
 const Module_Model = require("../models/Module.js");
 const Assessment = require("../models/Assessment");
 const Pedagogy = require("../models/Pedagogy");
@@ -14,17 +14,17 @@ const BusinessCourses = require("../LearningModels/Training_Business.js");
 const extractSuperToken = require("../utils/super_admin_middleware.js");
 const LearningTime = require("../LearningModels/LearningTime.js");
 const { default: mongoose } = require("mongoose");
-const SubscriptionPacks = require("../../models/SubscriptionPacks.js");
+// const SubscriptionPacks = require("../../models/SubscriptionPacks.js");
 const router = express.Router();
 
-router.get("/subscription_packs", extractSuperToken, async (req, res) => {
-  try {
-    const data = await SubscriptionPacks.find({ price: { $ne: 0 } }).lean();
-    return res.status(200).json({ data, error: false });
-  } catch (error) {
-    return res.status(500).json({ data: error.message, error: true });
-  }
-});
+// router.get("/subscription_packs", extractSuperToken, async (req, res) => {
+//   try {
+//     const data = await SubscriptionPacks.find({ price: { $ne: 0 } }).lean();
+//     return res.status(200).json({ data, error: false });
+//   } catch (error) {
+//     return res.status(500).json({ data: error.message, error: true });
+//   }
+// });
 
 router.get("/courses_by_subscription", async (req, res) => {
   try {

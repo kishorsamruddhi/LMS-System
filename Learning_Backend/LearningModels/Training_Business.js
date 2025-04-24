@@ -11,12 +11,6 @@ const moduleSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
-  parent_business: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "businesses",
-    required: true,
-    unique: true,
-  },
   business_desc: {
     type: String,
     required: true,
@@ -39,9 +33,6 @@ const moduleSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  isCommonCourse: {
-    type: Boolean,
-  },
   courses: {
     type: [
       {
@@ -54,6 +45,6 @@ const moduleSchema = new mongoose.Schema({
   },
 });
 
-const BusinessCourses = mongoose.model("business_courses", moduleSchema);
+const BusinessCourses = mongoose.model("Institue", moduleSchema);
 
 module.exports = BusinessCourses;

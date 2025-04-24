@@ -1,0 +1,5 @@
+export const cookiesKey = "LMS-cookies";
+export const dataCookieAuth =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY3ZDg0YTc3MjEyMWNmYmE1YTI4ZjE2NCIsImVtYWlsIjoidGVzdHN0YWZmQGdtYWlsLmNvbSIsInJvbGUiOiJzdGFmZiIsImZpcnN0TmFtZSI6IlRlc3QiLCJsYXN0TmFtZSI6IlN0YWZmIn0sImlhdCI6MTc0NTMzNjU3MywiZXhwIjoxNzQ1NzY4NTczfQ.T02CFved6y7FGHgd4CvU3FO1NPFrBXyHreatAKna8Us";
+
+export const backendLink = "http://localhost:5055/";

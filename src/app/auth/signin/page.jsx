@@ -1,5 +1,7 @@
-"use client"; // Make this file a client component (you need it for NextAuth)
+"use client";
 
+import { loginApi } from "@/api/auth";
+import PasswordInput from "@/components/PasswordInput";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -8,49 +10,65 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Github, Mail } from "lucide-react";
+import useUserContext from "@/store/User_Context";
+import { Github, Loader, Mail } from "lucide-react";
 import { signIn } from "next-auth/react";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 
 const SignInPage = () => {
-  const [email, setEmail] = useState("");
+  const { signInHandler } = useUserContext()
+  const [loading, setLoading] = useState(false)
+  const { register, handleSubmit, formState: { errors }, } = useForm();
 
-  const handleSignInWithEmail = () => {
-    signIn("credentials", { email });
+  const handleSignInWithEmail = async ({ password, email }) => {
+    try {
+      if (loading) return
+      setLoading(true)
+      const resp = await loginApi({ password, email })
+      if (resp?.success && resp?.token) {
+        toast.success("Logged-in")
+        signInHandler(resp.data, resp.token)
+      }
+      else {
+        throw new Error(resp?.data || "Server Error")
+      }
+    } catch (error) {
+      toast.error(error.message)
+    }
+    finally {
+      setLoading(false)
+    }
   };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
-      <Card className="max-w-sm w-full space-y-8 p-6 bg-white rounded-xl shadow-xl">
+      <Card className="max-w-sm w-full space-y-8 p-6 bg-white border-rose-50 rounded-xl shadow-xl">
         <CardHeader>
           <h2 className="text-center text-3xl font-semibold text-gray-900">
             Sign In
           </h2>
         </CardHeader>
-
         <CardContent>
           <div className="space-y-4">
             <div className="flex gap-2">
               <Button
                 onClick={() => signIn("google")}
-                variant="outline"
                 fullWidth
-                className="flex items-center justify-center space-x-2 rounded-md"
+                className="border-2 border-gray-300 hover:border-cyan-300  flex items-center justify-center space-x-2 rounded"
               >
                 <Mail className="w-5 h-5" />
               </Button>
               <Button
-                onClick={() => signIn("google")}
-                variant="outline"
+                onClick={() => signIn("github")}
                 fullWidth
-                className="flex items-center justify-center space-x-2 rounded-md"
+                className="border-2 border-gray-300 hover:border-cyan-300  flex items-center justify-center space-x-2 rounded"
               >
                 <Github className="w-5 h-5" />
               </Button>
             </div>
 
-
-            {/* Divider */}
             <div className="relative my-4">
               <div
                 className="absolute inset-0 flex items-center"
@@ -63,24 +81,32 @@ const SignInPage = () => {
               </div>
             </div>
 
-            {/* Email Sign-In Form */}
-            <div>
-              <Input
-                type="email"
-                placeholder="Email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                fullWidth
-                className="border-gray-300 "
-              />
-            </div>
-            <Button
-              onClick={handleSignInWithEmail}
-              fullWidth
-              className="border-gray-300 border-2 mt-4"
+            <form
+              onSubmit={handleSubmit(handleSignInWithEmail)}
             >
-              Sign in with Email
-            </Button>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">Email</label>
+                <Input
+                  type="email"
+                  {...register('email', { required: 'Email is required' })}
+                  className={`mt-1 block w-full border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm`}
+                />
+                {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">Password</label>
+                <PasswordInput register={register} errors={errors} />
+                {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>}
+              </div>
+              <Button
+                disabled={loading}
+                className="w-full border-gray-300 border-2 mt-4">
+                {loading && <Loader />}
+                <span className="ml-2">
+                  Sign in
+                </span>
+              </Button>
+            </form>
           </div>
         </CardContent>
         <CardFooter className="text-center text-sm text-gray-500">

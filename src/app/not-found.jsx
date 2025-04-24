@@ -10,6 +10,7 @@ const mainStyle = {
   height: "calc(100vh - var(--header-h))",
   backgroundColor: "var(--main-Bg)",
   color: "var(--xp-primary-color)",
+  paddingTop: "3rem"
 }
 const linkDivStyle = {
   display: "flex",

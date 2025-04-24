@@ -3,7 +3,7 @@
 import axios from "axios";
 // import Cookies from "universal-cookie";
 import Cookies from "universal-cookie";
-import { cookiesKey, dataCookieAuth } from "@/store/User_Context";
+import { cookiesKey, dataCookieAuth } from "@/utils/token";
 
 const axiosInstance = axios.create({
   // baseURL: ".netlify/",

@@ -19,10 +19,10 @@ export default function Header() {
                 </div>
 
                 <nav className="hidden md:flex space-x-8">
-                    <Link href="#features" className="text-gray-600 hover:text-gray-900">Features</Link>
-                    <Link href="#pricing" className="text-gray-600 hover:text-gray-900">Pricing</Link>
-                    <Link href="#about" className="text-gray-600 hover:text-gray-900">About</Link>
-                    <Link href="#contact" className="text-gray-600 hover:text-gray-900">Contact</Link>
+                    <Link href="/admin" className="text-gray-600 hover:text-gray-900">Admin</Link>
+                    <Link href="/learner" className="text-gray-600 hover:text-gray-900">Learner</Link>
+                    <Link href="/auth/signin" className="text-gray-600 hover:text-gray-900">SignIn</Link>
+                    <Link href="/auth/signup" className="text-gray-600 hover:text-gray-900">Sign Up</Link>
                 </nav>
 
                 <div className="hidden md:block">

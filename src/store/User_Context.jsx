@@ -2,12 +2,11 @@
 import React, { useState, useEffect, useContext } from "react";
 import Cookies from "universal-cookie";
 import { jwtDecode } from "jwt-decode";
-
-export const cookiesKey = "Xperiento-cookies";
-export const dataCookieAuth = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY3ZDg0YTc3MjEyMWNmYmE1YTI4ZjE2NCIsImVtYWlsIjoidGVzdHN0YWZmQGdtYWlsLmNvbSIsInJvbGUiOiJzdGFmZiIsImZpcnN0TmFtZSI6IlRlc3QiLCJsYXN0TmFtZSI6IlN0YWZmIn0sImlhdCI6MTc0NTMzNjU3MywiZXhwIjoxNzQ1NzY4NTczfQ.T02CFved6y7FGHgd4CvU3FO1NPFrBXyHreatAKna8Us"
+import { cookiesKey } from "@/utils/token";
+import { ToastContainer } from "react-toastify";
+import { redirect } from "next/navigation";
 
 export const UserContext = React.createContext();
-
 export function decodingToken(token = "") {
   try {
     const decoded = jwtDecode(token);
@@ -22,12 +21,12 @@ export function decodingToken(token = "") {
 
 export const UserProvider = ({ children }) => {
   const cookies = new Cookies();
-  const token = cookies.get(cookiesKey);
   const [auth, updateAuth] = useState(null);
   const [isAuhtLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const userData = decodingToken(dataCookieAuth);
+    const token = cookies.get(cookiesKey);
+    const userData = decodingToken(token);
     if (userData) {
       updateAuth(userData.user);
     }
@@ -37,6 +36,25 @@ export const UserProvider = ({ children }) => {
   const signInHandler = (data, token) => {
     updateAuth(data);
     cookies.set(cookiesKey, token, { path: "/" });
+    const isEmailVerified = data?.isEmailVerified || false
+    const role = data?.role || null
+    let route = null
+    if (role === "user") {
+      route = "/training"
+    }
+    else if (role === "admin") {
+      route = "/admin"
+    }
+
+    if (!isEmailVerified) {
+      route = "/get-started"
+    }
+
+    if (route) {
+      setTimeout(() => {
+        redirect(route)
+      }, 1200);
+    }
   };
 
   const sign_out_handler = () => {
@@ -48,6 +66,7 @@ export const UserProvider = ({ children }) => {
 
   return (
     <UserContext.Provider value={{ auth, isAuhtLoading, signInHandler, sign_out_handler }}>
+      <ToastContainer />
       {children}
     </UserContext.Provider>
   );

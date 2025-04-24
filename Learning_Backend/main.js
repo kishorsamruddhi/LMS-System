@@ -1,40 +1,60 @@
 const express = require("express");
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const mongoose = require("mongoose");
 
-const getRoutes = require("./Create/get_api.js");
-const progressRoute = require("./Create/progess.js");
-const trackingRoutes = require("./Create/tracking.js");
-const super_admin_create_routes = require("./Admin/create.js");
-const super_admin_get_Routes = require("./Admin/getRoutes.js");
-const super_admin_delete_routes = require("./Admin/deleteRoutes.js");
-const super_admin_update_routes = require("./Admin/updateRoute.js");
+require("dotenv").config();
+
+const app = express();
+const port = 5055;
+
+// Middleware
+app.use(bodyParser.json());
+
+// TODO SET ALLOWED ORIGIN
+app.use(cors());
+
+// MongoDB connection
+const cloudUrl = process.env.CLOUD_URL;
+const localUrl = process.env.LOCAL_URL;
+const dbUrl = localUrl;
+
+mongoose.connect(dbUrl);
+
+const db = mongoose.connection;
+db.on("error", (error) => {
+  console.error("Error connecting to MongoDB:", error.message);
+});
+db.once("open", () => {
+  console.log("Connected to MongoDB");
+});
+
+const getAuth = require("./Auth/auth.route");
+const getRoutes = require("./User/get_api.js");
+const progressRoute = require("./User/progess.js");
+const trackingRoutes = require("./User/tracking.js");
+// const super_admin_create_routes = require("./Admin/create.js");
+// const super_admin_get_Routes = require("./Admin/getRoutes.js");
+// const super_admin_delete_routes = require("./Admin/deleteRoutes.js");
+// const super_admin_update_routes = require("./Admin/updateRoute.js");
 const testRoutes = require("./Admin/Qlite_testRoute.js");
-const adminRoutes = require("./Create/admin_routes.js");
+const adminRoutes = require("./User/admin_routes.js");
 
 const extractSuperToken = require("./utils/super_admin_middleware.js");
 
-const learningRouterApp = express.Router();
+app.use("/auth", getAuth);
+app.use("/get", getRoutes);
+app.use("/progress", progressRoute);
+app.use("/tracking", trackingRoutes);
+app.use("/admin", adminRoutes);
 
-learningRouterApp.use("/get", getRoutes);
-learningRouterApp.use("/progress", progressRoute);
-learningRouterApp.use("/tracking", trackingRoutes);
-learningRouterApp.use("/normal-admin/", adminRoutes);
+app.use("/admin/reports", testRoutes);
+// app.use("/admin/create", extractSuperToken, super_admin_create_routes);
+// app.use("/admin/get", extractSuperToken, super_admin_get_Routes);
+// app.use("/admin/delete", extractSuperToken, super_admin_delete_routes);
+// app.use("/admin/update", extractSuperToken, super_admin_update_routes);
 
-learningRouterApp.use("/admin/reports", testRoutes);
-learningRouterApp.use(
-  "/admin/create",
-  extractSuperToken,
-  super_admin_create_routes
-);
-learningRouterApp.use("/admin/get", extractSuperToken, super_admin_get_Routes);
-learningRouterApp.use(
-  "/admin/delete",
-  extractSuperToken,
-  super_admin_delete_routes
-);
-learningRouterApp.use(
-  "/admin/update",
-  extractSuperToken,
-  super_admin_update_routes
-);
-
-module.exports = learningRouterApp;
+// Start the server
+app.listen(port, () => {
+  console.log(`Server running on http://localhost:${port}`);
+});

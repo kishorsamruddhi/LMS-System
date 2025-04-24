@@ -15,25 +15,26 @@ const queryClient = new QueryClient({
   },
 });
 
+const style = {
+  backgroundColor: "#fff",
+  color: "#000",
+  minHeight: "calc(100vh - var(--header-h, 60px))",
+  display: "flex",
+  position: "relative",
+};
+const headerstyle = {
+  backgroundColor: "#fff",
+  height: "60px",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  position: "relative",
+};
+const flexGrow = {
+  flexGrow: 1,
+};
+
 const Layout = ({ children }) => {
-  const style = {
-    backgroundColor: "#fff",
-    color: "#000",
-    minHeight: "calc(100vh - var(--header-h, 60px))",
-    display: "flex",
-    position: "relative",
-  };
-  const headerstyle = {
-    backgroundColor: "#fff",
-    height: "60px",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    position: "relative",
-  };
-  const flexGrow = {
-    flexGrow: 1,
-  };
   return (
     <QueryClientProvider client={queryClient}>
       <div style={headerstyle} className="header">

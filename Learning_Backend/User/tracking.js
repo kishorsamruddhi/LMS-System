@@ -1,5 +1,5 @@
 const express = require("express");
-const User = require("../../models/User_Customer.js");
+const User = require("../models/User.model");
 const UserAssessment = require("../LearningModels/LearningAssessment.js");
 const BusinessCourses = require("../LearningModels/Training_Business.js");
 const UserReportCard = require("../LearningModels/UserLearningProgress.js");
@@ -8,6 +8,22 @@ const UserModuleReport = require("../LearningModels/LearningModule.js");
 const UserCourseReport = require("../LearningModels/LearningCourse.js");
 
 const router = express.Router();
+
+const removeField =
+  "-createdAt -updatedAt -__v -business_id -created_by -updated_by";
+
+const getCoursesData = [
+  {
+    path: "learning_Modules.user_record",
+    select: removeField,
+    model: "user_learning_module",
+  },
+  {
+    path: "completed_Modules.user_record",
+    select: removeField,
+    model: "user_learning_module",
+  },
+];
 
 router.get("/check-training-validation", extractToken, async (req, res) => {
   try {
@@ -68,51 +84,9 @@ router.get("/check-training-validation", extractToken, async (req, res) => {
 router.get("/getAllStats", extractToken, async (req, res) => {
   try {
     const token = req.user;
-    const removeField =
-      "-createdAt -updatedAt -__v -business_id -created_by -updated_by";
+    let activePlanLvl = 4;
 
-    const getCoursesData = [
-      {
-        path: "learning_Modules.user_record",
-        select: removeField,
-        model: "user_learning_module",
-      },
-      {
-        path: "completed_Modules.user_record",
-        select: removeField,
-        model: "user_learning_module",
-      },
-    ];
-    let activePlanLvl = null;
-
-    // Sub Pack Check and Filtered Courses
     const populateUserData = async (userId) => {
-      const user = await User.findById(token._id, {
-        business_Id: 1,
-      })
-        .populate({
-          path: "business_Id",
-          select: "active_subscription",
-          populate: {
-            path: "active_subscription",
-            select: "plan subscription_lvl",
-          },
-        })
-        .lean();
-
-      const active_subscription =
-        user?.business_Id?.active_subscription || null;
-      if (!active_subscription) {
-        throw new Error(
-          "You need to buy subscription to use this service and contact business admin."
-        );
-      }
-      if (active_subscription?.plan === "FREE TRIAL") {
-        throw new Error(
-          "Free trial users must purchase a subscription to access this service."
-        );
-      }
-      activePlanLvl = active_subscription?.subscription_lvl;
       return await UserReportCard.findOne(userId)
         .populate([
           {
@@ -143,51 +117,14 @@ router.get("/getAllStats", extractToken, async (req, res) => {
         error: true,
         data: "You don't have permission to access the training module. Contact admin for permission.",
       });
-      const getAdminId = await User.findById(token._id, {
-        business_Id: 1,
-      })
-        .populate({ path: "business_Id", select: "admin_Id" })
-        .lean();
-
-      const business_Course_Id = await BusinessCourses.findOne(
-        {
-          admin_id: getAdminId?.business_Id?.admin_Id,
-        },
-        { _id: 1 }
-      );
-
-      const newReportInstance = await createUserLearningInstance({
-        user_id: token._id,
-        business_id: business_Course_Id._id,
-      });
-      user = await populateUserData({ user_id: newReportInstance.user_id });
     }
 
     const { business_course_id, learning_courses, completed_courses } = user;
     const learning_Modules = learning_courses?.learning_Modules || [];
     const completed_Modules = learning_courses?.completed_Modules || [];
-    const getCommonCourses = await BusinessCourses.findOne(
-      {
-        isCommonCourse: true,
-      },
-      { courses: 1 }
-    ).populate({
-      path: "courses",
-      select: removeField,
-      match: { subscription_lvl: { $lte: activePlanLvl } },
-      populate: {
-        path: "modules",
-        select: removeField,
-      },
-    });
-
     res.status(200).json({
       error: false,
-      data:
-        [
-          ...(getCommonCourses?.courses || []),
-          ...business_course_id?.courses,
-        ] || [],
+      data: business_course_id?.courses || [],
       extra: user,
       learning_coursesList: learning_courses || [],
       completed_coursesList: completed_courses || [],
@@ -263,7 +200,6 @@ router.get("/getCompletedCourses", extractToken, async (req, res) => {
       data: planeData,
     });
   } catch (err) {
-    console.error(err.message);
     res.status(500).json({
       error: true,
       extra: err.message,
@@ -278,8 +214,7 @@ router.get("/getCompletedCourse/:id", extractToken, async (req, res) => {
     const course_id = req.params.id;
 
     const user = await User.findById(_id, {
-      firstName: 1,
-      lastName: 1,
+      email: 1,
     }).lean();
 
     if (!user) {
@@ -304,7 +239,6 @@ router.get("/getCompletedCourse/:id", extractToken, async (req, res) => {
       user,
     });
   } catch (err) {
-    console.error(err.message);
     res.status(500).json({
       error: true,
       extra: err.message,

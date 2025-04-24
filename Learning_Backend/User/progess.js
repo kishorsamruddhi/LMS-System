@@ -1,7 +1,5 @@
 const express = require("express");
-const User = require("../../models/User_Customer.js");
 const Course = require("../models/Course.js");
-const Module = require("../models/Module.js");
 const Assessment = require("../models/Assessment.js");
 const Pedagogy = require("../models/Pedagogy.js");
 const UserAssessment = require("../LearningModels/LearningAssessment.js");

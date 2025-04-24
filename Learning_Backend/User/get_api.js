@@ -1,5 +1,5 @@
 const express = require("express");
-const User = require("../../models/User_Customer.js");
+const User = require("../models/User.model");
 const Module = require("../models/Module.js");
 const { default: mongoose } = require("mongoose");
 const LearningTime = require("../LearningModels/LearningTime.js");
