@@ -5,8 +5,6 @@ const Assessment = require("../models/Assessment.js");
 const Pedagogy = require("../models/Pedagogy.js");
 const LearningTime = require("../LearningModels/LearningTime.js");
 const UserReportCard = require("../LearningModels/UserLearningProgress.js");
-const User = require("../../models/User_Customer.js");
-const SubscriptionPacks = require("../../models/SubscriptionPacks.js");
 const { default: mongoose } = require("mongoose");
 const BusinessCourses = require("../LearningModels/Training_Business.js");
 const router = express.Router();
@@ -55,23 +53,6 @@ router.get("/all_data_counts", async (req, res) => {
   }
 });
 
-router.get("/businesses", async (req, res) => {
-  try {
-    const data = await BusinessCourses.find({}, { __v: 0 }).lean();
-
-    res.status(200).json({
-      error: false,
-      data,
-    });
-  } catch (err) {
-    res.status(500).json({
-      error: true,
-      extra: err.message,
-      data: "An error occurred while processing your request.",
-    });
-  }
-});
-
 router.get("/courses", async (req, res) => {
   try {
     const business_id = req.query.business_id;
@@ -104,43 +85,7 @@ router.get("/courses", async (req, res) => {
   }
 });
 
-router.get("/admins_List", async (req, res) => {
-  try {
-    const data = await User.find(
-      { role: "admin" },
-      { firstName: 1, lastName: 1, email: 1, phoneNumber: 1 }
-    ).lean();
-
-    res.status(200).json({
-      error: false,
-      data: data,
-    });
-  } catch (err) {
-    res.status(500).json({
-      error: true,
-      extra: err.message,
-      data: "An error occurred while processing your request.",
-    });
-  }
-});
-
-router.get("/business_list", async (req, res) => {
-  try {
-    const courses = await BusinessCourses.find({}, { business_name: 1 }).lean();
-
-    res.status(200).json({
-      error: false,
-      data: courses,
-    });
-  } catch (err) {
-    res.status(500).json({
-      error: true,
-      extra: err.message,
-      data: "An error occurred while processing your request.",
-    });
-  }
-});
-
+// For Dropdown
 router.get("/course_list", async (req, res) => {
   try {
     const business_id = req.query.business_id;
@@ -195,39 +140,10 @@ router.get("/modules_by_course_id/:id", async (req, res) => {
   }
 });
 
-router.get("/businesses_and_courses_list", async (req, res) => {
-  try {
-    const courses = await BusinessCourses.find(
-      {},
-      {
-        business_name: 1,
-        courses: 1,
-      }
-    )
-      .populate({
-        path: "courses",
-        select: "course_name",
-      })
-      .lean();
-
-    res.status(200).json({
-      error: false,
-      data: courses,
-    });
-  } catch (err) {
-    res.status(500).json({
-      error: true,
-      extra: err.message,
-      data: "An error occurred while processing your request.",
-    });
-  }
-});
-
 router.get("/courses_and_modules_list", async (req, res) => {
   try {
     const modTypes = ["THEORY", "ASSESSMENT"];
     const getType = req.query.mod_type;
-    const business_id = req.query.business_id;
 
     if (!modTypes.includes(getType)) {
       return res.status(500).json({
@@ -462,22 +378,6 @@ router.get("/getLearners", async (req, res) => {
         select: "firstName lastName email phoneNumber",
       })
       .lean();
-    res.status(200).json({
-      error: false,
-      data,
-    });
-  } catch (err) {
-    res.status(500).json({
-      error: true,
-      extra: err.message,
-      data: "An error occurred while processing your request.",
-    });
-  }
-});
-
-router.get("/getSubscriptionPacks", async (req, res) => {
-  try {
-    const data = await SubscriptionPacks.find({}).lean();
     res.status(200).json({
       error: false,
       data,

@@ -175,13 +175,14 @@ const generateForgotPasswordEmail = (link) => {
 </html>
 `;
 };
+
 const sendAddStaffTokenEmail = ({ token, senderEmail }) => {
   return `<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Business Token of Shiksha</title>
+    <title>Join Institue Invitation on Shiksha</title>
     <style>
       body,
       h1,
@@ -265,10 +266,9 @@ const sendAddStaffTokenEmail = ({ token, senderEmail }) => {
   <body>
     <div class="container">
       <h1 class="logo">Shiksha</h1>
-      <h3>Business Token for Staff</h3>
+      <h3>Join Institue Invitation on Shiksha</h3>
       <p class="star">
-        Paste the token into the 'Business Name' field while creating your
-        account
+      Login into App and paste the below code into Join Institue Field
       </p>
       <div class="reset-link">
         <p class="black-color">

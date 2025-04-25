@@ -1,3 +1,4 @@
+"use client";
 import "./Common/styles.scss";
 import _DataTable from "./DataTable";
 import { useEffect, useState } from "react";

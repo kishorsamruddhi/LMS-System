@@ -1,7 +1,6 @@
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { useState } from 'react';
-import { Button } from 'primereact/button';
 import { Link } from 'react-router-dom';
 
 const _DataTable = ({ data, pagination, setPagination }) => {

@@ -9,17 +9,17 @@ const availableRoutes = {
 };
 
 export async function middleware(request) {
-  console.log("Incoming request URL:", request.nextUrl.href);
-  console.log("Incoming pathname:", request.nextUrl.pathname);
+  return NextResponse.next();
   const cookies = await request.cookies;
   const token = cookies.get(cookiesKey)?.value;
   const { pathname } = request.nextUrl;
+
   if (!token) {
     if (
       pathname === "/" ||
       pathname.startsWith(availableRoutes.auth) ||
-      pathname === "/page404"
-      // ||pathname === "/training"
+      pathname === "/page404" ||
+      pathname === "/training"
     ) {
       return NextResponse.next();
     }

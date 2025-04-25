@@ -1,0 +1,46 @@
+.viewReport {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+
+    .big-card {
+        background-image: linear-gradient(106deg, #fb923c 7.37%, #9831a3 72.65%);
+        border-radius: 1.5rem;
+        padding: 2rem;
+        margin-bottom: 2rem;
+
+        .counts-details {
+            display: grid;
+            margin-top: 1rem;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+
+            .counts {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+
+                .data-counts {
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+
+                    i {
+                        font-size: 6px;
+                    }
+
+                    .total_count {
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                    }
+                }
+
+                .time {
+                    color: #dadada;
+                    font-size: 12px;
+                }
+            }
+        }
+    }
+}

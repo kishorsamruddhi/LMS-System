@@ -61,55 +61,6 @@ router.get("/get/getStaffList", extractToken, async (req, res) => {
   }
 });
 
-router.post("/add/add_learner", extractToken, async (req, res) => {
-  try {
-    const { _id, role } = req.user;
-    if (role !== "admin") {
-      return res
-        .status(403)
-        .json({ data: "Only Admin can access.", error: true });
-    }
-    const { user_id } = req.body;
-    const user = await User.findById(user_id, { email: 1, role: 1 }).lean();
-
-    if (!user || user.role !== "staff") {
-      return res.status(404).json({
-        error: true,
-        data: "Staff not found.",
-      });
-    }
-
-    const isExists = await UserLearningProgress.findOne({ user_id }).lean();
-
-    if (isExists?.user_id) {
-      return res.status(404).json({
-        error: true,
-        data: "Staff have already access to the training module.",
-      });
-    }
-    const getBusiness = await BusinessCourses.findOne(
-      { admin_id: _id },
-      { admin_id: 1 }
-    ).lean();
-    const newReportCard = new UserLearningProgress({
-      user_id,
-      business_course_id: getBusiness._id,
-    });
-
-    await newReportCard.save();
-
-    return res.status(201).json({
-      data: "Training Module is now available for the staff.",
-      error: false,
-    });
-  } catch (error) {
-    res.status(500).json({
-      error: true,
-      data: error.message,
-    });
-  }
-});
-
 router.get("/get/learners_report_datatable", extractToken, async (req, res) => {
   try {
     const { _id, role } = req.user;

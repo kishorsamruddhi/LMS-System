@@ -1,7 +1,8 @@
 "use client";
+import { setupAdminApi } from '@/api/auth';
 import React from 'react'
 import { useForm } from 'react-hook-form';
-import Validations from '@/utils/FormValidations';
+import { toast } from 'react-toastify';
 
 const Page = () => {
     return (
@@ -18,8 +19,16 @@ const BusinessForm = () => {
         formState: { errors },
     } = useForm();
 
-    const onSubmit = (data) => {
-        console.log(data);
+    const onSubmit = async (data) => {
+        try {
+            const resp = await setupAdminApi(data);
+            if (resp?.error) { return toast.error(resp.data) }
+            else {
+                return toast.success(resp.data)
+            }
+        } catch (error) {
+            toast.error(error.message)
+        }
     };
 
     return (
@@ -33,25 +42,6 @@ const BusinessForm = () => {
                     className={`mt-1 block w-full border rounded-md p-2 ${errors.business_name ? 'border-red-500' : 'border-gray-300'}`}
                 />
                 {errors.business_name && <p className="text-red-500 text-sm">{errors.business_name.message}</p>}
-            </div>
-            <div>
-                <label className="block text-sm font-medium text-gray-700">Email</label>
-                <input
-                    type="email"
-                    {...register('email', Validations.email)}
-                    className={`mt-1 block w-full border rounded-md p-2 ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
-                />
-                {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
-            </div>
-
-            <div>
-                <label className="block text-sm font-medium text-gray-700">Phone</label>
-                <input
-                    type="text"
-                    {...register('phone', { required: 'Phone number is required' })}
-                    className={`mt-1 block w-full border rounded-md p-2 ${errors.phone ? 'border-red-500' : 'border-gray-300'}`}
-                />
-                {errors.phone && <p className="text-red-500 text-sm">{errors.phone.message}</p>}
             </div>
             <div>
                 <label className="block text-sm font-medium text-gray-700">Category</label>
