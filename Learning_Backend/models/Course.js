@@ -4,14 +4,14 @@ const courseSchema = new mongoose.Schema(
   {
     business_id: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "business_courses",
+      ref: "Institue",
       required: true,
     },
-    course_pack_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "subscription_packs",
-      required: true,
-    },
+    // course_pack_id: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: "subscription_packs",
+    //   required: true,
+    // },
     course_code: {
       type: String,
       required: true,

@@ -35,7 +35,3 @@ export const createAdmin_subscription = async (body) => {
     instance.post("/admin/create/create_subscription", body)
   );
 };
-
-export const createAdminApi_AddLearner = async (body) => {
-  return handleRequest(() => instance.post("/admin/create/add_learner", body));
-};

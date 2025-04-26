@@ -20,7 +20,7 @@ const learnerSub = new mongoose.Schema(
     business_course_id: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: "business_courses",
+      ref: "Institue",
     },
     plan_code: {
       type: String,

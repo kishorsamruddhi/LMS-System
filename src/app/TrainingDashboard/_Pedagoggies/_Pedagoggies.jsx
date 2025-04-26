@@ -1,13 +1,12 @@
 import "../Common/styles.scss";
 import _DataTable from "./DataTable";
-import SuperAdminBackButton from "@/components/ui/SuperAdminBackButton";
-import { getAdmin_assessments_by_module_id, getCourses_and_Modules_list } from "@/api/Super_Admin/qlite/getApis";
+import AdminBackButton from "@/components/AdminBackButton";
 import { useEffect, useState } from "react";
 import { Dropdown } from "primereact/dropdown";
+import { getAdmin_pedagoggies_by_module_id, getCourses_and_Modules_list } from "@/api/Super_Admin/qlite/getApis";
 import { Link } from "react-router-dom";
 
-
-const _Assessments = () => {
+const _Pedagoggies = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [isError, setIsError] = useState(false);
     const [business_List, setBusiness_List] = useState([])
@@ -23,18 +22,13 @@ const _Assessments = () => {
     });
 
     const getTableData = async () => {
-
         if (!selected_Fields.module._id) return
         setIsLoading(true);
         setIsError(false);
         try {
-            const resp = await getAdmin_assessments_by_module_id(selected_Fields?.module?._id);
-            console.log(resp);
-
+            const resp = await getAdmin_pedagoggies_by_module_id(selected_Fields?.module?._id);
             if (!resp.error) {
-
-                setData(resp.data.assessments
-                );
+                setData(resp.data.pedagogies);
             } else {
                 setIsError(true);
             }
@@ -48,7 +42,7 @@ const _Assessments = () => {
 
     const getListData = async () => {
         try {
-            const resp = await getCourses_and_Modules_list("ASSESSMENT");
+            const resp = await getCourses_and_Modules_list("THEORY");
             if (!resp.error) {
                 if (resp?.data?.length > 0) {
                     setBusiness_List(resp?.data);
@@ -78,6 +72,7 @@ const _Assessments = () => {
     }, [selected_Fields?.module?._id])
 
 
+
     const refreshTableData = async () => {
         return await getTableData()
     }
@@ -89,15 +84,14 @@ const _Assessments = () => {
 
     const tableProps = { refreshTableData, data: selected_Fields?.module ? data : [], isLoading, pagination, setPagination }
 
-
     return (
         <div className='SuperAdmin'>
             <div style={{ margin: "1rem 0" }} className="div">
-                <SuperAdminBackButton style={{ margin: "0" }} />
+                <AdminBackButton style={{ margin: "0" }} />
             </div>
             <div className="header">
-                <h1>Assessments Management</h1>
-                <Link style={{ padding: "6px 1rem", textDecoration: "none" }} to={"create"} className="start p-0 pr" >Create Assessment</Link>
+                <h1>Pedagogies Management</h1>
+                <Link style={{ padding: "6px 1rem", textDecoration: "none" }} to={"create"} className="start p-0 pr" >Create Pedagoggy</Link>
             </div>
             <div style={{ marginTop: "2rem", display: "flex", flexWrap: "wrap", gap: "2rem" }} >
                 <div>
@@ -133,4 +127,5 @@ const _Assessments = () => {
     );
 };
 
-export default _Assessments;
+
+export default _Pedagoggies;

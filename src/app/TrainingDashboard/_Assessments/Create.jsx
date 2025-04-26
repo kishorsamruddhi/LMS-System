@@ -1,18 +1,16 @@
-import { useEffect, useRef, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
-import { createAdmin_Pedagogy } from "@/api/Super_Admin/qlite/createApi";
 import { getCourses_and_Modules_list } from "@/api/Super_Admin/qlite/getApis";
 import style from "../Common/form.module.scss";
-import SuperAdminBackButton from "@/components/ui/SuperAdminBackButton";
+import AdminBackButton from "@/components/AdminBackButton";
+import { useForm, useFieldArray, Controller } from "react-hook-form";
+import { createAdmin_Assessment } from "@/api/Super_Admin/qlite/createApi";
 import { Dropdown } from "primereact/dropdown";
-import { Editor } from "primereact/editor";
-import "./EditorStyle.scss"
 
-const CreatePedagogy = () => {
 
+const CreateAssessment = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [formLoading, setFormLoading] = useState(false);
     const [isError, setIsError] = useState(false);
@@ -22,22 +20,26 @@ const CreatePedagogy = () => {
 
     const {
         register,
-        handleSubmit,
-        control,
+        handleSubmit, control,
         setValue,
         formState: { errors },
     } = useForm({
         business_id: "",
-        course_id: "",
-        module_id: "",
-        text: ""
+        course_id: "", module_id: ""
     });
+
+
+    const optCompProps = {
+        initOptions: {},
+        control, register, errors
+    }
+
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 setIsLoading(true);
-                const resp = await getCourses_and_Modules_list("THEORY");
+                const resp = await getCourses_and_Modules_list("ASSESSMENT");
                 if (!resp.error && resp?.data?.length > 0) {
                     setBusinessList(resp.data);
                     setSelectedFields({
@@ -48,6 +50,7 @@ const CreatePedagogy = () => {
                     setValue("business_id", resp.data[0]?._id || null)
                     setValue("course_id", resp.data[0]?.courses[0]._id || null)
                     setValue("module_id", resp.data[0]?.courses[0]?.modules[0]?._id || null)
+
                 } else {
                     setIsError(true);
                 }
@@ -62,18 +65,21 @@ const CreatePedagogy = () => {
 
     const onSubmit = async (data) => {
         try {
-            const text = data.text
-            if (!text) return toast.info("Text field can't be empty.");
-            if (formLoading) return
-            setFormLoading(true);
             if (!data?.course_id || !data?.business_id || !data?.module_id) {
                 throw new Error("business_id, course_id, module_id are required")
             }
-            const resp = await createAdmin_Pedagogy(data);
+            data.module_id = selectedFields.module._id
+            const opts = data?.options?.length
+            if (opts < 2) {
+                return toast.error("Minimum 2 Options are required");
+            }
+            if (formLoading) return
+            setFormLoading(true);
+            const resp = await createAdmin_Assessment(data);
             if (!resp.error) {
-                toast.success("Pedagogy created successfully!");
+                toast.success("Assessment created successfully!");
                 setTimeout(() => {
-                    navigate("/super-admin/dashboard/training-dashboard/pedagogies");
+                    navigate("/super-admin/dashboard/training-dashboard/assessments");
                 }, 1200);
             } else {
                 toast.error(resp?.data || "Unknown error");
@@ -90,17 +96,16 @@ const CreatePedagogy = () => {
         return <h1>Error fetching courses data. Please try again later.</h1>;
     }
 
-    const FormField = ({ label, fieldType, registerKey, options = { required: true }, errorMessage = "" }) => {
+    const FormField = ({ label, type, registerKey, options = { required: true }, errorMessage = "" }) => {
         return <div className={style.flexColumn}>
             <label>{label}</label>
             <input
-                type={fieldType}
+                type={type}
                 {...register(registerKey, options)}
             />
             {errors[registerKey] && <span>{errorMessage || "This field is required"}</span>}
         </div>
     }
-
 
     const courseList = selectedFields?.business?.courses || []
     const moduleList = selectedFields?.course?.modules || []
@@ -108,9 +113,9 @@ const CreatePedagogy = () => {
     return (
         <form style={{ minWidth: "unset", maxWidth: "unset", padding: "2rem" }} className={style.form} onSubmit={handleSubmit(onSubmit)}>
             <div style={{ width: "100%", }}>
-                <SuperAdminBackButton />
+                <AdminBackButton />
             </div>
-            <h3>Create Pedagogy</h3>
+            <h3>Create Assessment</h3>
             <div className={style.flexColumn}>
                 <label>Select Business:</label>
                 <Controller
@@ -177,13 +182,9 @@ const CreatePedagogy = () => {
                         )} />}
                 {errors.module_id && <span style={{ fontSize: "12px", color: 'red' }}>This field is required.</span>}
             </div>
-            {FormField({ register, errors, label: "Title:", fieldType: "text", registerKey: "title" })}
-            <div className={style.flexColumn}>
-                <label>Text:</label>
-                <TextQuillField control={control} register={register} setValue={setValue} />
-                {errors?.text && <span style={{ fontSize: "12px", color: "red" }}>This field is required</span>}
-            </div>
-            {FormField({ register, errors, label: "Url:", fieldType: "text", registerKey: "url" })}
+            <FormField register={register} errors={errors} label={"Primary Text:"} type="text" registerKey={"primary_text"} />
+            <OptionsField  {...optCompProps} />
+            <FormField register={register} errors={errors} label={"Correct Option:"} type="text" registerKey={"correct_option"} />
             <div className={style.flexColumn}>
                 <label>Select Status:</label>
                 <select {...register("pedagogy_status", { required: true })}>
@@ -195,30 +196,52 @@ const CreatePedagogy = () => {
                 {errors.pedagogy_status && <span>This field is required</span>}
             </div>
             <div className={style.flexRow}>
-                {!isLoading && <Button loading={formLoading} disabled={formLoading} className={style.submit} type="submit">Create Pedagogy</Button>}
+                {!isLoading && <Button loading={formLoading} disabled={formLoading} className={style.submit} type="submit">Create Assessment</Button>}
             </div>
         </form>
     );
 };
 
+const OptionsField = ({ control, errors }) => {
+    const { fields, append, remove } = useFieldArray({
+        control,
+        name: "options",
+    });
 
-const TextQuillField = ({ value = "", setValue }) => {
-    const editorRef = useRef(null);
     return (
-        <div className="Editor">
-            <Editor
-                ref={editorRef}
-                value={value}
-                defaultValue={value}
-                onTextChange={(e) => {
-                    setValue("text", e.htmlValue)
-                }}
-                pt={{ content: { style: { maxHeight: "500px", overflowY: "auto" } } }}
-            />
+        <div className={style.flexColumn}>
+            <label>Options:</label>
+            {fields.map((item, index) => {
+                return (
+                    <div key={item.id} className={style.fieldWithIcon}>
+                        <Controller
+                            name={`options[${index}]`}
+                            control={control}
+                            defaultValue={item?.value || ""}
+                            render={({ field }) => {
+                                return (
+                                    <input
+                                        {...field}
+                                        type="text"
+                                        placeholder={`Option ${index + 1}`}
+                                    />
+                                )
+                            }}
+                        />
+                        <Button
+                            type="button" text
+                            onClick={() => remove(index)}
+                            icon="pi pi-trash" />
+                    </div>
+                )
+            })}
+            <Button
+                style={{ padding: "6px 12px" }}
+                className={style.addOption} text type="button" onClick={() => append("")} icon="pi pi-plus" />
+            {errors.options && <span>This field is required</span>}
         </div>
     );
 };
 
 
-
-export default CreatePedagogy;
+export default CreateAssessment;

@@ -1,6 +1,6 @@
 import "../Common/styles.scss";
 import _DataTable from "./DataTable";
-import SuperAdminBackButton from "@/components/ui/SuperAdminBackButton";
+import AdminBackButton from "@/components/AdminBackButton";
 import { getAdmin_modules_by_courseId, getAdmin_Course_List_DropDown, getAdmin_Business_List_DropDown } from "@/api/Super_Admin/qlite/getApis";
 import { useEffect, useState } from "react";
 
@@ -110,7 +110,7 @@ const _Modules = () => {
     return (
         <div className='SuperAdmin'>
             <div style={{ margin: "1rem 0" }} className="div">
-                <SuperAdminBackButton style={{ margin: "0" }} />
+                <AdminBackButton style={{ margin: "0" }} />
             </div>
             <div className="header">
                 <h1>Modules Management</h1>

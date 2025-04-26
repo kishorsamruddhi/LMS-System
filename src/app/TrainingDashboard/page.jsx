@@ -43,9 +43,8 @@ const TrainingDashboard = () => {
         return <ErrorPage message={error.message || "Something went wrong"} />;
     }
 
-    const prefix = "/TranininDashboard";
+    const prefix = "/TrainingDashboard";
     const links = [
-        { title: "Businesses", category: "Manage", link: `${prefix}/businesses`, count: data.businessCount },
         { title: "Learners", category: "Manage", link: `${prefix}/learners`, count: data.learnersCount },
         // { title: "Subscriptions", category: "Manage", link: `${prefix}/subscription`, count: data.subsCount },
         { title: "Courses", category: "Manage", count: data.coursesCount, link: `${prefix}/courses` },

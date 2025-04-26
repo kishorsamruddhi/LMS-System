@@ -1,21 +1,29 @@
+"use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import "./styles.scss"
 import { Chart, ArcElement, Tooltip, Legend } from 'chart.js';
-import { useParams } from 'react-router-dom';
-import { getAdmin_view_report_by_learner_id } from '@/api/Super_Admin/qlite/getApis';
-import LoadingSpinner from '@/Loading';
 import { calculateCourseProgress } from './const';
 import { formatDate } from '@/utils/timeFormatter';
-import SuperAdminBackButton from '@/components/ui/SuperAdminBackButton';
+import LoadingSpinner from '@/components/Loading';
+import { getAdmin_view_report_by_learner_id } from '@/api/_admin/getApis';
+import { Button } from '@/components/ui/button';
+import Link from "next/link";
+import { ArrowLeft } from 'lucide-react';
 
-
+function AdminBackButton() {
+  return <Button asChild>
+    <Link href={"/TrainingDashboard"}>
+      <ArrowLeft />
+    </Link>
+  </Button>
+}
 
 Chart.register(ArcElement, Tooltip, Legend);
 
-const _View_Learner_Report = () => {
-  const { id } = useParams();
+const _View_Learner_Report = ({ params }) => {
+  const { id } = use(params);
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState(null);
 
@@ -67,12 +75,12 @@ const _View_Learner_Report = () => {
   return (
     <div className='viewReport'>
       <div>
-        <SuperAdminBackButton hardURL={"/super-admin/dashboard/training-dashboard/learners"} />
+        <AdminBackButton hardURL={"/super-admin/dashboard/training-dashboard/learners"} />
       </div>
       <div>
         <h1>{data.user?.firstName} {data.user?.lastName}</h1>
-        <p style={{ fontSize: "12px", marginTop: "6px", color: "#cacaca" }}>Email: {data.user?.email}</p>
-        <p style={{ fontSize: "12px", marginTop: "6px", color: "#cacaca" }}>Phone Number:{data.user?.phoneNumber}</p>
+        <p className='text-gray-400'>Email: <span className='text-cyan-500'>{data.user?.email}</span></p>
+        <p className='text-gray-400'>Phone Number: <span className='text-cyan-500'>{data.user?.phoneNumber}</span></p>
       </div>
       <div className="big-card">
         <h2>Summary</h2>
@@ -128,14 +136,14 @@ const _View_Learner_Report = () => {
 const DoughnutChart = ({ allDataResponse, courses, progressData }) => {
   const objectKeys = Object.keys(progressData)
   const modsProgress = objectKeys.map((val) => progressData[val].completed_modules)
-  // const yetToBeCompleted = courses.flatMap((cor) => cor.modules).length - allDataResponse.completedModules.length
+  const yetToBeCompleted = courses.flatMap((cor) => cor.modules).length - allDataResponse.completedModules.length
 
   const data = {
-    // labels: [...courses.flatMap((cor) => cor.course_name), "Incompleted Modules"],
+    labels: [...courses.flatMap((cor) => cor.course_name), "Incompleted Modules"],
     labels: courses.flatMap((cor) => cor.course_name),
     datasets: [
       {
-        // data: [...modsProgress, yetToBeCompleted],
+        data: [...modsProgress, yetToBeCompleted],
         data: modsProgress,
         backgroundColor: [...courses.flatMap((cor) => cor.color), "#cacaca"],
         borderColor: [...courses.flatMap((cor) => cor.color), "#cacaca"],
@@ -180,9 +188,9 @@ function learningTime(totalSeconds = 0) {
   const minutes = Math.floor((totalSeconds % 3600) / 60);
 
   return {
-    days,
-    hours,
-    minutes,
+    days: isNaN(days) ? 0 : days,
+    hours: isNaN(hours) ? 0 : hours,
+    minutes: isNaN(minutes) ? 0 : minutes,
   };
 };
 

@@ -16,7 +16,10 @@ const extractToken = (req, res, next) => {
           .status(401)
           .json({ data: "Token has expired", success: false });
       } else {
-        return res.status(401).json({ data: "Invalid token", success: false });
+        return res.status(401).json({
+          data: "Invalid token",
+          success: false,
+        });
       }
     }
   } else {

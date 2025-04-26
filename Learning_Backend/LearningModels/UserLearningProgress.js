@@ -10,7 +10,7 @@ const user_report_card = new mongoose.Schema({
   business_course_id: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
-    ref: "business_courses",
+    ref: "Institue",
     default: null,
   },
   isComplete: {

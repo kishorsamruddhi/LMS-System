@@ -6,7 +6,7 @@ import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
 import { createAdminModule } from "@/api/Super_Admin/qlite/createApi";
 import { getBusinesses_and_Courses_list } from "@/api/Super_Admin/qlite/getApis";
-import SuperAdminBackButton from "@/components/ui/SuperAdminBackButton";
+import AdminBackButton from "@/components/AdminBackButton";
 import { Dropdown } from "primereact/dropdown";
 import { InputTextarea } from "primereact/inputtextarea";
 import LoadingSpinner from "@/Loading";
@@ -99,7 +99,7 @@ const CreateModule = () => {
     return (
         <form style={{ minWidth: "unset", maxWidth: "unset", padding: "2rem" }} className={style.form} onSubmit={handleSubmit(onSubmit)}>
             <div style={{ width: "100%", }}>
-                <SuperAdminBackButton />
+                <AdminBackButton />
             </div>
             <h3>Create Module</h3>
             <div className={style.selectGrid}>

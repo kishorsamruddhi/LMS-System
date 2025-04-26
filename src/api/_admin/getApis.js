@@ -10,28 +10,14 @@ export const getAllDataCounts = async () => {
   );
 };
 
-export const getAdmin_Businesses = async () => {
-  return handleRequest(() => axiosInstance.get("/admin/get/businesses"));
-};
-
-export const get_List_of_Admins = async () => {
-  return handleRequest(() => axiosInstance.get("/admin/get/admins_List"));
-};
-
-export const getAdmin_Courses = async (id) => {
-  return handleRequest(() =>
-    axiosInstance.get("/admin/get/courses?business_id=" + id)
-  );
+export const getAdmin_Courses = async () => {
+  return handleRequest(() => axiosInstance.get(basePathName + "get/courses"));
 };
 
 export const getAdmin_modules_by_courseId = async (id) => {
   return handleRequest(() =>
     axiosInstance.get("/admin/get/modules_by_course_id/" + id)
   );
-};
-
-export const getAdmin_Business_List_DropDown = async () => {
-  return handleRequest(() => axiosInstance.get("/admin/get/business_list"));
 };
 
 export const getAdmin_Course_List_DropDown = async (id) => {
@@ -84,11 +70,9 @@ export const getAdminLearnerList = async () => {
   return handleRequest(() => axiosInstance.get("/admin/get/getLearners"));
 };
 
-export const getAdmin_learners_report_datatable = async (id) => {
+export const getAdmin_learners_report_datatable = async () => {
   return handleRequest(() =>
-    axiosInstance.get(
-      "/admin/reports/learners_report_datatable?business_id=" + id
-    )
+    axiosInstance.get("/admin/reports/learners_report_datatable")
   );
 };
 

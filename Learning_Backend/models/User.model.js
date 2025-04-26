@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema(
     },
     address: { type: String, maxlength: 60, default: "" },
     password: { type: String, default: "" },
-    instituteId: {
+    business_course_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Institue",
     },

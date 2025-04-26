@@ -50,6 +50,9 @@ router.post("/institute", extractToken, async (req, res) => {
     });
 
     await setUp.save();
+    await User.findByIdAndUpdate(_id, {
+      business_course_id: setUp._id,
+    });
 
     return res.status(201).json({ error: false, data: "Setup Complete" });
   } catch (err) {
@@ -87,12 +90,24 @@ router.post("/institute-invite", extractToken, async (req, res) => {
         email: 1,
         phoneNumber: 1,
         role: 1,
+        business_course_id: 1,
       }
-    );
+    ).lean();
     if (!isStudent) {
       return res.status(404).json({
         error: true,
         data: `User is not registered with this email (${email}) on this app.`,
+      });
+    }
+    const isAlreadyEnrolled = await UserReportCard.findOne(
+      { user_id: isStudent._id },
+      { user_id: 1 }
+    ).lean();
+
+    if (isAlreadyEnrolled) {
+      return res.status(404).json({
+        error: true,
+        data: "The user is already enrolled in an institute.",
       });
     }
 
@@ -154,6 +169,7 @@ router.post("/user", extractToken, async (req, res) => {
         email: 1,
         phoneNumber: 1,
         role: 1,
+        business_course_id: 1,
       }
     ).lean();
 
@@ -161,6 +177,13 @@ router.post("/user", extractToken, async (req, res) => {
       return res
         .status(403)
         .json({ error: true, data: "Token is not vaild for you." });
+    }
+
+    if (getMyDetails?.business_course_id) {
+      return res.status(403).json({
+        error: true,
+        data: "You have already connected to an Institute.",
+      });
     }
 
     const getInstitueDetails = await BusinessCourses.findById(business_KEY, {
@@ -175,23 +198,17 @@ router.post("/user", extractToken, async (req, res) => {
         .json({ error: true, data: "Institute is no longer exists." });
     }
 
-    const isAlreadySetup = await UserReportCard.findOne({
-      user_id: getMyDetails._id,
-    }).lean();
-
-    if (isAlreadySetup) {
-      return res.status(304).json({
-        error: true,
-        data: "You have already connected to an Institute.",
-      });
-    }
-
     const setUp = new UserReportCard({
       user_id: getMyDetails._id,
       business_course_id: getInstitueDetails._id,
     });
 
     await setUp.save();
+
+    await User.findByIdAndUpdate(getMyDetails._id, {
+      business_course_id: setUp._id,
+    }).lean();
+
     return res.status(201).json({
       error: false,
       data: "Joinned Successfully",

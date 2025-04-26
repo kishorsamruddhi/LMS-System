@@ -23,14 +23,21 @@ export const setupAdminApi = async ({
   );
 };
 
+// Get - Token from Email and Verify Token to Join
 export const setupUserApi = async ({ email }) => {
   return handleRequest(() => axiosInstance.post("/setup/user", { email }));
 };
 
-export const setupValidteUserApi = async () => {
-  return handleRequest(() => axiosInstance.get("/setup/user-validate"));
+export const sendInvitationApi = async ({ email }) => {
+  return handleRequest(() =>
+    axiosInstance.post("/setup/institute-invite", { email })
+  );
 };
 
-export const setupValidteAdminApi = async () => {
-  return handleRequest(() => axiosInstance.get("/setup/admin-validate"));
-};
+// export const setupValidteUserApi = async () => {
+//   return handleRequest(() => axiosInstance.get("/setup/user-validate"));
+// };
+
+// export const setupValidteAdminApi = async () => {
+//   return handleRequest(() => axiosInstance.get("/setup/admin-validate"));
+// };

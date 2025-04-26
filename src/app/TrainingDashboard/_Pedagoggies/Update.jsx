@@ -6,7 +6,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { updateAdmin_Pedagogy } from "@/api/Super_Admin/qlite/updateApi";
 import style from "../Common/form.module.scss";
 import { getAdmin_details_of_pedagogy } from "@/api/Super_Admin/qlite/getApis";
-import SuperAdminBackButton from "@/components/ui/SuperAdminBackButton";
+import AdminBackButton from "@/components/AdminBackButton";
 import { Editor } from "primereact/editor";
 import "./EditorStyle.scss"
 
@@ -92,7 +92,7 @@ const UpdatePedagogy = () => {
     return (
         <form style={{ minWidth: "unset", maxWidth: "unset", padding: "2rem" }} className={style.form} onSubmit={handleSubmit(onSubmit)}>
             <div style={{ width: "100%", }}>
-                <SuperAdminBackButton hardURL="/super-admin/dashboard/training-dashboard/pedagogies" />
+                <AdminBackButton hardURL="/super-admin/dashboard/training-dashboard/pedagogies" />
             </div>
             <h3>Updating Pedagogy</h3>
             <div style={{ color: "#dadada", fontSize: "12px", textAlign: "center" }}>

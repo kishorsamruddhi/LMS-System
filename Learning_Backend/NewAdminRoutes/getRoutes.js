@@ -7,6 +7,7 @@ const LearningTime = require("../LearningModels/LearningTime.js");
 const UserReportCard = require("../LearningModels/UserLearningProgress.js");
 const { default: mongoose } = require("mongoose");
 const BusinessCourses = require("../LearningModels/Training_Business.js");
+const extractToken = require("../utils/middleware.js");
 const router = express.Router();
 
 router.get("/all_data_counts", async (req, res) => {
@@ -53,15 +54,18 @@ router.get("/all_data_counts", async (req, res) => {
   }
 });
 
-router.get("/courses", async (req, res) => {
+router.get("/courses", extractToken, async (req, res) => {
   try {
-    const business_id = req.query.business_id;
-    const bus = await BusinessCourses.findById(business_id, {
-      courses: 1,
-    })
+    const user = req.user;
+    const bus = await BusinessCourses.findOne(
+      { admin_id: user?._id },
+      {
+        courses: 1,
+      }
+    )
       .populate({
         path: "courses",
-        populate: { path: "course_pack_id", select: "name plan_code" },
+        // populate: { path: "course_pack_id", select: "name plan_code" },
       })
       .lean();
 

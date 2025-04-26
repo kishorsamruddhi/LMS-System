@@ -6,7 +6,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { updateAdmin_Assessment } from "@/api/Super_Admin/qlite/updateApi";
 import style from "../Common/form.module.scss";
 import { getAdmin_details_of_asmt } from "@/api/Super_Admin/qlite/getApis";
-import SuperAdminBackButton from "@/components/ui/SuperAdminBackButton";
+import AdminBackButton from "@/components/AdminBackButton";
 
 const UpdateAssessment = () => {
     const { assessment_id } = useParams();
@@ -93,7 +93,7 @@ const UpdateAssessment = () => {
     return (
         <form style={{ minWidth: "unset", maxWidth: "unset", padding: "2rem" }} className={style.form} onSubmit={handleSubmit(onSubmit)}>
             <div style={{ width: "100%", }}>
-                <SuperAdminBackButton hardURL="/super-admin/dashboard/training-dashboard/assessments" />
+                <AdminBackButton hardURL="/super-admin/dashboard/training-dashboard/assessments" />
             </div>
             <h3>Updating Assessment</h3>
             <div style={{ color: "#dadada", fontSize: "12px", textAlign: "center" }}>
