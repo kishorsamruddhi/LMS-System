@@ -5,7 +5,7 @@ const Assessment = require("../models/Assessment.js");
 const Pedagogy = require("../models/Pedagogy.js");
 const { body, validationResult } = require("express-validator");
 const BusinessCourses = require("../LearningModels/Training_Business.js");
-const SubscriptionPlan = require("../../models/SubscriptionPacks.js");
+const { default: mongoose } = require("mongoose");
 
 const router = express.Router();
 
@@ -14,7 +14,6 @@ const courseValidatorRes = courseValidatorFunc();
 const moduleValidatorRes = moduleValidatorFunc();
 const assessmentValidatorRes = assessmentValidatorFunc();
 const pedagogyValidatorRes = pedagogyValidatorFunc();
-const subsValidatorRes = validateSubscriptionPlan();
 
 router.put("/update_business", businessValidatorRes, async (req, res) => {
   const errors = validationResult(req);
@@ -64,11 +63,6 @@ router.put("/update_business", businessValidatorRes, async (req, res) => {
 });
 
 router.put("/update_course", courseValidatorRes, async (req, res) => {
-  return res.status(500).json({
-    error: true,
-    data: "Route is not available",
-  });
-
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({
@@ -81,30 +75,21 @@ router.put("/update_course", courseValidatorRes, async (req, res) => {
           .join(", "),
     });
   }
-
-  const {
-    course_name,
-    color,
-    course_desc,
-    course_pack_id,
-    course_code,
-    course_status,
-    _id,
-  } = req.body;
-
   try {
-    const getCourseSubPackId = await SubscriptionPlan.findById(course_pack_id, {
-      _id: 1,
-    }).lean();
-
-    if (!getCourseSubPackId) {
-      return res
-        .status(404)
-        .json({ error: true, data: "Selected Subcription plan not found." });
+    const {
+      course_name,
+      color,
+      course_desc,
+      course_pack_id,
+      course_code,
+      course_status,
+      course_id,
+    } = req.body;
+    if (!mongoose.isValidObjectId(course_id)) {
+      return res.status(404).json({ error: true, data: "Course not Found" });
     }
-
     const updatedCourse = await Course.findByIdAndUpdate(
-      _id,
+      course_id,
       {
         $set: {
           course_name,
@@ -145,18 +130,19 @@ router.put("/update_module", moduleValidatorRes, async (req, res) => {
     });
   }
 
-  const { module_code, module_name, module_desc, module_seq_no, _id } =
+  const { business_course_id } = req.user;
+
+  const { module_code, module_name, module_desc, module_seq_no, module_id } =
     req.body;
 
   try {
-    const updatedModule = await Module.findByIdAndUpdate(
-      _id,
+    const updatedModule = await Module.findOneAndUpdate(
+      { _id: module_id, business_id: business_course_id },
       {
         $set: {
           module_code,
           module_name,
           module_desc,
-          module_seq_no,
         },
       },
       { new: true, runValidators: true }
@@ -240,31 +226,28 @@ router.put("/update_pedagogy", pedagogyValidatorRes, async (req, res) => {
     });
   }
 
-  const {
-    pedagogy_type,
-    text,
-    title,
-    url,
-    // embed_code,
-    // avg_time,
-    pedagogy_seq_no,
-    pedagogy_status,
-    _id,
-  } = req.body;
-
   try {
+    const { business_course_id } = req.user;
+    const { text, title, url, _id } = req.body;
+
+    const getPadagogy = await Pedagogy.findById(_id, {
+      business_id: 1,
+    }).lean();
+
+    if (
+      !getPadagogy ||
+      getPadagogy?.business_id.toString() !== business_course_id
+    ) {
+      return res.status(403).json({ error: true, data: "Pedagogy not found" });
+    }
+
     const updatedPedagogy = await Pedagogy.findByIdAndUpdate(
       _id,
       {
         $set: {
-          pedagogy_type,
           text,
           title,
           url,
-          // embed_code,
-          // avg_time,
-          pedagogy_seq_no,
-          pedagogy_status,
         },
       },
       { new: true, runValidators: true }
@@ -278,70 +261,6 @@ router.put("/update_pedagogy", pedagogyValidatorRes, async (req, res) => {
     }
 
     res.status(200).json({ error: false, data: updatedPedagogy });
-  } catch (error) {
-    res.status(500).json({ error: true, data: error.message });
-  }
-});
-
-router.put("/update_subscription_pack", subsValidatorRes, async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({
-      error: true,
-      data:
-        "Validation failed: " +
-        errors
-          .array()
-          .flatMap((val) => val.msg)
-          .join(", "),
-    });
-  }
-
-  const {
-    status,
-    price,
-    name,
-    days,
-    subscription_lvl,
-    plan_code,
-    availableFields,
-    notAvailableFields,
-    availableRoutes,
-    description,
-    _id,
-  } = req.body;
-
-  try {
-    const updatedPack = await SubscriptionPlan.findByIdAndUpdate(
-      _id,
-      {
-        $set: {
-          name,
-          plan_code,
-          description,
-          status,
-          price,
-          days,
-          subscription_lvl,
-          availableFields:
-            availableFields.length > 1 ? availableFields.split(" ") : [],
-          notAvailableFields:
-            notAvailableFields.length > 1 ? notAvailableFields.split(" ") : [],
-          availableRoutes:
-            availableRoutes.length > 1 ? availableRoutes.split(" ") : [],
-        },
-      },
-      { new: true, runValidators: true }
-    );
-
-    if (!updatedPack) {
-      return res.status(404).json({
-        error: true,
-        data: "Subscription Pack not found.",
-      });
-    }
-
-    res.status(200).json({ error: false, data: updatedPack });
   } catch (error) {
     res.status(500).json({ error: true, data: error.message });
   }
@@ -411,7 +330,6 @@ function moduleValidatorFunc() {
       .optional()
       .isIn(["THEORY", "ASSESSMENT"])
       .withMessage("Module type must be either THEORY or ASSESSMENT."),
-    body("_id").isMongoId().withMessage("Invalid module ID."),
   ];
 }
 
@@ -470,7 +388,6 @@ function pedagogyValidatorFunc() {
       .withMessage(
         "Pedagogy status must be one of PUBLISHED, DRAFT, or ARCHIVED."
       ),
-    body("_id").isMongoId().withMessage("Invalid pedagogy ID."),
   ];
 }
 

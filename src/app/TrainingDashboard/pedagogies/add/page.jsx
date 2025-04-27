@@ -1,0 +1,182 @@
+"use client";
+import { useEffect, useState, useRef } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+import AdminBackButton from "@/components/AdminBackButton";
+import { Button } from "@/components/ui/button";
+import { Loader } from "lucide-react";
+import { redirect } from "next/navigation";
+import { Input } from "@/components/ui/input";
+import Dropdown from "@/components/Prime/Dropdown";
+import { createAdmin_Pedagogy } from "@/api/_admin/createApi";
+import { getCourses_and_Modules_list } from "@/api/_admin/getApis";
+import Quill from 'quill';
+import 'quill/dist/quill.snow.css';
+
+const CreateCourse = () => {
+    const ModuleType = "THEORY"
+    const [selectedCourse, setSelectedCourse] = useState(null)
+    const [courseDropdown, setCourseDropdown] = useState(null)
+    const [isLoading, setIsLoading] = useState(false);
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        setValue,
+    } = useForm();
+
+
+    const getCoursesList = async () => {
+        try {
+            const course_resp = await getCourses_and_Modules_list(ModuleType);
+            if (!course_resp?.error) {
+                const arr = course_resp.data
+                setCourseDropdown(arr);
+                setSelectedCourse(arr[0]._id)
+            } else {
+                setIsError(true);
+            }
+        } catch (error) {
+            setIsError(error.message);
+        }
+    };
+
+    useEffect(() => {
+        getCoursesList()
+    }, [])
+
+
+    async function onSubmit(data) {
+        const { module_id, text, title, url } = data
+        try {
+            if (isLoading) return
+            setIsLoading(true)
+            const resp = await createAdmin_Pedagogy({ module_id, text, title, url });
+            if (!resp.error) {
+                toast.success(`Pedagogy created successfully!!!`);
+                setTimeout(() => {
+                    redirect("/TrainingDashboard/pedagogies");
+                }, 1200);
+            } else {
+                toast.error(resp?.data || "Unknown Error");
+                setTimeout(() => {
+                    throw new Error(resp?.data || "Unknown Error")
+                }, 1200);
+            }
+        } catch (error) {
+            toast.error(error.message);
+            setTimeout(() => {
+                throw new Error(error.message)
+            }, 1200);
+        }
+        finally {
+            setIsLoading(false)
+        }
+    }
+
+    const FormField = ({ label, type, registerKey, options = { required: true }, inputStyle = {} }) => {
+        return (
+            <div className="flex flex-col mt-4">
+                <label className="text-sm text-gray-600">{label}</label>
+                <Input
+                    disabled={isLoading}
+                    type={type}
+                    style={inputStyle}
+                    {...register(registerKey, options)}
+                />
+                {errors[registerKey] && <span className="text-sm text-red-400">{errors[registerKey]?.message || "This field is required"}</span>}
+            </div>
+        );
+    };
+
+    function courseChangeHandler(val) {
+        setSelectedCourse(val)
+    }
+
+    function moduleChangeHandler(val) {
+        setValue("module_id", val)
+    }
+
+    const modulesList = Array.isArray(courseDropdown) ? courseDropdown.find(val => val._id === selectedCourse)?.modules : []
+
+    return (
+        <div style={{ padding: "2rem" }}>
+            <div className="my-4 flex gap-4 items-center">
+                <AdminBackButton addOnPath="/modules" />
+                <h1 className="text-2xl">Create <span className="text-cyan-500">Pedagogy</span> </h1>
+            </div>
+            <form style={{ minWidth: "unset", maxWidth: "unset", }} onSubmit={handleSubmit(onSubmit)}>
+                <div className="flex gap-4 items-center">
+                    {courseDropdown && courseDropdown.length > 0 ? <Dropdown options={courseDropdown}
+                        optionLabel={"course_name"}
+                        optionValue={"_id"}
+                        onChange={courseChangeHandler}
+                        value={selectedCourse}
+                        placeholder="Select Course" /> : <Button
+                            disabled={true}
+                            className="text-red-400 text-sm">You don't have any courses</Button>}
+                    {selectedCourse && modulesList.length > 0 ? <Dropdown options={modulesList}
+                        optionLabel={"module_name"}
+                        optionValue={"_id"}
+                        onChange={moduleChangeHandler}
+                        placeholder="Select Module" /> : <Button
+                            disabled={true}
+                            className="text-red-400 text-sm">Course has 0 module of {ModuleType}</Button>}
+                </div>
+                {FormField({ register, errors, label: "Title:", fieldType: "text", registerKey: "title" })}
+                {FormField({ register, errors, label: "Video Url:", fieldType: "text", registerKey: "url" })}
+                <div className="flex flex-col  mt-4">
+                    <label className="text-sm text-gray-600">Text:</label>
+                    <TextQuillField setValue={setValue} />
+                    {errors?.text && <span className="text-sm text-red-400">{errors?.text?.message || "This field is required"}</span>}
+                </div>
+                {/* <FormField register={register} errors={errors} label={"Course Description:"} type="text" registerKey={"course_desc"} /> */}
+                <div className="mt-4">
+                    <Button className={"hover:text-cyan-400"} disabled={isLoading} type="submit">
+                        {isLoading ? <>
+                            <Loader />
+                            <span className="ml-2">
+                                Creating Pedagogy
+                            </span>
+                        </>
+                            : "Create Pedagogy"}
+                    </Button>
+                </div>
+            </form>
+        </div>
+    );
+};
+
+
+const TextQuillField = ({ setValue }) => {
+    const editorRef = useRef(null);
+    const quillRef = useRef(null);
+
+    useEffect(() => {
+        if (editorRef.current && !quillRef.current) {
+            quillRef.current = new Quill(editorRef.current, {
+                theme: 'snow',
+                modules: {
+                    toolbar: [
+                        [{ header: [1, 2, false] }],
+                        ['bold', 'italic', 'underline'],
+                        [{ list: 'ordered' }, { list: 'bullet' }],
+                    ],
+                },
+                formats: ['header', 'bold', 'italic', 'underline', 'list'],
+            });
+
+            quillRef.current.on('text-change', () => {
+                const html = editorRef.current.querySelector('.ql-editor').innerHTML;
+                setValue("text", html);
+            });
+        }
+    }, []);
+
+    return (
+        <div ref={editorRef} />
+    );
+};
+
+
+export default CreateCourse;

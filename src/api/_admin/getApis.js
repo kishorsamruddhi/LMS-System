@@ -2,28 +2,23 @@ import { backendLink } from "@/utils/token.js";
 import { handleRequest, axiosInstance } from "../axios.js";
 
 axiosInstance.defaults.baseURL = backendLink;
-const basePathName = "/admin-test/";
 
 export const getAllDataCounts = async () => {
-  return handleRequest(() =>
-    axiosInstance.get(basePathName + "get/all_data_counts")
-  );
+  return handleRequest(() => axiosInstance.get("admin/get/all_data_counts"));
 };
 
 export const getAdmin_Courses = async () => {
-  return handleRequest(() => axiosInstance.get(basePathName + "get/courses"));
+  return handleRequest(() => axiosInstance.get("admin/get/courses"));
 };
 
 export const getAdmin_modules_by_courseId = async (id) => {
   return handleRequest(() =>
-    axiosInstance.get("/admin/get/modules_by_course_id/" + id)
+    axiosInstance.get("admin/get/modules_by_course_id/" + id)
   );
 };
 
-export const getAdmin_Course_List_DropDown = async (id) => {
-  return handleRequest(() =>
-    axiosInstance.get("/admin/get/course_list?business_id=" + id)
-  );
+export const getAdmin_Course_List_DropDown = async () => {
+  return handleRequest(() => axiosInstance.get("admin/get/course_list"));
 };
 
 export const getBusinesses_and_Courses_list = async () => {

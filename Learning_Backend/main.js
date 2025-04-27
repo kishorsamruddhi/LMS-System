@@ -39,9 +39,11 @@ const adminTestRoute = require("./NewAdminRoutes/getRoutes");
 // const super_admin_create_routes = require("./Admin/create.js");
 // const super_admin_get_Routes = require("./Admin/getRoutes.js");
 // const super_admin_delete_routes = require("./Admin/deleteRoutes.js");
-// const super_admin_update_routes = require("./Admin/updateRoute.js");
 // const testRoutes = require("./Admin/Qlite_testRoute.js");
 const testRoutes = require("./NewAdminRoutes/Report");
+const admin_create_routes = require("./NewAdminRoutes/create.js");
+const admin_update_routes = require("./NewAdminRoutes/updateRoute");
+const extractToken = require("./utils/middleware");
 // const adminRoutes = require("./User/admin_routes.js");
 
 app.use("/auth", getAuth);
@@ -50,13 +52,14 @@ app.use("/get", getRoutes);
 app.use("/progress", progressRoute);
 app.use("/tracking", trackingRoutes);
 // app.use("/admin-test", adminRoutes);
-app.use("/admin-test/get", adminTestRoute);
+app.use("/admin/get", extractToken, adminTestRoute);
 
 app.use("/admin/reports", testRoutes);
-// app.use("/admin/create", extractSuperToken, super_admin_create_routes);
+app.use("/admin/create", extractToken, admin_create_routes);
+app.use("/admin/update", extractToken, admin_update_routes);
+
 // app.use("/admin/get", extractSuperToken, super_admin_get_Routes);
 // app.use("/admin/delete", extractSuperToken, super_admin_delete_routes);
-// app.use("/admin/update", extractSuperToken, super_admin_update_routes);
 
 // Start the server
 app.listen(port, () => {

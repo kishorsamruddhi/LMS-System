@@ -7,6 +7,16 @@ const assessmentSchema = new mongoose.Schema(
       ref: "module",
       required: true,
     },
+    course_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "course",
+      required: true,
+    },
+    business_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Institue",
+      required: true,
+    },
     primary_text: { type: String, required: true },
     options: { type: [String], required: true, default: [] },
     correct_option: { type: String, required: true },

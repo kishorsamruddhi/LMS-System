@@ -10,7 +10,7 @@ import { Eye, Pencil } from "lucide-react";
 const _Courses = async () => {
     try {
         const ck = (await cookies())?.get(cookiesKey)?.value
-        const reqUrl = backendLink + "admin-test/get/courses"
+        const reqUrl = backendLink + "admin/get/courses"
         const resp = await fetch(reqUrl, {
             headers: {
                 Authorization: `Bearer ${ck}`,
@@ -30,8 +30,14 @@ const _Courses = async () => {
             { header: "Course", field: "course_name" },
             { header: "Course Description", field: "course_desc" },
             { header: "Course Code", field: "course_code" },
-            { header: "Color", field: "color" },
+            { header: "Color", field: "color", body: renderColor },
+            { header: "Status", field: "course_status" },
         ]
+
+        function renderColor(value) {
+            console.log("Value", value)
+            return <p style={{ height: "20px", width: "20px", borderRadius: "3px", backgroundColor: value }}></p>
+        }
 
         function ActionBtns(rowData) {
             const nextUrl = `courses/${rowData?._id}?mode=`
@@ -64,7 +70,7 @@ const _Courses = async () => {
                 </div>
 
                 <div className="my-4 flex justify-between items-center">
-                    <h1 className="text-2xl">Courses Management</h1>
+                    <h1 className="text-2xl">Courses <span className="text-cyan-500">Management</span> </h1>
                     <Button
                         className="hover:text-cyan-500"
                     >
@@ -72,8 +78,8 @@ const _Courses = async () => {
                         >Create Course</Link>
                     </Button>
                 </div>
-                <div className="data-table">
-                    <div className="table">
+                <div className="data-table w-full">
+                    <div className="table w-full">
                         {tableData.length > 0 ? <DataTable {...tableProps} /> : <p>O records found.</p>}
                     </div>
                 </div>

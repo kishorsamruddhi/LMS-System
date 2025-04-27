@@ -10,34 +10,33 @@ import { Input } from "@/components/ui/input";
 import Dropdown from "@/components/Prime/Dropdown";
 import { formatDate } from "@/utils/timeFormatter";
 import { Textarea } from "@/components/ui/textarea"
-import { updateAdminCourse } from "@/api/_admin/updateApi";
+import { updateAdminModule } from "@/api/_admin/updateApi";
 
-const UpdateCourse = ({ formValues = {} }) => {
-    const { course_code, course_name, course_desc, color, course_status, course_seq_no, updatedAt } = formValues
+const Actions = ({ formValues = {} }) => {
+    const { module_name, module_code, module_desc, module_type, course_id, updatedAt, module_seq_no } = formValues
+
     const [editMode, setEditMode] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const {
         register,
         handleSubmit,
         formState: { errors },
-        reset,
-        setValue,
     } = useForm({
-        defaultValues: { course_code, course_name, course_desc, color, course_status }
+        defaultValues: { module_name, module_code, module_desc, module_type, }
     });
 
 
     async function onSubmit(data) {
         if (!editMode) return
-        const { course_code, course_name, course_desc, color, course_status } = data
+        const { module_name, module_code, module_desc } = data
         try {
             if (isLoading) return
             setIsLoading(true)
-            const resp = await updateAdminCourse({ course_code, course_name, course_desc, color, course_status, course_id: formValues._id });
+            const resp = await updateAdminModule({ module_name, module_code, module_desc, module_id: formValues._id });
             if (!resp.error) {
-                toast.success(`Course updated successfully!!!`);
+                toast.success(`Module updated successfully!!!`);
                 setTimeout(() => {
-                    redirect("/TrainingDashboard/courses");
+                    redirect("/TrainingDashboard/modules");
                 }, 1200);
             } else {
                 toast.error(resp?.data || "Unknown Error");
@@ -61,6 +60,7 @@ const UpdateCourse = ({ formValues = {} }) => {
             <div className="flex flex-col mt-4">
                 <label className="text-sm text-gray-600">{label}</label>
                 <Input
+                    className={"font-light"}
                     disabled={!editMode}
                     type={type}
                     style={inputStyle}
@@ -75,39 +75,43 @@ const UpdateCourse = ({ formValues = {} }) => {
         setEditMode(prev => !prev)
     }
 
-    function statusChange(val) {
-        setValue("course_status", val)
-    }
-
     return (<div style={{ padding: "2rem" }}>
         <div style={{ width: "100%", }}>
-            <AdminBackButton addOnPath="/courses" />
+            <AdminBackButton addOnPath="/modules" />
         </div>
         <div className="my-4 flex justify-between items-center">
-            <h1 className="text-2xl">{editMode ? "Updating" : "Viewing"} <span className="text-cyan-500">Course</span> </h1>
+            <h1 className="text-2xl">{editMode ? "Updating" : "Viewing"} <span className="text-cyan-500">Module</span> </h1>
             <Button type="button" onClick={toggleMode}>{editMode ? "Switch To View Mode" : "Switch To Edit Mode"}</Button>
             <Button>Last update on<span className="text-cyan-400">{formatDate(updatedAt)} </span>
             </Button>
         </div>
-        <form style={{ minWidth: "unset", maxWidth: "unset" }} onSubmit={handleSubmit(onSubmit)}>
-            <FormField register={register} errors={errors} label={"Course Code:"} type="text" registerKey={"course_code"} />
-            <FormField register={register} errors={errors} label={"Course Name:"} type="text" registerKey={"course_name"} />
-            {/* <FormField register={register} errors={errors} label={"Course Sequence:"} type="number" registerKey={"course_seq_no"} /> */}
-            <div className="flex gap-4">
-                <FormField inputStyle={{ width: "100px" }} register={register} errors={errors} label={"Color:"} type="color" registerKey={"color"} />
-                <div className="flex flex-col  mt-4">
-                    <label className="text-sm text-gray-600">Course Status:</label>
-                    <Dropdown options={["ACTIVE", "INACTIVE"]} value={course_status}
-                        onChange={statusChange}
-                        disabled={!editMode}
-                        placeholder="Select Status"
-                    />
-                    {errors.course_status && <span className="text-sm text-red-400">This field is required</span>}
-                </div>
+        <div className="flex flex-col mt-4">
+            <label className="text-sm text-gray-600">Course Name:</label>
+            <Input
+                className={"font-light"}
+                readOnly
+                disabled={true}
+                value={course_id.course_name} />
+        </div>
+        <form style={{ minWidth: "unset", maxWidth: "unset", }} onSubmit={handleSubmit(onSubmit)}>
+            {FormField({ register: register, errors: errors, label: "Module Name:", type: "text", registerKey: "module_name" })}
+            {FormField({ register: register, errors: errors, label: "Module Code:", type: "text", registerKey: "module_code" })}
+            <div className="flex flex-col mt-4">
+                <label className="text-sm text-gray-600">Module Type:</label>
+                <Dropdown options={["THEORY", "ASSESSMENT"]}
+                    disabled={true}
+                    value={module_type}
+                    className="font-light"
+                    placeholder="Select Module Type"
+                />
+                {errors.course_status && <span className="text-sm text-red-400">This field is required</span>}
             </div>
             <div className="flex flex-col  mt-4">
-                <label className="text-sm text-gray-600">Course Description:</label>
-                <Textarea disabled={!editMode} placeholder="Type your message here." {...register("course_desc", { required: true })} />
+                <label className="text-sm text-gray-600">Module Description:</label>
+                <Textarea
+                    disabled={isLoading}
+                    className="font-light"
+                    placeholder="Type your message here." {...register("module_desc", { required: true })} />
                 {errors?.course_desc && <span className="text-sm text-red-400">{errors?.course_desc?.message || "This field is required"}</span>}
             </div>
             {/* <FormField register={register} errors={errors} label={"Course Description:"} type="text" registerKey={"course_desc"} /> */}
@@ -116,10 +120,10 @@ const UpdateCourse = ({ formValues = {} }) => {
                     {isLoading ? <>
                         <Loader />
                         <span className="ml-2">
-                            Updating Course
+                            Updating Module
                         </span>
                     </>
-                        : "Update Course"}
+                        : "Update Module"}
                 </Button>
             </div>
         </form>
@@ -127,4 +131,4 @@ const UpdateCourse = ({ formValues = {} }) => {
     );
 };
 
-export default UpdateCourse;
+export default Actions;

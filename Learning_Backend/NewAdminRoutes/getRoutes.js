@@ -7,7 +7,6 @@ const LearningTime = require("../LearningModels/LearningTime.js");
 const UserReportCard = require("../LearningModels/UserLearningProgress.js");
 const { default: mongoose } = require("mongoose");
 const BusinessCourses = require("../LearningModels/Training_Business.js");
-const extractToken = require("../utils/middleware.js");
 const router = express.Router();
 
 router.get("/all_data_counts", async (req, res) => {
@@ -54,7 +53,7 @@ router.get("/all_data_counts", async (req, res) => {
   }
 });
 
-router.get("/courses", extractToken, async (req, res) => {
+router.get("/courses", async (req, res) => {
   try {
     const user = req.user;
     const bus = await BusinessCourses.findOne(
@@ -92,7 +91,7 @@ router.get("/courses", extractToken, async (req, res) => {
 // For Dropdown
 router.get("/course_list", async (req, res) => {
   try {
-    const business_id = req.query.business_id;
+    const business_id = req.user.business_course_id;
     const bus = await BusinessCourses.findById(business_id, {
       courses: 1,
     })
@@ -155,9 +154,10 @@ router.get("/courses_and_modules_list", async (req, res) => {
         data: "Requested Mod Type is invaild",
       });
     }
+    const business_id = req.user.business_course_id;
 
-    const courses = await BusinessCourses.find(
-      {},
+    const business = await BusinessCourses.findOne(
+      { _id: business_id },
       {
         business_name: 1,
         courses: 1,
@@ -176,7 +176,7 @@ router.get("/courses_and_modules_list", async (req, res) => {
 
     res.status(200).json({
       error: false,
-      data: courses,
+      data: business.courses,
     });
   } catch (err) {
     res.status(500).json({

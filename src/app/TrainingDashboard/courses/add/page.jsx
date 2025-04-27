@@ -5,10 +5,11 @@ import { toast } from "react-toastify";
 import AdminBackButton from "@/components/AdminBackButton";
 import { Button } from "@/components/ui/button";
 import { Loader } from "lucide-react";
-import { redirect } from "next/dist/server/api-utils";
+import { redirect } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import Dropdown from "@/components/Prime/Dropdown";
 import { Textarea } from "@/components/ui/textarea"
+import { createAdminCourse } from "@/api/_admin/createApi";
 
 const CreateCourse = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -26,17 +27,15 @@ const CreateCourse = () => {
 
 
     async function onSubmit(data) {
-        const { course_code, course_name, course_desc, color, course_status, course_seq_no } = data
-        console.log("Data", data)
-        return
+        const { course_code, course_name, course_desc, color, course_status } = data
         try {
             if (isLoading) return
             setIsLoading(true)
-            const resp = await createCourse(data);
+            const resp = await createAdminCourse({ course_code, course_name, course_desc, color, course_status });
             if (!resp.error) {
-                toast.success(`Course updated successfully!!!`);
+                toast.success(`Course created successfully!!!`);
                 setTimeout(() => {
-                    redirect("courses");
+                    redirect("/TrainingDashboard/courses");
                 }, 1200);
             } else {
                 toast.error(resp?.data || "Unknown Error");
@@ -55,7 +54,7 @@ const CreateCourse = () => {
         }
     }
 
-    const FormField = ({ label, type, registerKey, options = { required: true }, errorMessage = "", inputStyle = {} }) => {
+    const FormField = ({ label, type, registerKey, options = { required: true }, inputStyle = {} }) => {
         return (
             <div className="flex flex-col mt-4">
                 <label className="text-sm text-gray-600">{label}</label>
@@ -80,11 +79,11 @@ const CreateCourse = () => {
                 <AdminBackButton addOnPath="/courses" />
                 <h1 className="text-2xl">Create <span className="text-cyan-500">Course</span> </h1>
             </div>
-            <FormField register={register} errors={errors} label={"Course Code:"} type="text" registerKey={"course_code"} />
-            <FormField register={register} errors={errors} label={"Course Name:"} type="text" registerKey={"course_name"} />
+            {FormField({ register: register, errors: errors, label: "Course Code:", type: "text", registerKey: "course_code" })}
+            {FormField({ register: register, errors: errors, label: "Course Name:", type: "text", registerKey: "course_name" })}
             {/* <FormField register={register} errors={errors} label={"Course Sequence:"} type="number" registerKey={"course_seq_no"} /> */}
             <div className="flex gap-4">
-                <FormField inputStyle={{ width: "100px" }} register={register} errors={errors} label={"Color:"} type="color" registerKey={"color"} />
+                {FormField({ register: register, errors: errors, label: "Color:", type: "color", registerKey: "color", inputStyle: { width: "100px" } })}
                 <div className="flex flex-col  mt-4">
                     <label className="text-sm text-gray-600">Course Status:</label>
                     <Dropdown options={["ACTIVE", "INACTIVE"]}

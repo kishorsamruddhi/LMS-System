@@ -6,6 +6,11 @@ const modulesSchema = new mongoose.Schema(
       ref: "course",
       required: true,
     },
+    business_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Institue",
+      required: true,
+    },
     module_code: {
       type: String,
       required: true,
