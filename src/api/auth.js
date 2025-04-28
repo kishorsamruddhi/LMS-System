@@ -28,6 +28,16 @@ export const setupUserApi = async ({ email }) => {
   return handleRequest(() => axiosInstance.post("/setup/user", { email }));
 };
 
+export const sendEmailVerificationCodeApi = async () => {
+  return handleRequest(() => axiosInstance.get("/setup/send-code-to-email"));
+};
+
+export const emailVerifyApi = async ({ code }) => {
+  return handleRequest(() =>
+    axiosInstance.post("/setup/verify-email-code", { code })
+  );
+};
+
 export const sendInvitationApi = async ({ email }) => {
   return handleRequest(() =>
     axiosInstance.post("/setup/institute-invite", { email })

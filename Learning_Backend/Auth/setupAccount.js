@@ -1,13 +1,15 @@
 const express = require("express");
 const User = require("../models/User.model");
 const BusinessCourses = require("../LearningModels/Training_Business");
-const extractToken = require("../utils/middleware");
 const UserReportCard = require("../LearningModels/UserLearningProgress");
 const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
 const router = express.Router();
 require("dotenv").config();
-const { sendAddStaffTokenEmail } = require("../utils/email_template");
+const {
+  sendAddStaffTokenEmail,
+  generateEmailVerification,
+} = require("../utils/email_template");
 const { default: mongoose } = require("mongoose");
 
 const encodeKey = process.env.ENCODE_KEY;
@@ -15,7 +17,7 @@ const user_mail_address = process.env.MAIL_ADDRESS;
 const user_mail_password = process.env.Mail_PASS;
 const login_Token_Vaildity = process.env.LOGIN_TOKEN_VAILDITY;
 
-router.post("/institute", extractToken, async (req, res) => {
+router.post("/institute", async (req, res) => {
   try {
     const { business_name, business_desc, category } = req.body;
     const _id = req.user._id;
@@ -60,7 +62,7 @@ router.post("/institute", extractToken, async (req, res) => {
   }
 });
 
-router.post("/institute-invite", extractToken, async (req, res) => {
+router.post("/institute-invite", async (req, res) => {
   try {
     const { email } = req.body;
     const _id = req.user._id;
@@ -151,7 +153,7 @@ router.post("/institute-invite", extractToken, async (req, res) => {
   }
 });
 
-router.post("/user", extractToken, async (req, res) => {
+router.post("/user", async (req, res) => {
   try {
     const _id = req.user._id;
     const { invitationToken } = req.body;
@@ -222,6 +224,141 @@ router.post("/user", extractToken, async (req, res) => {
   }
 });
 
+router.get("/send-code-to-email", async (req, res) => {
+  try {
+    const _id = req.user._id;
+    const user = await User.findById(_id);
+
+    if (!user) {
+      return res.status(404).json({ error: true, data: "User not found." });
+    }
+
+    if (user.isEmailVerified) {
+      return res
+        .status(403)
+        .json({ error: true, data: "Your email is already verified." });
+    }
+
+    const now = new Date();
+    let newCodeNeeded = true;
+
+    if (user.code && user.code.expireDate > now) {
+      newCodeNeeded = false;
+    }
+
+    let token;
+    if (newCodeNeeded) {
+      token = generateRandomCode();
+      const expireDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days from now
+
+      user.code = {
+        value: token,
+        expireDate: expireDate,
+        type: "Email",
+      };
+
+      await user.save();
+    } else {
+      token = user.code.value;
+    }
+
+    const message = `Your verification code is:\n\n ${token} \n\nPlease use this code to verify your email address.`;
+
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: user_mail_address,
+        pass: user_mail_password,
+      },
+    });
+
+    const mailOptions = {
+      from: user_mail_address,
+      to: user.email,
+      subject: "Email Verification",
+      text: message,
+      html: generateEmailVerification(token),
+    };
+
+    // await transporter.sendMail(mailOptions);
+
+    return res.status(201).json({
+      error: false,
+      data: "Verification code sent to email.",
+    });
+  } catch (err) {
+    return res.status(500).json({ error: true, data: err.message });
+  }
+});
+
+router.post("/verify-email-code", async (req, res) => {
+  try {
+    const { code } = req.body;
+    const _id = req.user._id;
+
+    if (!code) {
+      return res
+        .status(400)
+        .json({ error: true, data: "Verification code is required." });
+    }
+
+    const user = await User.findById(_id);
+
+    if (!user) {
+      return res.status(404).json({ error: true, data: "User not found." });
+    }
+
+    if (user.isEmailVerified) {
+      return res
+        .status(400)
+        .json({ error: true, data: "Email is already verified." });
+    }
+
+    if (
+      !user.code ||
+      user.code.value !== code ||
+      new Date() > user.code.expireDate
+    ) {
+      return res
+        .status(400)
+        .json({ error: true, data: "Invalid or expired verification code." });
+    }
+
+    user.isEmailVerified = true;
+    user.code = undefined;
+    await user.save();
+
+    const resp = {
+      _id: user._id,
+      email: user.email,
+      role: user.role,
+      username: user.username,
+      business_course_id: user?.business_course_id || null,
+      isEmailVerified: user.isEmailVerified,
+    };
+    const token = jwt.sign(
+      {
+        user: resp,
+      },
+      encodeKey,
+      {
+        expiresIn: login_Token_Vaildity || "5d",
+      }
+    );
+
+    return res
+      .status(200)
+      .json({
+        error: false,
+        userData: resp,
+        data: "Email successfully verified.",
+        token,
+      });
+  } catch (err) {
+    return res.status(500).json({ error: true, data: err.message });
+  }
+});
+
 function invitationTokenValidator(token) {
   try {
     const decodedToken = jwt.verify(token, encodeKey);
@@ -233,6 +370,18 @@ function invitationTokenValidator(token) {
       return { data: "Invalid token", error: true };
     }
   }
+}
+
+function generateRandomCode() {
+  var characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  var code = "";
+
+  for (var i = 0; i < 6; i++) {
+    code += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+
+  return code;
 }
 
 module.exports = router;

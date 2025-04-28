@@ -1,7 +1,6 @@
 "use client"
 import React, { useEffect } from 'react'
 import "./styles.scss"
-import Technology_Section from '../../components/Technology/TechnologySection'
 import { getCoursesAndModulesWithStats } from '../../api/get'
 import { countsAndData } from '@/components/getStatsFunc'
 import AOS from 'aos';
@@ -9,6 +8,7 @@ import 'aos/dist/aos.css';
 import { useQuery } from '@tanstack/react-query'
 import ErrorPage from '@/components/ErrorPage'
 import LoadingSpinner from '@/components/Loading'
+import Technology_Section from '@/components/Technology/TechnologySection'
 
 const LearnerDashboard = () => {
 

@@ -13,7 +13,8 @@ import Quill from 'quill';
 import 'quill/dist/quill.snow.css';
 
 const Actions = ({ formValues = {} }) => {
-    const { module_id, text, url, title, updatedAt } = formValues
+    const { module_id, course_id, text, url, title, updatedAt } = formValues
+    const modId = module_id?._id
 
     const [editMode, setEditMode] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -37,7 +38,7 @@ const Actions = ({ formValues = {} }) => {
             if (!resp.error) {
                 toast.success(`Pedagogy updated successfully!!!`);
                 setTimeout(() => {
-                    redirect("/TrainingDashboard/pedagogies");
+                    redirect(`/TrainingDashboard/pedagogies?course_id=${course_id}&module_id=${modId}`)
                 }, 1200);
             } else {
                 toast.error(resp?.data || "Unknown Error");
@@ -78,7 +79,7 @@ const Actions = ({ formValues = {} }) => {
 
     return (<div style={{ padding: "2rem" }}>
         <div style={{ width: "100%", }}>
-            <AdminBackButton addOnPath="/pedagogies" />
+            <AdminBackButton addOnPath={`/pedagogies?course_id=${course_id}&module_id=${modId}`} />
         </div>
         <div className="my-4 flex justify-between items-center">
             <h1 className="text-2xl">{editMode ? "Updating" : "Viewing"} <span className="text-cyan-500">Pedagogy</span> </h1>

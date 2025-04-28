@@ -13,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { updateAdminModule } from "@/api/_admin/updateApi";
 
 const Actions = ({ formValues = {} }) => {
-    const { module_name, module_code, module_desc, module_type, course_id, updatedAt, module_seq_no } = formValues
+    const { module_name, module_code, module_desc, module_type, course_id, updatedAt } = formValues
 
     const [editMode, setEditMode] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -22,7 +22,7 @@ const Actions = ({ formValues = {} }) => {
         handleSubmit,
         formState: { errors },
     } = useForm({
-        defaultValues: { module_name, module_code, module_desc, module_type, }
+        defaultValues: { module_name, module_code, module_desc, module_type }
     });
 
 
@@ -36,7 +36,7 @@ const Actions = ({ formValues = {} }) => {
             if (!resp.error) {
                 toast.success(`Module updated successfully!!!`);
                 setTimeout(() => {
-                    redirect("/TrainingDashboard/modules");
+                    redirect(`/TrainingDashboard/modules?course_id=${course_id._id}`)
                 }, 1200);
             } else {
                 toast.error(resp?.data || "Unknown Error");
@@ -77,7 +77,7 @@ const Actions = ({ formValues = {} }) => {
 
     return (<div style={{ padding: "2rem" }}>
         <div style={{ width: "100%", }}>
-            <AdminBackButton addOnPath="/modules" />
+            <AdminBackButton addOnPath={"/modules?course_id=" + course_id._id} />
         </div>
         <div className="my-4 flex justify-between items-center">
             <h1 className="text-2xl">{editMode ? "Updating" : "Viewing"} <span className="text-cyan-500">Module</span> </h1>

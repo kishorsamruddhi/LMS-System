@@ -11,7 +11,7 @@ import Dropdown from "@/components/Prime/Dropdown";
 import { createAdmin_Assessment } from "@/api/_admin/createApi";
 import { getCourses_and_Modules_list } from "@/api/_admin/getApis";
 
-const CreateCourse = () => {
+const CreateAssessment = () => {
     const ModuleType = "ASSESSMENT"
     const [selectedCourse, setSelectedCourse] = useState(null)
     const [courseDropdown, setCourseDropdown] = useState(null)
@@ -62,7 +62,8 @@ const CreateCourse = () => {
             if (!resp.error) {
                 toast.success(`Assessment created successfully!!!`);
                 setTimeout(() => {
-                    redirect("/TrainingDashboard/assessments");
+                    const { course_id, module_id } = resp.data
+                    redirect(`/TrainingDashboard/assessments?course_id=${course_id}&module_id=${module_id}`)
                 }, 1200);
             } else {
                 toast.error(resp?.data || "Unknown Error");
@@ -211,4 +212,4 @@ const OptionsField = ({ control, errors, setValue }) => {
 
 
 
-export default CreateCourse;
+export default CreateAssessment;

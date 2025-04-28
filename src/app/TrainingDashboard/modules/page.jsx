@@ -7,10 +7,12 @@ import { Eye, Pencil } from "lucide-react";
 import { getAdmin_Course_List_DropDown, getAdmin_modules_by_courseId } from "@/api/_admin/getApis";
 import { useEffect, useState } from "react";
 import Dropdown from "@/components/Prime/Dropdown";
-import LoadingSpinner from "@/components/Loading";
 import ErrorPage from "@/components/ErrorPage";
+import { useSearchParams } from "next/navigation";
 
 const Module = () => {
+    const searchParams = useSearchParams();
+    const course_id = searchParams.get("course_id") || null
     const [selectedCourse, setSelectedCourse] = useState(null)
     const [courseDropdown, setCourseDropdown] = useState(null)
     const [data, setData] = useState(null)
@@ -41,8 +43,15 @@ const Module = () => {
             const course_resp = await getAdmin_Course_List_DropDown();
             if (!course_resp?.error) {
                 const arr = course_resp.data
+                if (course_id) {
+                    const item = arr.find(val => val._id == course_id)
+                    if (item) {
+                        setSelectedCourse(item._id)
+                    }
+                } else {
+                    setSelectedCourse(arr[0]?._id)
+                }
                 setCourseDropdown(arr);
-                setSelectedCourse(arr[0]?._id)
             } else {
                 setIsError(true);
             }

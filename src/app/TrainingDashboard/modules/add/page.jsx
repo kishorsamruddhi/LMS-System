@@ -12,7 +12,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { createAdminModule } from "@/api/_admin/createApi";
 import { getAdmin_Course_List_DropDown } from "@/api/_admin/getApis";
 
-const CreateCourse = () => {
+const CreateModule = () => {
     const [selectedCourse, setSelectedCourse] = useState(null)
     const [courseDropdown, setCourseDropdown] = useState(null)
     const [isLoading, setIsLoading] = useState(false);
@@ -58,7 +58,7 @@ const CreateCourse = () => {
             if (!resp.error) {
                 toast.success(`Module created successfully!!!`);
                 setTimeout(() => {
-                    redirect("/TrainingDashboard/modules");
+                    redirect("/TrainingDashboard/modules?course_id=" + course_id);
                 }, 1200);
             } else {
                 toast.error(resp?.data || "Unknown Error");
@@ -153,4 +153,4 @@ const CreateCourse = () => {
     );
 };
 
-export default CreateCourse;
+export default CreateModule;

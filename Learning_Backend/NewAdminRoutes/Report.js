@@ -10,7 +10,7 @@ const User = require("../models/User.model.js");
 const Course = require("../models/Course.js");
 const router = express.Router();
 
-router.get("/learners_report_datatable", extractToken, async (req, res) => {
+router.get("/learners_report_datatable", async (req, res) => {
   try {
     const user = req.user;
 

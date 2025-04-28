@@ -7,9 +7,16 @@ import { getAdmin_pedagoggies_by_module_id, getCourses_and_Modules_list } from "
 import { useEffect, useState } from "react";
 import Dropdown from "@/components/Prime/Dropdown";
 import LinkButton from "@/components/LinkButton";
+import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 
 const PedagogyPage = () => {
     const ModuleType = "THEORY"
+    const searchParams = useSearchParams();
+    const queryParams = {
+        module_id: searchParams.get("module_id") || null,
+        course_id: searchParams.get("course_id") || null
+    }
     const [selectedCourse, setSelectedCourse] = useState(null)
     const [courseDropdown, setCourseDropdown] = useState(null)
     const [selectedModule, setSelectedModule] = useState(undefined)
@@ -40,9 +47,23 @@ const PedagogyPage = () => {
         try {
             const course_resp = await getCourses_and_Modules_list(ModuleType);
             if (!course_resp?.error) {
+                const { course_id, module_id } = queryParams
                 const arr = course_resp.data
+                if (course_id) {
+                    const item = arr.find(val => val._id == course_id)
+                    if (item) {
+                        setSelectedCourse(item._id)
+                        if (module_id) {
+                            const mod_item = item.modules?.find(val => val._id == module_id)
+                            if (mod_item) {
+                                setSelectedModule(mod_item._id)
+                            }
+                        }
+                    }
+                } else {
+                    setSelectedCourse(arr[0]?._id)
+                }
                 setCourseDropdown(arr);
-                setSelectedCourse(arr[0]?._id)
             } else {
                 setIsError(true);
             }
@@ -50,6 +71,7 @@ const PedagogyPage = () => {
             setIsError(error.message);
         }
     };
+
 
     useEffect(() => {
         getCoursesList()
@@ -74,12 +96,16 @@ const PedagogyPage = () => {
     function ActionBtns(rowData) {
         const nextUrl = `pedagogies/${rowData?._id}?mode=`
         return <div className="flex gap-2">
-            <LinkButton href={nextUrl + "view"}>
-                <Eye />
-            </LinkButton>
-            <LinkButton href={nextUrl + "edit"}>
-                <Pencil />
-            </LinkButton>
+            <Button asChild>
+                <Link href={nextUrl + "view"}>
+                    <Eye />
+                </Link>
+            </Button>
+            <Button asChild>
+                <Link href={nextUrl + "edit"}>
+                    <Pencil />
+                </Link>
+            </Button>
         </div>
     }
 
@@ -122,6 +148,7 @@ const PedagogyPage = () => {
                     optionLabel={"module_name"}
                     optionValue={"_id"}
                     onChange={moduleChangeHandler}
+                    value={selectedModule}
                     placeholder="Select Module" /> : <Button
                         disabled={true}
                         className="text-red-400 text-sm">Course has 0 module of {ModuleType}</Button>}

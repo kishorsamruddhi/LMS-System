@@ -9,10 +9,12 @@ import { redirect } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { formatDate } from "@/utils/timeFormatter";
 import { updateAdmin_Assessment } from "@/api/_admin/updateApi";
+import LinkButton from "@/components/LinkButton";
 
 const Actions = ({ formValues = {} }) => {
-    const { module_id, primary_text, correct_option, options, updatedAt } = formValues
+    const { module_id, course_id, primary_text, correct_option, options, updatedAt } = formValues
 
+    const modId = module_id?._id
     const [editMode, setEditMode] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const {
@@ -41,7 +43,7 @@ const Actions = ({ formValues = {} }) => {
             if (!resp.error) {
                 toast.success(`Assessment updated successfully!!!`);
                 setTimeout(() => {
-                    redirect("/TrainingDashboard/assessments");
+                    redirect(`/TrainingDashboard/assessments?course_id=${course_id}&module_id=${modId}`)
                 }, 1200);
             } else {
                 toast.error(resp?.data || "Unknown Error");
@@ -82,7 +84,7 @@ const Actions = ({ formValues = {} }) => {
 
     return (<div style={{ padding: "2rem" }}>
         <div style={{ width: "100%", }}>
-            <AdminBackButton addOnPath="/pedagogies" />
+            <AdminBackButton addOnPath={`/assessments?course_id=${course_id}&module_id=${modId}`} />
         </div>
         <div className="my-4 flex justify-between items-center">
             <h1 className="text-2xl">{editMode ? "Updating" : "Viewing"} <span className="text-cyan-500">Assessment</span> </h1>

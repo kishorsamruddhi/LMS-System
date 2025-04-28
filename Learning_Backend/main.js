@@ -36,30 +36,49 @@ const progressRoute = require("./User/progess.js");
 const trackingRoutes = require("./User/tracking.js");
 
 const adminTestRoute = require("./NewAdminRoutes/getRoutes");
-// const super_admin_create_routes = require("./Admin/create.js");
-// const super_admin_get_Routes = require("./Admin/getRoutes.js");
-// const super_admin_delete_routes = require("./Admin/deleteRoutes.js");
-// const testRoutes = require("./Admin/Qlite_testRoute.js");
 const testRoutes = require("./NewAdminRoutes/Report");
 const admin_create_routes = require("./NewAdminRoutes/create.js");
 const admin_update_routes = require("./NewAdminRoutes/updateRoute");
 const extractToken = require("./utils/middleware");
-// const adminRoutes = require("./User/admin_routes.js");
+const {
+  checkStartedStatus,
+  checkEmailStatus,
+} = require("./utils/accountLayers");
 
 app.use("/auth", getAuth);
-app.use("/setup/", setupAcc);
-app.use("/get", getRoutes);
-app.use("/progress", progressRoute);
-app.use("/tracking", trackingRoutes);
-// app.use("/admin-test", adminRoutes);
-app.use("/admin/get", extractToken, adminTestRoute);
+app.use("/setup/", extractToken, setupAcc);
+app.use("/get", extractToken, checkStartedStatus, checkEmailStatus, getRoutes);
+app.use("/progress", checkStartedStatus, checkEmailStatus, progressRoute);
+app.use("/tracking", checkStartedStatus, checkEmailStatus, trackingRoutes);
+app.use(
+  "/admin/get",
+  extractToken,
+  checkStartedStatus,
+  checkEmailStatus,
+  adminTestRoute
+);
 
-app.use("/admin/reports", testRoutes);
-app.use("/admin/create", extractToken, admin_create_routes);
-app.use("/admin/update", extractToken, admin_update_routes);
-
-// app.use("/admin/get", extractSuperToken, super_admin_get_Routes);
-// app.use("/admin/delete", extractSuperToken, super_admin_delete_routes);
+app.use(
+  "/admin/reports",
+  extractToken,
+  checkStartedStatus,
+  checkEmailStatus,
+  testRoutes
+);
+app.use(
+  "/admin/create",
+  extractToken,
+  checkStartedStatus,
+  checkEmailStatus,
+  admin_create_routes
+);
+app.use(
+  "/admin/update",
+  extractToken,
+  checkStartedStatus,
+  checkEmailStatus,
+  admin_update_routes
+);
 
 // Start the server
 app.listen(port, () => {

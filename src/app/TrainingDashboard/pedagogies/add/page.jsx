@@ -13,7 +13,7 @@ import { getCourses_and_Modules_list } from "@/api/_admin/getApis";
 import Quill from 'quill';
 import 'quill/dist/quill.snow.css';
 
-const CreateCourse = () => {
+const CreatePedagogy = () => {
     const ModuleType = "THEORY"
     const [selectedCourse, setSelectedCourse] = useState(null)
     const [courseDropdown, setCourseDropdown] = useState(null)
@@ -48,6 +48,7 @@ const CreateCourse = () => {
 
     async function onSubmit(data) {
         const { module_id, text, title, url } = data
+        if (!module_id) return toast.error("Please Select Module or Create a Theory Module");
         try {
             if (isLoading) return
             setIsLoading(true)
@@ -55,7 +56,8 @@ const CreateCourse = () => {
             if (!resp.error) {
                 toast.success(`Pedagogy created successfully!!!`);
                 setTimeout(() => {
-                    redirect("/TrainingDashboard/pedagogies");
+                    const { course_id, module_id } = resp.data
+                    redirect(`/TrainingDashboard/pedagogies?course_id=${course_id}&module_id=${module_id}`)
                 }, 1200);
             } else {
                 toast.error(resp?.data || "Unknown Error");
@@ -179,4 +181,4 @@ const TextQuillField = ({ setValue }) => {
 };
 
 
-export default CreateCourse;
+export default CreatePedagogy;

@@ -8,17 +8,8 @@ import { calculateCourseProgress } from './const';
 import { formatDate } from '@/utils/timeFormatter';
 import LoadingSpinner from '@/components/Loading';
 import { getAdmin_view_report_by_learner_id } from '@/api/_admin/getApis';
-import { Button } from '@/components/ui/button';
-import Link from "next/link";
-import { ArrowLeft } from 'lucide-react';
+import AdminBackButton from '@/components/AdminBackButton';
 
-function AdminBackButton() {
-  return <Button asChild>
-    <Link href={"/TrainingDashboard"}>
-      <ArrowLeft />
-    </Link>
-  </Button>
-}
 
 Chart.register(ArcElement, Tooltip, Legend);
 
@@ -75,7 +66,7 @@ const _View_Learner_Report = ({ params }) => {
   return (
     <div className='viewReport'>
       <div>
-        <AdminBackButton hardURL={"/super-admin/dashboard/training-dashboard/learners"} />
+        <AdminBackButton addOnPath='/learners' />
       </div>
       <div>
         <h1>{data.user?.firstName} {data.user?.lastName}</h1>

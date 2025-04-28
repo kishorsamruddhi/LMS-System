@@ -1,6 +1,5 @@
 "use client";
 import AdminBackButton from "@/components/AdminBackButton";
-import Link from "next/link";
 import DataTable from "@/components/Prime/DataTable";
 import { Button } from "@/components/ui/button";
 import { Eye, Pencil } from "lucide-react";
@@ -8,8 +7,15 @@ import { getAdmin_assessments_by_module_id, getCourses_and_Modules_list } from "
 import { useEffect, useState } from "react";
 import Dropdown from "@/components/Prime/Dropdown";
 import LinkButton from "@/components/LinkButton";
+import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 
 const AssessmentPage = () => {
+    const searchParams = useSearchParams();
+    const queryParams = {
+        module_id: searchParams.get("module_id") || null,
+        course_id: searchParams.get("course_id") || null
+    }
     const ModuleType = "ASSESSMENT"
     const [selectedCourse, setSelectedCourse] = useState(null)
     const [courseDropdown, setCourseDropdown] = useState(null)
@@ -41,9 +47,23 @@ const AssessmentPage = () => {
         try {
             const course_resp = await getCourses_and_Modules_list(ModuleType);
             if (!course_resp?.error) {
+                const { course_id, module_id } = queryParams
                 const arr = course_resp.data
+                if (course_id) {
+                    const item = arr.find(val => val._id == course_id)
+                    if (item) {
+                        setSelectedCourse(item._id)
+                        if (module_id) {
+                            const mod_item = item.modules?.find(val => val._id == module_id)
+                            if (mod_item) {
+                                setSelectedModule(mod_item._id)
+                            }
+                        }
+                    }
+                } else {
+                    setSelectedCourse(arr[0]?._id)
+                }
                 setCourseDropdown(arr);
-                setSelectedCourse(arr[0]?._id)
             } else {
                 setIsError(true);
             }
@@ -83,12 +103,16 @@ const AssessmentPage = () => {
     function ActionBtns(rowData) {
         const nextUrl = `assessments/${rowData?._id}?mode=`
         return <div className="flex gap-2">
-            <LinkButton href={nextUrl + "view"}>
-                <Eye />
-            </LinkButton>
-            <LinkButton href={nextUrl + "edit"}>
-                <Pencil />
-            </LinkButton>
+            <Button asChild>
+                <Link href={nextUrl + "view"}>
+                    <Eye />
+                </Link>
+            </Button>
+            <Button asChild>
+                <Link href={nextUrl + "edit"}>
+                    <Pencil />
+                </Link>
+            </Button>
         </div>
     }
 
@@ -130,6 +154,7 @@ const AssessmentPage = () => {
                 {selectedCourse && modulesList.length > 0 ? <Dropdown options={modulesList}
                     optionLabel={"module_name"}
                     optionValue={"_id"}
+                    value={selectedModule}
                     onChange={moduleChangeHandler}
                     placeholder="Select Module" /> : <Button
                         disabled={true}

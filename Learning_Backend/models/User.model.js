@@ -23,6 +23,9 @@ const userSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Institue",
     },
+    code: {
+      type: Object,
+    },
     isEmailVerified: { type: Boolean, default: false },
   },
   { timestamps: true }
