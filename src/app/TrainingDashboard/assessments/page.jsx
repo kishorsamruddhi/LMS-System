@@ -7,7 +7,7 @@ import { Eye, Pencil } from "lucide-react";
 import { getAdmin_assessments_by_module_id, getCourses_and_Modules_list } from "@/api/_admin/getApis";
 import { useEffect, useState } from "react";
 import Dropdown from "@/components/Prime/Dropdown";
-import LoadingSpinner from "@/components/Loading";
+import LinkButton from "@/components/LinkButton";
 
 const AssessmentPage = () => {
     const ModuleType = "ASSESSMENT"
@@ -19,13 +19,13 @@ const AssessmentPage = () => {
     const [isError, setIsError] = useState(null)
 
     const getTableData = async () => {
-        if (!selectedCourse) return
+        if (!selectedModule) return
         setIsLoading(true);
         setIsError(false);
         try {
             const resp = await getAdmin_assessments_by_module_id(selectedModule);
             if (!resp.error) {
-                setData(resp.data.modules);
+                setData(resp.data.assessments);
             } else {
                 setIsError(resp.data);
             }
@@ -43,7 +43,7 @@ const AssessmentPage = () => {
             if (!course_resp?.error) {
                 const arr = course_resp.data
                 setCourseDropdown(arr);
-                setSelectedCourse(arr[0])
+                setSelectedCourse(arr[0]?._id)
             } else {
                 setIsError(true);
             }
@@ -64,34 +64,36 @@ const AssessmentPage = () => {
 
     if (isError) return <ErrorPage message={isError || "Something went worng."} />
 
-    const tableData = data || []
     const cols = [
         { header: "Unique Id", field: "_id" },
-        { header: "Module Name", field: "module_name" },
-        { header: "Module Description", field: "module_desc" },
-        { header: "Module Code", field: "module_code" },
-        { header: "Module Type", field: "module_type" },
-        { header: "Module Seq No", field: "module_seq_no" },
+        { header: "Question", field: "primary_text" },
+        { header: "Correct Option", field: "correct_option", },
+        { header: "Options", field: "options", body: renderOptions },
+        { header: "Answer Type", field: "type" },
     ]
+
+    function renderOptions(options) {
+        let value = options
+        if (Array.isArray(options)) {
+            value = options.join(", ")
+        }
+        return value
+    }
 
     function ActionBtns(rowData) {
         const nextUrl = `assessments/${rowData?._id}?mode=`
         return <div className="flex gap-2">
-            <Button asChild>
-                <Link href={nextUrl + "view"}>
-                    <Eye />
-                </Link>
-            </Button>
-            <Button asChild>
-                <Link href={nextUrl + "edit"}>
-                    <Pencil />
-                </Link>
-            </Button>
+            <LinkButton href={nextUrl + "view"}>
+                <Eye />
+            </LinkButton>
+            <LinkButton href={nextUrl + "edit"}>
+                <Pencil />
+            </LinkButton>
         </div>
     }
 
     const tableProps = {
-        data: tableData, columns: cols,
+        data: data || [], columns: cols,
         action: {
             header: "Action",
             body: ActionBtns
@@ -104,7 +106,8 @@ const AssessmentPage = () => {
         setSelectedModule(val)
     }
 
-    const modulesList = selectedCourse?.modules || []
+    const modulesList = Array.isArray(courseDropdown) ? courseDropdown.find(val => val._id === selectedCourse)?.modules : []
+
     return (
         <div className='p-6'>
             <div style={{ margin: "1rem 0" }} className="div">
@@ -113,17 +116,14 @@ const AssessmentPage = () => {
 
             <div className="my-4 flex justify-between items-center">
                 <h1 className="text-2xl">Assessments <span className="text-cyan-500">Management</span> </h1>
-                <Button className="hover:text-cyan-500">
-                    <Link href={"assessments/add"}
-                    >Create Assessments</Link>
-                </Button>
+                <LinkButton href={"assessments/add"}>Create Assessments</LinkButton>
             </div>
             <div className="flex gap-4 items-center">
                 {courseDropdown && courseDropdown.length > 0 ? <Dropdown options={courseDropdown}
                     optionLabel={"course_name"}
                     optionValue={"_id"}
                     onChange={courseChangeHandler}
-                    value={selectedCourse?._id}
+                    value={selectedCourse}
                     placeholder="Select Course" /> : <Button
                         disabled={true}
                         className="text-red-400 text-sm">You don't have any courses</Button>}
@@ -133,7 +133,7 @@ const AssessmentPage = () => {
                     onChange={moduleChangeHandler}
                     placeholder="Select Module" /> : <Button
                         disabled={true}
-                        className="text-red-400 text-sm">Course have 0 module of {ModuleType}</Button>}
+                        className="text-red-400 text-sm">Course has 0 module of {ModuleType}</Button>}
             </div>
             <div className="data-table w-full mt-4">
                 <div className="table w-full">

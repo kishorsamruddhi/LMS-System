@@ -125,11 +125,29 @@ router.post("/create_assessment", async (req, res) => {
   try {
     const { module_id, primary_text, options, correct_option } = req.body;
 
+    if (Array.isArray(options) && options.length === 0) {
+      return res
+        .status(404)
+        .json({ error: true, data: "Need atleast 2 options." });
+    }
+
+    const moduleDetails = await Module.findById(module_id, {
+      course_id: 1,
+      business_id: 1,
+      module_type: 1,
+    }).lean();
+
+    if (!moduleDetails || moduleDetails.module_type !== "ASSESSMENT") {
+      return res.status(404).json({ error: true, data: "Module not found" });
+    }
+
     const newAssessment = new Assessment({
-      module_id,
       primary_text,
       options,
       correct_option,
+      module_id: moduleDetails._id,
+      course_id: moduleDetails.course_id,
+      business_id: moduleDetails.business_id,
     });
 
     const savedAssessment = await newAssessment.save();

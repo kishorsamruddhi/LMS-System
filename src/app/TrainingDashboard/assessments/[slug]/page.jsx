@@ -7,7 +7,7 @@ const Page = async ({ params }) => {
     try {
         const { slug } = await params
         const ck = (await cookies())?.get(cookiesKey)?.value
-        const reqUrl = backendLink + "admin/get/pedagogy/" + slug
+        const reqUrl = backendLink + "admin/get/assessment/" + slug
         const makingReq = await fetch(reqUrl, {
             headers: {
                 Authorization: `Bearer ${ck}`,

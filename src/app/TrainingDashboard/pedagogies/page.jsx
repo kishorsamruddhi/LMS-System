@@ -1,6 +1,5 @@
 "use client";
 import AdminBackButton from "@/components/AdminBackButton";
-import Link from "next/link";
 import DataTable from "@/components/Prime/DataTable";
 import { Button } from "@/components/ui/button";
 import { Eye, Pencil } from "lucide-react";
