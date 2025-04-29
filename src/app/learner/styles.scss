@@ -82,3 +82,24 @@
             }
         }
     }
+
+    @media screen and (max-width: 726px) {
+        .main-content .content-body {
+            .top-content {
+                flex-wrap: wrap;
+
+                .cards {
+                    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+
+                    .card {
+                        min-height: 150px;
+                        border-radius: 12px;
+
+                        .top {
+                            padding: unset;
+                        }
+                    }
+                }
+            }
+        }
+    }

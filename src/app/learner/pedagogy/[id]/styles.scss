@@ -259,6 +259,10 @@
 
         .mobile-playlist-trigger {
             display: block;
+
+            .mac {
+                display: none;
+            }
         }
 
         .actionButtons {
@@ -283,124 +287,3 @@
         }
     }
 }
-
-
-// .more-content {
-//     position: relative;
-//     overflow-x: hidden;
-//     padding: 2rem 0;
-//     padding-left: 2rem;
-
-//     .sub_nav_btns {
-//         padding-right: 2rem;
-//         display: flex;
-//         justify-content: flex-end;
-//         gap: 1rem;
-//         right: 0px;
-//         top: 27px;
-//         transform: translateY(-50%);
-
-//         div {
-//             i {
-//                 font-size: 32px;
-//             }
-
-//             &:hover {
-//                 color: var(--star-color);
-//             }
-//         }
-//     }
-
-//     .list {
-
-//         .swiper {
-//             width: unset;
-//             align-items: stretch;
-//         }
-
-//         .swiper-wrapper {
-//             padding: 40px 0;
-//         }
-
-//         .swiper-slide {
-//             position: relative;
-//             box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
-//             border-radius: 10px;
-//             user-select: none;
-//             cursor: pointer;
-//             height: 280px;
-//             min-width: 307px;
-//             transition: transform .2s ease-in-out;
-
-//             .swiper-card {
-//                 position: relative;
-//                 padding: 1rem 1rem;
-//                 height: 100%;
-//                 width: 100%;
-//                 display: flex;
-//                 flex-direction: column;
-//                 justify-content: space-between;
-
-//                 .currentTag {
-//                     position: absolute;
-//                     right: 10px;
-//                     top: 10px;
-//                     font-size: .7rem;
-//                     color: #fff;
-//                     background-color: #06060696;
-//                     padding: 3px 6px;
-//                     border-radius: 4px;
-//                 }
-
-//                 .top i {
-//                     font-size: 24px;
-//                     color: #fff;
-//                     margin-bottom: 1rem;
-//                 }
-
-//                 h3 {
-//                     font-size: 1.5rem;
-//                     color: #fff;
-//                     -webkit-line-clamp: 3;
-//                     -webkit-box-orient: vertical;
-//                     display: -webkit-box;
-//                     overflow: hidden;
-//                 }
-
-//                 img {
-//                     margin-left: auto;
-//                     margin-right: auto;
-//                 }
-//             }
-
-//             &:hover {
-//                 transform: translateY(-20px) scale(1.02);
-//             }
-
-//         }
-
-//         .swiper-slide:nth-child(1n) {
-//             background-color: rgb(206, 17, 17);
-//         }
-
-//         .swiper-slide:nth-child(2n) {
-//             background-color: rgb(0, 140, 255);
-//         }
-
-//         .swiper-slide:nth-child(3n) {
-//             background-color: rgb(10, 184, 111);
-//         }
-
-//         .swiper-slide:nth-child(4n) {
-//             background-color: rgb(211, 122, 7);
-//         }
-
-//         .swiper-slide:nth-child(5n) {
-//             background-color: rgb(118, 163, 12);
-//         }
-
-//         .swiper-slide:nth-child(6n) {
-//             background-color: rgb(180, 10, 47);
-//         }
-//     }
-// }

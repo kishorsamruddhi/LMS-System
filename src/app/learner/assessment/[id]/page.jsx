@@ -3,19 +3,13 @@ import "./styles.scss"
 import React, { use, useState } from 'react'
 import { get_assessments_with_status, submitAssessmentAnswer } from '@/api/get'
 import { useQuery } from "@tanstack/react-query"
-
 import { toast } from "react-toastify"
-import LearnerCongrats from "./Complete"
+import LearnerCongrats from "./_Complete"
 import LoadingSpinner from "@/components/Loading"
-import Link from "next/link"
-function Button({ children, ...props }) {
-    return <button {...props}>
-        {children}
-    </button>
-}
-function Checkbox({ ...props }) {
-    return <input type="checkbox" {...props} />
-}
+import { Checkbox } from "@/components/ui/checkbox"
+import { Button } from "@/components/ui/button"
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+import { Loader, Shredder } from "lucide-react"
 
 const Assessment = ({ params }) => {
     const { id } = use(params)
@@ -48,13 +42,14 @@ const Assessment = ({ params }) => {
     if (isError) {
         return <h1>{error}</h1>
     }
-
     const module_data = data.module_id
     const childArray = module_data.assessments
     const completedArrayList = data.completed_Assessments
     const activeAssessment = childArray[activeQuestion]
+    const currentQuestionIndex = childArray.findIndex(val => val._id === activeAssessment._id)
     const isFirstQuestion = activeQuestion === 0
     const isLastQuestion = activeQuestion === childArray?.length - 1
+
     const handlePre = () => {
         if (isFirstQuestion) return
         setActiveQuestion(pre => pre - 1)
@@ -70,12 +65,24 @@ const Assessment = ({ params }) => {
     return (
         <div className='Assessment'>
             <div className="Assessment_nav">
-                <div className="breadCrumbs">
-                    {/* <h3>Assessment</h3><i className="pi pi-angle-right"></i> */}
-                    <Link href={"/dashboard/Training/dashboard"}>My Courses</Link> <i className="pi pi-angle-right"></i>
-                    <Link href={"/dashboard/Training/dashboard"}>{module_data.module_name}</Link>
+                <div className="">
+                    <Breadcrumb>
+                        <BreadcrumbList>
+                            <BreadcrumbItem>
+                                <BreadcrumbLink className={"hover:text-cyan-500"} href={"/learner"}>My Courses</BreadcrumbLink>
+                            </BreadcrumbItem>
+                            <BreadcrumbSeparator />
+                            <BreadcrumbItem>
+                                <BreadcrumbLink className={"hover:text-cyan-500"} href={"/learner"}>{module_data.module_name}</BreadcrumbLink>
+                            </BreadcrumbItem>
+                            <BreadcrumbSeparator />
+                            <BreadcrumbItem>
+                                Question No. {currentQuestionIndex + 1}
+                            </BreadcrumbItem>
+                        </BreadcrumbList>
+                    </Breadcrumb>
                 </div>
-                {/* <BackButton href="/dashboard/Training/dashboard" /> */}
+                <p> <span className="text-cyan-500 font-bold"> {currentQuestionIndex + 1}</span> out of {childArray.length} </p>
             </div>
             {/* {assessments.map((data, index) => { */}
             <Question
@@ -88,11 +95,11 @@ const Assessment = ({ params }) => {
                 setIsTestComplete={setIsTestComplete}
             />
             {/* })} */}
-            <div className="actionButtons">
+            {childArray.length > 1 && <div className="actionButtons">
                 {!isFirstQuestion ? <Button icon="pi pi-angle-left" className="pre" style={{ padding: "8px 16px" }}
                     onClick={handlePre}>Back</Button> : <div></div>}
                 {!isLastQuestion ? <Button iconPos="right" icon="pi pi-angle-right" className="next" style={{ padding: "8px 16px" }} onClick={handleNext}>Next</Button> : <div></div>}
-            </div>
+            </div>}
         </div>
     )
 }
@@ -100,9 +107,12 @@ const Assessment = ({ params }) => {
 const Question = ({ module_id, setSuccessScore, setIsTestComplete, data, isLastQuestion, setActiveQuestion, course_id }) => {
     const { primary_text, secondary_text, options, _id } = data
     const [choosedOption, setChoosedOption] = useState(null)
+    const [isLoading, setIsLoading] = useState(false)
 
     async function handleSubmit() {
         if (!choosedOption) return
+        if (isLoading) return
+        setIsLoading(true)
         try {
             const resp = await submitAssessmentAnswer({
                 module_id, course_id,
@@ -137,34 +147,34 @@ const Question = ({ module_id, setSuccessScore, setIsTestComplete, data, isLastQ
         } catch (error) {
             return toast.error("Error while submitting answer")
         }
+        finally {
+            setIsLoading(false)
+        }
     }
 
+    function choosingOption(val) {
+        setChoosedOption(val)
+    }
 
     return <div className='Question_Section'>
         {primary_text && <h1>Q. {primary_text}</h1>}
         {secondary_text && <h3>{secondary_text}</h3>}
         <div className="options px-2">
-            {options?.map((opt, i) => <div key={i} className="option">
-                <Checkbox checked={choosedOption === opt} onChange={() => setChoosedOption(opt)} name={"option"} id={opt} />
-                <p onClick={() => setChoosedOption(opt)}>{opt}</p></div>)}
-            <div className="option">
-                <Checkbox checked={choosedOption === "0.SKIP"} onChange={() => setChoosedOption("0.SKIP")} name={"option"} />
-                <p onClick={() => setChoosedOption("0.SKIP")}>SKIP THIS </p></div>
+            {options?.map((opt, i) => <label htmlFor={opt} onClick={() => choosingOption(opt)} key={i} className="option hover:bg-gray-200">
+                <Checkbox checked={choosedOption === opt} name={"option"} id={opt} />
+                <span>{opt}</span></label>)}
+            <label htmlFor={"SKIP"} onClick={() => choosingOption("0.SKIP")} className="option  hover:bg-gray-200">
+                <Checkbox id={"SKIP"} checked={choosedOption === "0.SKIP"} onChange={() => choosingOption("0.SKIP")} name={"option"} />
+                <span>SKIP THIS </span></label>
         </div>
         <div className="px-2 mt-2">
-            <Button icon="pi pi-upload" onClick={handleSubmit} style={{ padding: "8px 16px", fontWeight: "600", gap: ".35rem" }} className="Submit " >Submit</Button>
+            <Button
+                disabled={isLoading}
+                onClick={handleSubmit} style={{ padding: "8px 16px", fontWeight: "600", gap: ".35rem" }} className="Submit border hover:border-cyan-500  hover:text-cyan-500 " >Submit
+                {isLoading ? <Loader /> : <Shredder />}
+            </Button>
         </div>
     </div>
 }
 
 export default Assessment
-
-
-
-const BackButton = ({ ...props }) => {
-    return (
-        <Link className="back" {...props}>
-            <i className="pi pi-arrow-left"></i>{" "}
-        </Link>
-    );
-};

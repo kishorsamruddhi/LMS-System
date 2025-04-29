@@ -28,57 +28,39 @@ db.on("error", (error) => {
 db.once("open", () => {
   console.log("Connected to MongoDB");
 });
-
 const getAuth = require("./Auth/auth.route");
 const setupAcc = require("./Auth/setupAccount");
 const getRoutes = require("./User/get_api.js");
 const progressRoute = require("./User/progess.js");
 const trackingRoutes = require("./User/tracking.js");
 
-const adminTestRoute = require("./NewAdminRoutes/getRoutes");
-const testRoutes = require("./NewAdminRoutes/Report");
-const admin_create_routes = require("./NewAdminRoutes/create.js");
-const admin_update_routes = require("./NewAdminRoutes/updateRoute");
+const adminTestRoute = require("./AdminRoutes/getRoutes");
+const testRoutes = require("./AdminRoutes/Report");
+const adminCreateRoutes = require("./AdminRoutes/create.js");
+const adminUpdateRoutes = require("./AdminRoutes/updateRoute");
 const extractToken = require("./utils/middleware");
 const {
   checkStartedStatus,
   checkEmailStatus,
 } = require("./utils/accountLayers");
 
+// Middleware for protected routes
+const protectedRoutes = [extractToken, checkStartedStatus, checkEmailStatus];
+
+// Authentication routes
 app.use("/auth", getAuth);
 app.use("/setup/", extractToken, setupAcc);
-app.use("/get", extractToken, checkStartedStatus, checkEmailStatus, getRoutes);
-app.use("/progress", checkStartedStatus, checkEmailStatus, progressRoute);
-app.use("/tracking", checkStartedStatus, checkEmailStatus, trackingRoutes);
-app.use(
-  "/admin/get",
-  extractToken,
-  checkStartedStatus,
-  checkEmailStatus,
-  adminTestRoute
-);
 
-app.use(
-  "/admin/reports",
-  extractToken,
-  checkStartedStatus,
-  checkEmailStatus,
-  testRoutes
-);
-app.use(
-  "/admin/create",
-  extractToken,
-  checkStartedStatus,
-  checkEmailStatus,
-  admin_create_routes
-);
-app.use(
-  "/admin/update",
-  extractToken,
-  checkStartedStatus,
-  checkEmailStatus,
-  admin_update_routes
-);
+// User routes
+app.use("/get", protectedRoutes, getRoutes);
+app.use("/progress", protectedRoutes, progressRoute);
+app.use("/tracking", protectedRoutes, trackingRoutes);
+
+// Admin routes
+app.use("/admin/get", protectedRoutes, adminTestRoute);
+app.use("/admin/reports", protectedRoutes, testRoutes);
+app.use("/admin/create", protectedRoutes, adminCreateRoutes);
+app.use("/admin/update", protectedRoutes, adminUpdateRoutes);
 
 // Start the server
 app.listen(port, () => {

@@ -1,4 +1,6 @@
+import { backendLink } from "@/utils/token";
 import { axiosInstance, handleRequest } from "./axios";
+axiosInstance.defaults.baseURL = backendLink;
 
 export const staffTrainingValidator = async () => {
   return handleRequest(() =>

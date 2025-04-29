@@ -5,10 +5,10 @@ function emptyFn() {
     return null
 }
 
-const Dropdown = ({ options = [], optionLabel, optionValue, value, onChange = emptyFn, placeholder = "Select", className = "min-w-4", contentProps = {}, ...props }) => {
+const Dropdown = ({ options = [], optionLabel, optionValue, value, onChange = emptyFn, placeholder = "Select", triggerClass = "min-w-4", contentProps = {}, ...props }) => {
     return (
         <Select onValueChange={onChange} defaultValue={value || undefined} {...props}>
-            <SelectTrigger className={className}>
+            <SelectTrigger className={triggerClass}>
                 <SelectValue placeholder={placeholder} />
             </SelectTrigger>
             <SelectContent className={"bg-white"} {...contentProps}>

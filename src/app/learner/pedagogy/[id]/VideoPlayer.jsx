@@ -5,9 +5,20 @@ import ReactPlayer from 'react-player';
 
 const VideoSection = ({ activePeda, course_id, module_id }) => {
     const videoRef = useRef(null);
-    const hasPlayedRef = useRef(false);
+    const hasPlayedRef = useRef(true);
     const cleanupIntervalRef = useRef(null);
     const time_spent_interval = 12000;
+
+    useEffect(() => {
+        videoRef.current = null;
+        hasPlayedRef.current = false;
+        cleanupIntervalRef.current = null;
+        return () => {
+            if (cleanupIntervalRef.current) {
+                clearInterval(cleanupIntervalRef.current);
+            }
+        };
+    }, [activePeda, course_id, module_id]);
 
     const playVideo = () => {
         if (videoRef.current) {
@@ -78,8 +89,8 @@ const VideoSection = ({ activePeda, course_id, module_id }) => {
             <div className="video-box">
                 <ReactPlayer
                     url={activePeda.url}
-                    onReady={playVideo}
-                    playing={true}
+                    // onReady={playVideo}
+                    // playing={true}
                     controls
                     ref={videoRef}
                     width="100%"

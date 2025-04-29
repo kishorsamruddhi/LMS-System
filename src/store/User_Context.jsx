@@ -3,7 +3,7 @@ import React, { useState, useEffect, useContext } from "react";
 import Cookies from "universal-cookie";
 import { jwtDecode } from "jwt-decode";
 import { cookiesKey } from "@/utils/token";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { redirect } from "next/navigation";
 
 export const UserContext = React.createContext();
@@ -37,19 +37,26 @@ export const UserProvider = ({ children }) => {
     updateAuth(data);
     cookies.set(cookiesKey, token, { path: "/" });
     const isEmailVerified = data?.isEmailVerified || false
+    const business = data?.business_course_id || false
     const role = data?.role || null
     let route = null
     if (role === "user") {
-      route = "/training"
+      route = "/learner"
     }
     else if (role === "admin") {
       route = "/admin"
     }
 
     if (!isEmailVerified) {
-      route = "/get-started"
+      route += "/email-verify"
+      toast.info("Please, Verify email to continue")
     }
 
+    if (!business) {
+      route += "/get-started"
+      let message = role == "admin" ? "Please, Setup Institue to continue" : "Please, Connect to Institue to continue"
+      toast.info(message)
+    }
     if (route) {
       setTimeout(() => {
         redirect(route)

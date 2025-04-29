@@ -14,7 +14,6 @@ import {
     TabsList,
     TabsTrigger,
 } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
 import { emailVerifyApi, sendEmailVerificationCodeApi } from "@/api/auth";
 import { toast } from "react-toastify";
 import { UserContext } from "@/store/User_Context";

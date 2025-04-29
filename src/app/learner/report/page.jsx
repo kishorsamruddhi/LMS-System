@@ -96,7 +96,7 @@ const LearningReportPage = () => {
                             <p className="stat-value-text">{idsOfCompletedAsmt.length}</p>
                         </div>
                     </div>
-                    <Link style={{ textDecoration: "none" }} href={"/training/certificates"} className="download-column">
+                    <Link style={{ textDecoration: "none" }} href={"/learner/certificates"} className="download-column">
                         <img className="img" src="/assets/certificate.svg" alt="Certificate" />
                         <p className="text">Download <br /> Certificates</p>
                     </Link>
@@ -122,7 +122,7 @@ const LearningReportPage = () => {
                         return (
                             <SwiperSlide className='swiper-slide' key={index}>
                                 <div onClick={() =>
-                                    redirect("/training/assessment/" + mod_data._id)} className="course-card">
+                                    redirect("/learner/assessment/" + mod_data._id)} className="course-card">
                                     <div className="title">{module_name}</div>
                                     <div className="description">
                                         <p>{childs.length} Assessments </p>
@@ -140,7 +140,7 @@ const LearningReportPage = () => {
             <LearningTime totalSeconds={learningTime?.timeSpent || 0} />
             <div className="back-to-dashboard-section">
                 <div className="back-button-container">
-                    <Link href="/dashboard/Training/dashboard" className="back-button">Back to Dashboard</Link>
+                    <Link href="/learner" className="back-button">Back to Dashboard</Link>
                 </div>
             </div>
         </div>

@@ -2,7 +2,7 @@ import React from 'react'
 import "./styles.scss"
 import Link from 'next/link'
 
-const PageNotFound = ({ returnLink, returnLable, }) => {
+const PageNotFound = ({ returnLink, returnLable, title, errorMessage }) => {
     return (
         <div className='NotFound'>
             <div className="face">
@@ -16,8 +16,8 @@ const PageNotFound = ({ returnLink, returnLable, }) => {
                 <div className="mouth"></div>
             </div>
 
-            <h1>Oops! Something went wrong!</h1>
-            <p className='text-center font-bold text-red-400'>Page not found</p>
+            <h1>{title || "Oops! Something went wrong!"}</h1>
+            <p className='text-center font-bold text-red-400'>{errorMessage || "Page not found"}</p>
             <Link href={returnLink || "/"} className='btn bg-cyan-600  hover:bg-cyan-900' style={{ textDecoration: "none", color: "#fff" }}>
                 {returnLable || "Return to Home"}
             </Link>

@@ -16,7 +16,7 @@ const Technology_Section = ({ courseList, courses_tracking }) => {
         const redirectTo = module_type === "ASSESSMENT" ? "assessment" : "pedagogy"
         const childsLength = module_type === "ASSESSMENT" ? assessments?.length : pedagogies?.length
         if (!childsLength) return
-        return redirect(`/training/${redirectTo}/${_id}`)
+        return redirect(`/learner/${redirectTo}/${_id}`)
     }
 
     const {
@@ -33,7 +33,6 @@ const Technology_Section = ({ courseList, courses_tracking }) => {
         const matchedValues = array1.filter(value => set2.has(value));
         return matchedValues.length;
     }
-    console.log("selectedCourse", selectedCourse)
     return (
         <div className='Technology_Section'>
             <div className='dash-course-heading'>

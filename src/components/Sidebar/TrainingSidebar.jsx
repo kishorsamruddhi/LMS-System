@@ -38,7 +38,7 @@ const TrainingSidebar = () => {
         }
     }, []);
 
-    const link_prefix = "/training";
+    const link_prefix = "/learner";
     const navigations = [
         { icon: <Home />, label: "Dashboard", route: "/", protectedRoute: true, end: true },
         { icon: <Book />, label: "Technologies", route: "/my-courses", protectedRoute: true },

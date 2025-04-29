@@ -8,6 +8,7 @@ import 'aos/dist/aos.css';
 import { useQuery } from '@tanstack/react-query';
 import LoadingSpinner from '@/components/Loading';
 import { redirect } from 'next/navigation';
+import { BadgeInfo, BookOpen, CircleCheckBig } from 'lucide-react';
 
 const MyTechnology = () => {
 
@@ -39,10 +40,10 @@ const MyTechnology = () => {
 
     const redirectionToChild = ({ _id, module_type }) => {
         if (module_type === "ASSESSMENT") {
-            redirect("/training/assessment/" + _id)
+            redirect("/learner/assessment/" + _id)
         }
         else {
-            redirect("/training/pedagogy/" + _id)
+            redirect("/learner/pedagogy/" + _id)
         }
     }
 
@@ -80,20 +81,20 @@ const MyTechnology = () => {
 
     return (
         <div className='CoursesPage'>
-            <h1>My Technology</h1>
+            <h1 className='text-3xl '>My <span className='text-cyan-500'>Technology</span> </h1>
             <div className="CourseList">
                 {courseList && courseList.map(({ _id, course_name, course_desc, color, modules }, cor_ind) => {
                     const isCourseCompleted = completedCourses.find((cor) => cor._id === _id)
                     return <div key={cor_ind} className="Course_Section">
                         <div data-aos="fade-up"
                             data-aos-delay={cor_ind * 100} className="info">
-                            <h2>{course_name}</h2>
-                            <p>{course_desc}</p>
+                            <h2 className='text-xl'>{course_name}</h2>
+                            <p className='text-gray-600'>{course_desc}</p>
                         </div>
                         {modules.length === 0 ? <div style={{ justifyContent: " space-evenly" }} className='module'>
-                            <span></span>
-                            <i style={{ fontSize: "4rem", textAlign: "center" }}
-                                className='pi pi-info-circle'></i>
+                            <div className="w-full">
+                                <BadgeInfo className='mx-auto' />
+                            </div>
                             <h3 style={{ textAlign: "center" }}>
                                 Course doesn't have modules
                             </h3>
@@ -112,8 +113,8 @@ const MyTechnology = () => {
                                     style={{ backgroundColor: color || "rgb(206, 17, 17)" }}
                                     key={index} onClick={() => redirectionToChild({ _id: mod_id, module_type, assessments, pedagogies })} className="module">
                                     <div className="top">
-                                        {isModuleComplete ? <i className='pi pi-check-circle'></i> : <i className='pi pi-book'></i>}
-                                        <div className="title">{index + 1}. {module_name}</div>
+                                        {isModuleComplete ? <CircleCheckBig /> : <BookOpen />}
+                                        <div className="title ">{index + 1}. {module_name}</div>
                                         <div className="description">
                                             <p>
                                                 {module_type === "ASSESSMENT" ? `${moduleChilds.length} Assessments` : `${moduleChilds.length} Pedagogies`}

@@ -215,6 +215,7 @@ router.get("/getCompletedCourse/:id", extractToken, async (req, res) => {
 
     const user = await User.findById(_id, {
       email: 1,
+      username: 1,
     }).lean();
 
     if (!user) {

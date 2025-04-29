@@ -1,9 +1,13 @@
 "use client";
+
+import PageNotFound from "@/components/PageNotFound/PageNotFound";
+
 export default function Error({ error }) {
   return (
-    <div>
-      <h1>Something went wrong</h1>
-      <p>{error.message}</p>
-    </div>
+    <PageNotFound
+      returnLink={"/learner"}
+      returnLable={"Go Back"}
+      errorMessage={error?.message}
+    ></PageNotFound>
   );
 }

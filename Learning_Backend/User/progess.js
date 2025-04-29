@@ -13,15 +13,9 @@ const LearningTime = require("../LearningModels/LearningTime.js");
 const router = express.Router();
 
 router.post("/checkAnswer", extractToken, async (req, res) => {
-  const { assessment_id, module_id, course_id, user_option } = req.body;
+  const { assessment_id, module_id, user_option } = req.body;
   const user_id = req.user._id;
-  if (
-    !assessment_id ||
-    user_option === undefined ||
-    !user_id ||
-    !course_id ||
-    !module_id
-  ) {
+  if (!assessment_id || user_option === undefined || !user_id || !module_id) {
     return res.status(400).json({ error: true, data: "Invalid request data" });
   }
 
@@ -30,7 +24,6 @@ router.post("/checkAnswer", extractToken, async (req, res) => {
     const isCorrect = await submittingAnswer({
       user_id,
       module_id,
-      course_id,
       assessment_id,
       user_option,
       isSkip,
@@ -50,9 +43,9 @@ router.post("/checkAnswer", extractToken, async (req, res) => {
 });
 
 router.post("/update_pedagogy_Status", extractToken, async (req, res) => {
-  const { pedagogy_id, module_id, learning_sec, course_id } = req.body;
+  const { pedagogy_id, module_id, learning_sec } = req.body;
   const user_id = req.user._id;
-  if (!pedagogy_id || !module_id || !learning_sec || !user_id || !course_id) {
+  if (!pedagogy_id || !module_id || !learning_sec || !user_id) {
     return res.status(400).json({ error: true, data: "Invalid request data" });
   }
 
@@ -62,11 +55,10 @@ router.post("/update_pedagogy_Status", extractToken, async (req, res) => {
       module_id,
       learning_sec,
       user_id,
-      course_id,
     });
     res.status(201).json({
       error: false,
-      data: getData,
+      data: "Status Updated Successfully!!",
     });
   } catch (err) {
     console.error(err.message);
@@ -178,55 +170,6 @@ router.post("/update_user_learning_time", extractToken, async (req, res) => {
   }
 });
 
-// router.get("/clearModule", async (req, res) => {
-//   try {
-//     const getData = await UserModuleReport.findByIdAndUpdate(
-//       "678a41b8420f0a25a4b468b1",
-//       {
-//         $set: {
-//           total_child_count: 0,
-//           complete_child_count: 0,
-//           completed_Assessments: [],
-//         },
-//       },
-//       { new: true }
-//     ).lean();
-//     await UserAssessment.deleteMany({}).lean();
-//     res.status(201).json({
-//       error: false,
-//       data: getData,
-//     });
-//   } catch (err) {
-//     console.error(err.message);
-//     res.status(500).json({
-//       error: true,
-//       extra: err.message,
-//       data: "An error occurred while processing your request.",
-//     });
-//   }
-// });
-
-// router.get("/deleteAll", async (req, res) => {
-//   try {
-//     await UserReportCard.deleteMany({}).lean();
-//     await UserCourseReport.deleteMany({}).lean();
-//     await UserModuleReport.deleteMany({}).lean();
-//     await UserAssessment.deleteMany({}).lean();
-
-//     res.status(201).json({
-//       error: false,
-//       data: "Deleted",
-//     });
-//   } catch (err) {
-//     console.error(err.message);
-//     res.status(500).json({
-//       error: true,
-//       extra: err.message,
-//       data: "An error occurred while processing your request.",
-//     });
-//   }
-// });
-
 module.exports = router;
 
 async function submittingAnswer(data) {
@@ -294,7 +237,7 @@ async function submittingAnswer(data) {
     if (isCorrect) {
       await updateTreeOnCorrectOption({
         module_id,
-        course_id,
+        course_id: getCorrectAns.course_id,
         user_id,
         updatedUserAssessment: savedDoc,
       });
@@ -322,6 +265,7 @@ async function updateLearningPedagogyStatus({
 
     const pedagogy = await Pedagogy.findById(pedagogy_id).lean();
     if (!pedagogy) throw new Error("Pedagogy not found");
+    course_id = pedagogy.course_id;
     returnedValue.avg_time = pedagogy.avg_time;
 
     const existingProgress = await UserPedagogyProgress.findOne({

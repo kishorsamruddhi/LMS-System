@@ -5,7 +5,7 @@ import React from 'react'
 
 const AdminBackButton = ({ addOnPath = "" }) => {
     return <Button asChild>
-        <Link href={"/TrainingDashboard" + addOnPath}>
+        <Link href={"/admin" + addOnPath}>
             <ArrowLeft />
         </Link>
     </Button>

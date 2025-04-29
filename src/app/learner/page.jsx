@@ -101,7 +101,7 @@ const LearnerDashboard = () => {
   return (
     <div className="main-content">
       <div className="content-body">
-        <div className="top-content">
+        <div className="top-content max-md:flex-wrap">
           <div data-aos="slide-right" className="text-section">
             <h4 className='text-20'>
               Your Overall Progress is
@@ -119,7 +119,7 @@ const LearnerDashboard = () => {
 
           <div className="cards">
             {cards.map(({ headTitle, icon, title, startLabel, startValue, endLabel, endValue, moduelPos }, index) => {
-              return <div style={{ [`${startLabel}`]: startValue, [`${endLabel}`]: endValue, color: "#000" }} key={index}
+              return <div style={{ [`${startLabel}`]: startValue, [`${endLabel}`]: endValue, color: "#000", minWidth: "150px" }} key={index}
                 data-aos="fade-up"
                 data-aos-delay={100 + index * 100}
                 className="card ">

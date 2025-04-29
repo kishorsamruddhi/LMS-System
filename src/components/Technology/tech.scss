@@ -102,15 +102,18 @@
                     font-size: 1rem;
                     width: 100%;
                     padding: 8px 4px;
-                    border: none;
                     border-radius: 16px;
                     cursor: pointer;
                     font-weight: 600;
                     overflow: hidden;
+                    border: 2px solid transparent;
+                    transform: all .3s ease-in-out !important;
 
                     &:hover {
                         opacity: 1;
-                        background-color: var(--star-color);
+                        background-color: transparent;
+                        border: 2px solid #fff;
+                        color: #fff;
                     }
                 }
             }

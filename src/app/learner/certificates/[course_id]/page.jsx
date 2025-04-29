@@ -1,50 +1,66 @@
 "use client"
 
-import React, { useState, useEffect, use } from 'react';
+import React, { use, Fragment } from 'react';
 import "./styles.scss";
-import ThePDF_Container from './pdf';
 import { downloadCompletedCourseById } from '@/api/get';
 import LoadingSpinner from '@/components/Loading';
 import ErrorPage from '@/components/ErrorPage';
+import { ArrowLeft } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import { useQuery } from '@tanstack/react-query';
+import PageNotFound from '@/components/PageNotFound/PageNotFound';
+import ThePDF_Container from './_components/pdf';
 
 export default function CoursesCertificatePdf({ params }) {
     const { course_id } = use(params);
-    const [data, setData] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const {
+        data,
+        isError,
+        isLoading,
+        error
+    } = useQuery({
+        queryKey: ["download_Course", course_id],
+        queryFn: () => downloadCompletedCourseById(course_id),
+        staleTime: 60 * 1000 * 5,
+        gcTime: 60 * 1000 * 10,
+        refetchOnReconnect: false,
+        refetchInterval: false,
+        refetchOnMount: false,
+        refetchOnWindowFocus: false,
+        retry: false
+    })
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const result = await downloadCompletedCourseById(course_id);
-                if (result.error) {
-                    setError(result.data);
-                }
-                else {
-                    setData(result);
-                }
-            } catch (err) {
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchData();
-    }, []);
 
-    if (loading) {
+    if (isLoading) {
         return <LoadingSpinner />;
     }
 
-    if (error) {
+    if (isError || !data?.data) {
         return <ErrorPage message={error} />;
     }
 
     return (
-        <div className="certificate-container">
-            <div className="certificate-content">
-                {data?.data && <ThePDF_Container data={data} />}
+        <Fragment>
+
+            <div className="certificate-container">
+                <Button className={"mb-4"} asChild>
+                    <Link href={"/learner/certificates"}>
+                        <ArrowLeft />
+                    </Link>
+                </Button>
+                <div className="certificate-content">
+                    <LoadPDF data={data} />
+                </div>
             </div>
-        </div>
+        </Fragment>
     );
+}
+
+function LoadPDF({ data }) {
+    try {
+        return <ThePDF_Container data={data} />
+    } catch (error) {
+        return <PageNotFound errorMessage={"Currently this service is getting some error. Please try again later."} />
+    }
 }

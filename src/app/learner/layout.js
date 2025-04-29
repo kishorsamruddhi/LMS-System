@@ -27,6 +27,9 @@ const style = {
 
 const flexGrow = {
   flexGrow: 1,
+  flexShrink: 1,
+  overflowX: "auto",
+  padding: "2rem 0",
 };
 
 const Layout = ({ children }) => {

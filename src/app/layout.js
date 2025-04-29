@@ -21,10 +21,10 @@ export default async function RootLayout({ children }) {
       <body
         className={`${poppins.variable} antialiased`} // Use only Poppins variable
       >
-        <Header />
-        <div className="mt-[72px]">
-          <UserProvider>{children}</UserProvider>
-        </div>
+        <UserProvider>
+          <Header />
+          <div className="mt-[72px]">{children}</div>
+        </UserProvider>
       </body>
     </html>
   );

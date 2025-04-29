@@ -4,21 +4,19 @@ import "./styles.scss"
 import style from "./playlist.module.scss"
 import React, { Fragment, use, useState } from 'react'
 import { get_pedagoggies_with_status } from '@/api/get'
-// import { Swiper, SwiperSlide } from "swiper/react";
-// import { moduleCardsConfig } from "../Comp/Technology/swiperConfig"
 import { useQuery } from "@tanstack/react-query"
 import VideoSection from "./VideoPlayer"
-import Link from "next/link"
 import LoadingSpinner from "@/components/Loading"
 import { Button } from "@/components/ui/button";
 import {
     Sidebar,
     SidebarContent,
-    SidebarFooter,
     SidebarGroup,
     SidebarHeader,
     SidebarProvider,
 } from "@/components/ui/sidebar"
+import { SkipForward } from "lucide-react";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 
 const Pedagogy = ({ params }) => {
     const { id } = use(params)
@@ -89,12 +87,24 @@ const Pedagogy = ({ params }) => {
     return (
         <div className='Pedagogy'>
             <div className="Pedagogy_nav">
-                <div className="breadCrumbs">
-                    <Link href={"/dashboard/Training/dashboard"}>My Courses</Link> <i className="pi pi-angle-right"></i>
-                    <Link href={"/dashboard/Training/dashboard"}>{module_data.module_name}</Link>  <i className="pi pi-angle-right"></i>
-                    <span>{activePeda.title}</span>
+                <div className="">
+                    <Breadcrumb>
+                        <BreadcrumbList>
+                            <BreadcrumbItem>
+                                <BreadcrumbLink className={"hover:text-cyan-500"} href={"/learner/dashboard"}>My Courses</BreadcrumbLink>
+                            </BreadcrumbItem>
+                            <BreadcrumbSeparator />
+                            <BreadcrumbItem>
+                                <BreadcrumbLink className={"hover:text-cyan-500"} href={"/learner/dashboard"}>{module_data.module_name}</BreadcrumbLink>
+                            </BreadcrumbItem>
+                            <BreadcrumbSeparator />
+                            <BreadcrumbItem>
+                                <BreadcrumbLink className={"hover:text-cyan-500"}>{activePeda.title}</BreadcrumbLink>
+                            </BreadcrumbItem>
+                        </BreadcrumbList>
+                    </Breadcrumb>
                 </div>
-                {/* <BackButton href="/dashboard/Training/dashboard" /> */}
+                {/* <BackButton href="/learner/dashboard" /> */}
             </div>
             <div className="sticky-section">
                 <div className="main-frame" id="mainFrame">
@@ -108,37 +118,8 @@ const Pedagogy = ({ params }) => {
                 <div className="sidebar-playlist">
                     <PlayListSection items={childArray} />
                 </div>
-                {/* <div className="more-content">
-                    <div className="sub_nav_btns">
-                        <div id="sub_prev">
-                            <i className='pi pi-arrow-circle-left'></i>
-                        </div>
-                        <div id="sub_next">
-                            <i className='pi pi-arrow-circle-right'></i>
-                        </div>
-                    </div>
-                    <div className="list">
-                        {childArray?.length > 0 && <Swiper {...moduleCardsConfig}>
-                            {childArray.map((val, index) => {
-                                return <SwiperSlide key={index}>
-                                    <div className="swiper-card" onClick={() => setActivePedagogy(index)}>
-                                        {activePeda._id === val._id && <span className="currentTag">Playing</span>}
-                                        <div className="top">
-                                            <i className={completedArrayList.includes(val._id) ? "pi pi-check-circle" : "pi pi-circle"}></i>
-                                            <h3 className="title">{index + 1}. {val.title}</h3>
-                                        </div>
-                                        <img height={120} width={120} src="/Icons/play-icon.svg" alt="play-icon" />
-                                    </div>
-                                </SwiperSlide>
-                            })}
-                        </Swiper>}
-                    </div>
-                </div> */}
+
             </div>
-            {/* <div className="actionButtons pr">
-                {!isFirstQuestion ? <button onClick={handlePre}>Previous</button> : <div></div>}
-                {!isLastQuestion ? <button onClick={handleNext}>Next</button> : <div></div>}
-            </div> */}
             {childArray.length > 0 && <div className="mobile-playlist-trigger">
                 <MobilePlaylistSection {...propsMobilePlaylistSection} />
             </div>}
@@ -152,53 +133,31 @@ const MobilePlaylistSection = ({ items, activePeda, activePedagogy, completedArr
     if (!upcomingVideo) return null
     return <Fragment>
         <div className="centered">
-            <Button className="pr triggerButton" onClick={() => setVisibleBottom(true)} >
-                <i className="pi pi-fast-forward"></i> Next: {upcomingVideo.title}
+            <Button className=" bg-white triggerButton" onClick={() => setVisibleBottom(true)} >
+                <SkipForward /> Next: {upcomingVideo.title}
             </Button>
         </div>
-        <SidebarProvider>
-            <Sidebar>
-                <SidebarHeader >Playlist</SidebarHeader>
-                <SidebarContent>
-                    {items.length > 0 && items.map((val, index) => {
-                        return <SidebarGroup key={index} className={style.card} onClick={() => {
-                            setActivePedagogy(index)
-                        }}>
-                            {activePeda._id === val._id && <span className={style.currentTag}>Playing</span>}
-                            <div className="top">
-                                <i className={completedArrayList.includes(val._id) ? "pi pi-check-circle" : "pi pi-circle"}></i>
-                                <h3 className="title">{index + 1}. {val.title}</h3>
-                                <p className={style.des}>{val.text}</p>
-                            </div>
-                        </SidebarGroup>
-                    })}
-                </SidebarContent>
-            </Sidebar>
-            {/* <Sidebar header={<h3>Playlist</h3>} visible={visibleBottom}
-            style={{ height: "70vh" }}
-            pt={{
-                content: {
-                    style: { padding: "5px" }
-                }
-            }}
-            className="pr"
-            position="bottom"
-            onHide={() => setVisibleBottom(false)}>
-            <p>Total videos: {items.length}</p>
-            {items.length > 0 && items.map((val, index) => {
-                return <div key={index} className={style.card} onClick={() => {
-                    setActivePedagogy(index)
-                }}>
-                    {activePeda._id === val._id && <span className={style.currentTag}>Playing</span>}
-                    <div className="top">
-                        <i className={completedArrayList.includes(val._id) ? "pi pi-check-circle" : "pi pi-circle"}></i>
-                        <h3 className="title">{index + 1}. {val.title}</h3>
-                        <p className={style.des}>{val.text}</p>
-                    </div>
-                </div>
-            })}
-        </Sidebar> */}
-        </SidebarProvider>
+        <div className="mac">
+            <SidebarProvider>
+                <Sidebar>
+                    <SidebarHeader >Playlist</SidebarHeader>
+                    <SidebarContent>
+                        {items.length > 0 && items.map((val, index) => {
+                            return <SidebarGroup key={index} className={style.card} onClick={() => {
+                                setActivePedagogy(index)
+                            }}>
+                                {activePeda._id === val._id && <span className={style.currentTag}>Playing</span>}
+                                <div className="top">
+                                    <i className={completedArrayList.includes(val._id) ? "pi pi-check-circle" : "pi pi-circle"}></i>
+                                    <h3 className="title">{index + 1}. {val.title}</h3>
+                                    <p className={style.des}>{val.text}</p>
+                                </div>
+                            </SidebarGroup>
+                        })}
+                    </SidebarContent>
+                </Sidebar>
+            </SidebarProvider>
+        </div>
     </Fragment>
 }
 

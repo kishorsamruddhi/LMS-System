@@ -7,6 +7,7 @@ import { getCompletedCourses } from '@/api/get';
 import LoadingSpinner from '@/components/Loading';
 import ErrorPage from '@/components/ErrorPage';
 import Link from 'next/link';
+import LinkButton from '@/components/LinkButton';
 
 const fetchCompletedCourses = async () => {
     const resp = await getCompletedCourses();
@@ -38,7 +39,7 @@ const CoursesCertificates = () => {
         return (
             <div className="CoursesCertificates">
                 <h2>My Certificates</h2>
-                <h3>Click to download the certificates.</h3>
+                {/* <h3>Click to download the certificates.</h3> */}
                 <h1 style={{ color: "red", marginTop: "4rem" }}>
                     You have not completed any courses yet.
                 </h1>
@@ -53,7 +54,7 @@ const CoursesCertificates = () => {
             <h3>Click to download the certificates.</h3>
             <div className="courses-list">
                 {data.map(({ course_id }) => (
-                    <Link key={course_id._id} href={"/training/certificates/" + course_id._id} className="card">
+                    <Link key={course_id._id} href={"/learner/certificates/" + course_id._id} className="card">
                         <img src="/assets/badge-medal.svg" alt="Certificate Badge" />
                         <h3>{course_id.course_name}</h3>
                     </Link>
@@ -65,21 +66,9 @@ const CoursesCertificates = () => {
 };
 
 const GoToCoursesButton = () => (
-    <Link
-        href="/training/my-courses"
-        style={{
-            borderRadius: "25px",
-            display: "block",
-            width: "max-content",
-            textDecoration: "none",
-            marginTop: "2rem",
-            marginLeft: "auto",
-            marginRight: "auto",
-            padding: "10px 16px",
-        }}
-    >
+    <LinkButton href="/learner/my-courses">
         Go to Courses Page
-    </Link>
+    </LinkButton>
 );
 
 export default CoursesCertificates;
