@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema(
       unique: true,
     },
     email: { type: String, require: true, unique: true },
-    phoneNumber: { type: Number, require: true, maxlength: 12 },
+    phoneNumber: { type: Number, require: true, maxlength: 12, minlength: 10 },
     role: {
       type: String,
       enum: ["admin", "user"],

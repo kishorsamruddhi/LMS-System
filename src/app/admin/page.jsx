@@ -2,11 +2,9 @@
 import React, { use } from 'react';
 import "./styles.scss";
 import { useQuery } from '@tanstack/react-query';
-import { Button } from '@/components/ui/button';
 import LoadingSpinner from '@/components/Loading';
 import ErrorPage from '@/components/ErrorPage';
 import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
 import { UserContext } from '@/store/User_Context';
 import { getAllDataCounts } from '@/api/_admin/getApis';
 
@@ -56,10 +54,7 @@ const AdminDashboard = () => {
     const timeDetails = getTime(data.learningTime);
     return (
         <div className='AdminDashboard'>
-            <Button asChild className={"border-2 border-gray-300 hover:border-gray-800"}>
-                <Link href="/login"><ArrowLeft /></Link>
-            </Button>
-            <h1 className='text-2xl'>Welcome {isAuhtLoading ? "Loading..." : auth?.username}!</h1>
+            <h1 className='text-2xl mt-4'>Welcome <span className='text-cyan-500'>{isAuhtLoading ? "Loading..." : auth?.username}!</span> </h1>
             <div className="hero-card-section">
                 <div className="hero-card">
                     <img height={180} width={180} src="/Icons/data-graph.svg" alt="data-graph" />

@@ -7,15 +7,14 @@ import { use, useEffect } from "react";
 const Layout = ({ children }) => {
     const { auth, isAuhtLoading } = use(UserContext)
     useEffect(() => {
-        if (!isAuhtLoading) {
-            const user = auth?.user || null
+        if (!isAuhtLoading && auth?.role) {
+            const user = auth?.role || null
             if (user) {
-                const role = user.role === "admin" ? "/admin" : "/learner"
+                const role = auth.role === "admin" ? "/admin" : "/learner"
                 redirect(role)
             }
         }
     }, [isAuhtLoading])
-
     if (isAuhtLoading) return <LoadingSpinner />
     return (
         <div>{children}</div>

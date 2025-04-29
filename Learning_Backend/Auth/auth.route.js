@@ -20,7 +20,7 @@ router.post("/login", async (req, res) => {
     const user = await User.findOne({ email }).lean();
     if (!user) {
       return res.status(404).json({
-        success: false,
+        error: true,
         data: "User not found with these creadentials!",
       });
     }
@@ -28,7 +28,7 @@ router.post("/login", async (req, res) => {
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
       return res.status(200).json({
-        success: false,
+        error: true,
         data: "Incorrect password. Please verify your password and try again.",
       });
     }
@@ -51,7 +51,7 @@ router.post("/login", async (req, res) => {
         expiresIn: login_Token_Vaildity || "5d",
       }
     );
-    res.status(200).json({ success: true, data: resp, token });
+    res.status(200).json({ error: false, data: resp, token });
   } catch (err) {
     res.status(500).json({ error: true, data: err.message });
   }
@@ -75,7 +75,7 @@ router.post("/create-account", async (req, res) => {
       password.length > MAX_PASSWORD_LENGTH
     ) {
       return res.status(400).json({
-        success: false,
+        error: true,
         message: `Password length must be between ${MIN_PASSWORD_LENGTH} and ${MAX_PASSWORD_LENGTH} characters.`,
       });
     }
@@ -85,7 +85,7 @@ router.post("/create-account", async (req, res) => {
 
     if (!isPasswordValid) {
       return res.status(400).json({
-        success: false,
+        error: true,
         message: `Password validation failed. It must be between 6 and 16 characters and can include letters, digits, and special characters.`,
       });
     }
@@ -98,13 +98,21 @@ router.post("/create-account", async (req, res) => {
       password: hashedPassword,
       phoneNumber,
       role,
-      address,
     });
     await account.save();
 
+    const resp = {
+      _id: account._id,
+      email: account.email,
+      role: account.role,
+      username: account.username,
+      business_course_id: account?.business_course_id || null,
+      isEmailVerified: account.isEmailVerified,
+    };
+
     const token = jwt.sign(
       {
-        user: account,
+        user: resp,
       },
       encodeKey,
       {
@@ -135,7 +143,8 @@ router.post("/create-account", async (req, res) => {
 
     res.status(200).json({
       error: false,
-      data: token,
+      data: resp,
+      token,
     });
   } catch (err) {
     res.status(500).json({ error: true, data: err.message });

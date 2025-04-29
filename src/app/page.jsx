@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -13,7 +14,9 @@ export default function Home() {
           ease.
         </p>
         <Button className={"border-2 border-gray-300 hover:border-cyan-600  hover:text-cyan-600"} variant="solid" size="lg">
-          Get Started
+          <Link href={"/auth/signin"}>
+            Get Started
+          </Link>
         </Button>
       </section>
 
@@ -105,7 +108,9 @@ export default function Home() {
             size="lg"
             className={"border-2 border-gray-400 hover:border-gray-200"}
           >
-            Get Started Now
+            <Link href={"/auth/signin"}>
+              Get Started Now
+            </Link>
           </Button>
         </div>
       </section>

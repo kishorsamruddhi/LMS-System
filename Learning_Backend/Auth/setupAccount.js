@@ -52,11 +52,33 @@ router.post("/institute", async (req, res) => {
     });
 
     await setUp.save();
-    await User.findByIdAndUpdate(_id, {
-      business_course_id: setUp._id,
-    });
+    const user = await User.findByIdAndUpdate(
+      _id,
+      {
+        business_course_id: setUp._id,
+      },
+      { new: true }
+    );
 
-    return res.status(201).json({ error: false, data: "Setup Complete" });
+    const resp = {
+      _id: user._id,
+      email: user.email,
+      role: user.role,
+      username: user.username,
+      business_course_id: user?.business_course_id || null,
+      isEmailVerified: user.isEmailVerified,
+    };
+    const token = jwt.sign(
+      {
+        user: resp,
+      },
+      encodeKey,
+      {
+        expiresIn: login_Token_Vaildity || "5d",
+      }
+    );
+
+    return res.status(201).json({ error: false, data: resp, token });
   } catch (err) {
     return res.status(500).json({ error: true, data: err.message });
   }
@@ -207,9 +229,31 @@ router.post("/user", async (req, res) => {
 
     await setUp.save();
 
-    await User.findByIdAndUpdate(getMyDetails._id, {
-      business_course_id: setUp._id,
-    }).lean();
+    const user = await User.findByIdAndUpdate(
+      getMyDetails._id,
+      {
+        business_course_id: setUp._id,
+      },
+      { new: true }
+    ).lean();
+
+    const resp = {
+      _id: user._id,
+      email: user.email,
+      role: user.role,
+      username: user.username,
+      business_course_id: user?.business_course_id || null,
+      isEmailVerified: user.isEmailVerified,
+    };
+    const token = jwt.sign(
+      {
+        user: resp,
+      },
+      encodeKey,
+      {
+        expiresIn: login_Token_Vaildity || "5d",
+      }
+    );
 
     return res.status(201).json({
       error: false,
@@ -218,6 +262,8 @@ router.post("/user", async (req, res) => {
         name: getInstitueDetails.business_name,
         desc: getInstitueDetails.business_desc,
       },
+      userData: resp,
+      token,
     });
   } catch (err) {
     return res.status(500).json({ error: true, data: err.message });
@@ -346,14 +392,12 @@ router.post("/verify-email-code", async (req, res) => {
       }
     );
 
-    return res
-      .status(200)
-      .json({
-        error: false,
-        userData: resp,
-        data: "Email successfully verified.",
-        token,
-      });
+    return res.status(200).json({
+      error: false,
+      userData: resp,
+      data: "Email successfully verified.",
+      token,
+    });
   } catch (err) {
     return res.status(500).json({ error: true, data: err.message });
   }

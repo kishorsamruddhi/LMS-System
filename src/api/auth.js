@@ -9,13 +9,31 @@ export const loginApi = async ({ password, email }) => {
   );
 };
 
+export const createAccountApi = async ({
+  username,
+  password,
+  email,
+  role,
+  phoneNumber,
+}) => {
+  return handleRequest(() =>
+    axiosInstance.post("/auth/create-account", {
+      username,
+      password,
+      email,
+      role,
+      phoneNumber,
+    })
+  );
+};
+
 export const setupAdminApi = async ({
   business_name,
   business_desc,
   category,
 }) => {
   return handleRequest(() =>
-    axiosInstance.post("/setup/institue", {
+    axiosInstance.post("/setup/institute", {
       business_name,
       business_desc,
       category,
@@ -24,8 +42,10 @@ export const setupAdminApi = async ({
 };
 
 // Get - Token from Email and Verify Token to Join
-export const setupUserApi = async ({ email }) => {
-  return handleRequest(() => axiosInstance.post("/setup/user", { email }));
+export const setupUserApi = async ({ invitationToken }) => {
+  return handleRequest(() =>
+    axiosInstance.post("/setup/user", { invitationToken })
+  );
 };
 
 export const sendEmailVerificationCodeApi = async () => {

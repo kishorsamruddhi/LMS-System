@@ -3,7 +3,7 @@ import "./sidebar.scss";
 import { useState, useLayoutEffect, useEffect, useContext } from 'react';
 import { UserContext } from '@/store/User_Context';
 import Link from "next/link";
-import { Book, ChartArea, Home, LogOut, MoveLeft, Trophy } from "lucide-react"; // Ensure you import from the correct package
+import { Book, ChartArea, Home, LogOut, Mail, MoveLeft, School, Trophy } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { usePathname } from "next/navigation";
 
@@ -19,7 +19,7 @@ const debounce = (func, delay) => {
 
 const TrainingSidebar = () => {
     const pathname = usePathname()
-    const { sign_out_handler } = useContext(UserContext);
+    const { auth, sign_out_handler } = useContext(UserContext);
     const [windowWidth, setWindowWidth] = useState(400);
 
     useLayoutEffect(() => {
@@ -38,12 +38,17 @@ const TrainingSidebar = () => {
         }
     }, []);
 
+
+
     const link_prefix = "/learner";
-    const navigations = [
-        { icon: <Home />, label: "Dashboard", route: "/", protectedRoute: true, end: true },
-        { icon: <Book />, label: "Technologies", route: "/my-courses", protectedRoute: true },
-        { icon: <ChartArea />, label: "Reports", route: "/report", protectedRoute: true },
-        { icon: <Trophy />, label: "My Certificates", route: "/certificates", protectedRoute: false },
+    const navigations = auth?.business_course_id && auth?.isEmailVerified ? [
+        { icon: <Home />, label: "Dashboard", route: "/", },
+        { icon: <Book />, label: "Technologies", route: "/my-courses", },
+        { icon: <ChartArea />, label: "Reports", route: "/report", },
+        { icon: <Trophy />, label: "My Certificates", route: "/certificates" },
+    ] : [
+        { icon: <Mail />, label: "Email Verifiy", route: "/email-verify", },
+        { icon: <School />, label: "institute", route: "/get-started", },
     ];
 
     if (windowWidth < 800) {

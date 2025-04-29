@@ -61,6 +61,7 @@ function LoadPDF({ data }) {
     try {
         return <ThePDF_Container data={data} />
     } catch (error) {
-        return <PageNotFound errorMessage={"Currently this service is getting some error. Please try again later."} />
+        return <PageNotFound
+            errorMessage={"Currently this service is getting some error. Please try again later."} />
     }
 }

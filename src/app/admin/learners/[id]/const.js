@@ -21,11 +21,11 @@ export function calculateCourseProgress(data) {
 
   // Count completed assessments
   data.completedAssessments.forEach((assessment) => {
-    const module = data.completedModules.find(
+    const moduleVar = data.completedModules.find(
       (mod) => mod.module_id === assessment.module_id
     );
-    if (module && courseProgress[module.course_id]) {
-      courseProgress[module.course_id].completed_assessments += 1;
+    if (moduleVar && courseProgress[moduleVar.course_id]) {
+      courseProgress[moduleVar.course_id].completed_assessments += 1;
     }
   });
 

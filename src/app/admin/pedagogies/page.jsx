@@ -4,13 +4,20 @@ import DataTable from "@/components/Prime/DataTable";
 import { Button } from "@/components/ui/button";
 import { Eye, Pencil } from "lucide-react";
 import { getAdmin_pedagoggies_by_module_id, getCourses_and_Modules_list } from "@/api/_admin/getApis";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Dropdown from "@/components/Prime/Dropdown";
 import LinkButton from "@/components/LinkButton";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import LoadingSpinner from "@/components/Loading";
 
-const PedagogyPage = () => {
+function Page() {
+    return <Suspense fallback={<LoadingSpinner />}>
+        <PedagogyPage />
+    </Suspense>
+}
+
+function PedagogyPage() {
     const ModuleType = "THEORY"
     const searchParams = useSearchParams();
     const queryParams = {
@@ -163,4 +170,4 @@ const PedagogyPage = () => {
 };
 
 
-export default PedagogyPage;
+export default Page;

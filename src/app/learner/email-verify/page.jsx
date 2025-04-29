@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, use, useState } from "react";
+import { Fragment, use, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
     Card,
@@ -19,11 +19,27 @@ import { toast } from "react-toastify";
 import { UserContext } from "@/store/User_Context";
 import { Loader } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { redirect } from "next/navigation";
 
 export default function Page() {
-    const { signInHandler } = use(UserContext)
+    const { auth, isAuhtLoading, signInHandler } = use(UserContext)
     const [token, setToken] = useState("");
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (!isAuhtLoading && auth?.role) {
+            if (auth.isEmailVerified) {
+                toast.info("Your Email is Already Verified. Redirecting...")
+                setTimeout(() => {
+                    let link = "/learner"
+                    if (!auth?.business_course_id) {
+                        link = "/learner/get-started"
+                    }
+                    redirect(link)
+                }, 1200);
+            }
+        }
+    }, [isAuhtLoading])
 
     const handleSendCode = async () => {
         setLoading(true);

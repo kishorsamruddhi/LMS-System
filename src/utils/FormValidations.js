@@ -33,6 +33,7 @@ const email = {
 const businessName = {
   required: "Business Name is required",
 };
+
 const pinCode = {
   required: "Pin Code is required",
   maxLength: {
@@ -42,6 +43,21 @@ const pinCode = {
   pattern: {
     value: /^[0-9]*$/,
     message: "Pin Code can only contain numbers",
+  },
+};
+const phoneNumber = {
+  required: "Phone Number is required",
+  maxLength: {
+    value: 12,
+    message: "Phone Number cannot exceed 12 numbers",
+  },
+  minLength: {
+    value: 10,
+    message: "Phone Number must be at least 10 numbers",
+  },
+  pattern: {
+    value: /^[0-9]*$/,
+    message: "Phone number can only contain numbers",
   },
 };
 
@@ -55,6 +71,7 @@ const Validations = {
   email,
   businessName,
   pinCode,
+  phoneNumber,
   age,
 };
 

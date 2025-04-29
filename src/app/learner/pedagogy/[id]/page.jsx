@@ -98,8 +98,8 @@ const Pedagogy = ({ params }) => {
                                 <BreadcrumbLink className={"hover:text-cyan-500"} href={"/learner/dashboard"}>{module_data.module_name}</BreadcrumbLink>
                             </BreadcrumbItem>
                             <BreadcrumbSeparator />
-                            <BreadcrumbItem>
-                                <BreadcrumbLink className={"hover:text-cyan-500"}>{activePeda.title}</BreadcrumbLink>
+                            <BreadcrumbItem className="cursor-default">
+                                {activePeda.title}
                             </BreadcrumbItem>
                         </BreadcrumbList>
                     </Breadcrumb>

@@ -1,10 +1,7 @@
 "use client";
-import LoadingSpinner from "@/components/Loading";
 import TrainingSidebar from "@/components/Sidebar/TrainingSidebar";
-import { UserContext } from "@/store/User_Context";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { redirect, usePathname } from "next/navigation";
-import React, { use, useEffect } from "react";
+import React from "react";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -35,44 +32,12 @@ const flexGrow = {
 const Layout = ({ children }) => {
   return (
     <QueryClientProvider client={queryClient}>
-      <IsUser>{children}</IsUser>
+      <div style={style}>
+        <TrainingSidebar />
+        <div style={flexGrow}>{children}</div>
+      </div>
     </QueryClientProvider>
   );
 };
-
-function IsUser({ children }) {
-  const { auth, isAuhtLoading } = use(UserContext);
-  const pathname = usePathname();
-  useEffect(() => {
-    if (!isAuhtLoading) {
-      const role = auth.role;
-      const isVerified = auth.isEmailVerified;
-      if (role === "user") {
-        if (!isVerified && !pathname.includes("email-verify")) {
-          redirect("/learner/email-verify");
-        } else if (
-          !auth?.business_course_id &&
-          pathname.includes("get-started")
-        ) {
-          redirect("/learner/get-started");
-        }
-        return;
-      } else {
-        redirect("/page404");
-      }
-    }
-  }, [isAuhtLoading]);
-
-  if (isAuhtLoading) {
-    return <LoadingSpinner />;
-  }
-
-  return (
-    <div style={style}>
-      {auth?.isEmailVerified && <TrainingSidebar />}
-      <div style={flexGrow}>{children}</div>
-    </div>
-  );
-}
 
 export default Layout;

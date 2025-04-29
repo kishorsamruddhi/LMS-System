@@ -34,29 +34,41 @@ export const UserProvider = ({ children }) => {
   }, []);
 
   const signInHandler = (data, token) => {
+
     updateAuth(data);
     cookies.set(cookiesKey, token, { path: "/" });
     const isEmailVerified = data?.isEmailVerified || false
     const business = data?.business_course_id || false
     const role = data?.role || null
     let route = null
+    let isMessage = {
+      send: false,
+      message: ""
+    }
     if (role === "user") {
       route = "/learner"
     }
+
     else if (role === "admin") {
       route = "/admin"
     }
 
-    if (!isEmailVerified) {
-      route += "/email-verify"
-      toast.info("Please, Verify email to continue")
-    }
-
     if (!business) {
       route += "/get-started"
-      let message = role == "admin" ? "Please, Setup Institue to continue" : "Please, Connect to Institue to continue"
-      toast.info(message)
+      let message = role == "admin" ? "Please, Setup institute to continue" : "Please, Connect to institute to continue"
+      isMessage.send = true
+      isMessage.message = message
     }
+    else if (!isEmailVerified) {
+      route += "/email-verify"
+      isMessage.send = true
+      isMessage.message = "Please, Verify email to continue"
+    }
+
+    if (isMessage.send) {
+      toast.info(isMessage.message)
+    }
+
     if (route) {
       setTimeout(() => {
         redirect(route)
@@ -73,7 +85,7 @@ export const UserProvider = ({ children }) => {
 
   return (
     <UserContext.Provider value={{ auth, isAuhtLoading, signInHandler, sign_out_handler }}>
-      <ToastContainer />
+      <ToastContainer position="top-center" />
       {children}
     </UserContext.Provider>
   );

@@ -4,13 +4,20 @@ import DataTable from "@/components/Prime/DataTable";
 import { Button } from "@/components/ui/button";
 import { Eye, Pencil } from "lucide-react";
 import { getAdmin_assessments_by_module_id, getCourses_and_Modules_list } from "@/api/_admin/getApis";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Dropdown from "@/components/Prime/Dropdown";
 import LinkButton from "@/components/LinkButton";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import LoadingSpinner from "@/components/Loading";
 
-const AssessmentPage = () => {
+function Page() {
+    return <Suspense fallback={<LoadingSpinner />}>
+        <AssessmentPage />
+    </Suspense>
+}
+
+function AssessmentPage() {
     const searchParams = useSearchParams();
     const queryParams = {
         module_id: searchParams.get("module_id") || null,
@@ -95,7 +102,8 @@ const AssessmentPage = () => {
     function renderOptions(options) {
         let value = options
         if (Array.isArray(options)) {
-            value = options.join(", ")
+            const out = options.map((val, index) => `(${index + 1}) ${val.slice(0, 15)}`)
+            value = out.join(", ")
         }
         return value
     }
@@ -170,4 +178,4 @@ const AssessmentPage = () => {
 };
 
 
-export default AssessmentPage;
+export default Page;

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, Suspense } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import AdminBackButton from "@/components/AdminBackButton";
@@ -12,8 +12,15 @@ import { createAdmin_Pedagogy } from "@/api/_admin/createApi";
 import { getCourses_and_Modules_list } from "@/api/_admin/getApis";
 import Quill from 'quill';
 import 'quill/dist/quill.snow.css';
+import LoadingSpinner from "@/components/Loading";
 
-const CreatePedagogy = () => {
+function Page() {
+    return <Suspense fallback={LoadingSpinner}>
+        <CreatePedagogy />
+    </Suspense>
+}
+
+function CreatePedagogy() {
     const ModuleType = "THEORY"
     const [selectedCourse, setSelectedCourse] = useState(null)
     const [courseDropdown, setCourseDropdown] = useState(null)
@@ -150,7 +157,7 @@ const CreatePedagogy = () => {
 };
 
 
-const TextQuillField = ({ setValue }) => {
+function TextQuillField({ setValue }) {
     const editorRef = useRef(null);
     const quillRef = useRef(null);
 
@@ -181,4 +188,4 @@ const TextQuillField = ({ setValue }) => {
 };
 
 
-export default CreatePedagogy;
+export default Page;

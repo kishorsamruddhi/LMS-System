@@ -13,27 +13,46 @@ import { Input } from "@/components/ui/input";
 import useUserContext from "@/store/User_Context";
 import { Github, Loader, Mail } from "lucide-react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 // import { signIn } from "next-auth/react";
-import { useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 
+
 const SignInPage = () => {
-  const { signInHandler } = useUserContext()
+  const { auth, isAuhtLoading, signInHandler } = useUserContext()
   const [loading, setLoading] = useState(false)
   const { register, handleSubmit, formState: { errors }, } = useForm();
+
+  useEffect(() => {
+    if (!isAuhtLoading && auth?.role) {
+      if (auth.role == "admin") {
+        toast.info("Already Logged-In. Redirecting...")
+        setTimeout(() => {
+          redirect("/admin")
+        }, 1200);
+      }
+      else if (auth?.role == "user") {
+        toast.info("Already Logged-In. Redirecting...")
+        setTimeout(() => {
+          redirect("/learner")
+        }, 1200);
+      }
+    }
+  }, [isAuhtLoading])
 
   const handleSignInWithEmail = async ({ password, email }) => {
     try {
       if (loading) return
       setLoading(true)
       const resp = await loginApi({ password, email })
-      if (resp?.success && resp?.token) {
-        toast.success("Logged-in")
-        signInHandler(resp.data, resp.token)
+      if (resp?.error || !resp.token) {
+        throw new Error(resp?.data || "Server Error")
       }
       else {
-        throw new Error(resp?.data || "Server Error")
+        toast.success("Logged-in")
+        signInHandler(resp.data, resp.token)
       }
     } catch (error) {
       toast.error(error.message)
@@ -102,10 +121,12 @@ const SignInPage = () => {
               <Button
                 disabled={loading}
                 className="w-full border-gray-300 border-2 mt-4">
-                {loading && <Loader />}
-                <span className="ml-2">
-                  Sign in
-                </span>
+                {loading ? <Fragment>
+                  <Loader />
+                  Loading...
+                </Fragment>
+                  : "Sign in"
+                }
               </Button>
             </form>
           </div>

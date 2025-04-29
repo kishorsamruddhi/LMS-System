@@ -35,7 +35,10 @@ const CreateModule = () => {
             if (!course_resp?.error) {
                 const arr = course_resp.data
                 setCourseDropdown(arr);
-                setSelectedCourse(arr[0]?._id)
+                if (arr[0]?._id) {
+                    setSelectedCourse(arr[0]?._id)
+                    setValue("course_id", arr[0]?._id)
+                }
             } else {
                 setIsError(true);
             }
@@ -97,6 +100,7 @@ const CreateModule = () => {
     }
 
     function courseChangeHandler(val) {
+        debugger
         setValue("course_id", val)
         setSelectedCourse(val)
     }
