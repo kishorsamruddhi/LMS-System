@@ -135,6 +135,7 @@ router.post("/update_user_learning_time", extractToken, async (req, res) => {
       userLearning = new LearningTime({
         user_id,
         timeSpent,
+        business_id: req.user.business_course_id,
         courses: course_id ? [{ course_id, timeSpent }] : [],
         modules: module_id ? [{ module_id, timeSpent }] : [],
         pedagogies: pedagogy_id ? [{ pedagogy_id, timeSpent }] : [],

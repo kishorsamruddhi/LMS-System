@@ -11,7 +11,7 @@ const learningTimeSchema = new mongoose.Schema(
     business_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Institue",
-      required: true,
+      required: false,
     },
     timeSpent: {
       type: Number,
