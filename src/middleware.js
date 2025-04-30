@@ -4,68 +4,43 @@ import { cookiesKey } from "@/utils/token";
 
 const availableRoutes = {
   admin: "/admin",
-  user: "/training",
-  auth: "/auth",
+  user: "/learner",
 };
 
+const protectedRoutes = ["/admin", "/learner"];
+
 export async function middleware(request) {
-  return NextResponse.next();
   const cookies = await request.cookies;
   const token = cookies.get(cookiesKey)?.value;
   const { pathname } = request.nextUrl;
+  let isRequestingProtectedRoute = false;
 
-  if (!token) {
-    if (
-      pathname === "/" ||
-      pathname.startsWith(availableRoutes.auth) ||
-      pathname === "/page404" ||
-      pathname === "/training"
-    ) {
+  protectedRoutes.map((val) => {
+    if (pathname.includes(val)) {
+      isRequestingProtectedRoute = true;
+    }
+  });
+
+  if (!token && isRequestingProtectedRoute) {
+    return NextResponse.redirect(new URL("/auth-error", request.url));
+  }
+  if (token) {
+    try {
+      const decoded = jwt.decode(token);
+      const userRole = decoded.user?.role;
+      const roleRoute = availableRoutes[userRole];
+
+      let isValidForThisUser = pathname.includes(roleRoute);
+
+      if (isRequestingProtectedRoute && !isValidForThisUser) {
+        throw new Error("Page is not available");
+      }
       return NextResponse.next();
+    } catch (error) {
+      return NextResponse.redirect(new URL("/page-not-available", request.url));
     }
-    return NextResponse.redirect(new URL("/page404", request.url));
   }
-
-  try {
-    const decoded = jwt.decode(token);
-    const userRole = decoded.user?.role;
-    const isEmailVerified = decoded.user?.isEmailVerified;
-
-    const redirectToGetStarted = (basePath) => {
-      const url = new URL(`${basePath}/get-started`, request.url);
-      return NextResponse.redirect(url);
-    };
-
-    if (userRole === "admin") {
-      if (!pathname.startsWith(availableRoutes.admin)) {
-        return NextResponse.redirect(
-          new URL(availableRoutes.admin, request.url)
-        );
-      }
-      if (
-        !isEmailVerified &&
-        pathname !== `${availableRoutes.admin}/get-started`
-      ) {
-        return redirectToGetStarted(availableRoutes.admin);
-      }
-    } else if (userRole === "user") {
-      if (!pathname.startsWith(availableRoutes.user)) {
-        return NextResponse.redirect(
-          new URL(availableRoutes.user, request.url)
-        );
-      }
-      if (
-        !isEmailVerified &&
-        pathname !== `${availableRoutes.user}/get-started`
-      ) {
-        return redirectToGetStarted(availableRoutes.user);
-      }
-    }
-    return NextResponse.next();
-  } catch (error) {
-    console.error("JWT decoding error:", error.message);
-    return NextResponse.redirect(new URL("/page404", request.url));
-  }
+  return NextResponse.next();
 }
 
 export const config = {

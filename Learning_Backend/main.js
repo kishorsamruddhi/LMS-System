@@ -42,6 +42,7 @@ const extractToken = require("./utils/middleware");
 const {
   checkStartedStatus,
   checkEmailStatus,
+  checkIsAdmin,
 } = require("./utils/accountLayers");
 
 // Middleware for protected routes
@@ -56,7 +57,10 @@ app.use("/get", protectedRoutes, getRoutes);
 app.use("/progress", protectedRoutes, progressRoute);
 app.use("/tracking", protectedRoutes, trackingRoutes);
 
+protectedRoutes.push(checkIsAdmin);
 // Admin routes
+// TODO- Setup Middleware for Check that admin CURD opertaion only on admin's Business
+
 app.use("/admin/get", protectedRoutes, adminTestRoute);
 app.use("/admin/reports", protectedRoutes, testRoutes);
 app.use("/admin/create", protectedRoutes, adminCreateRoutes);

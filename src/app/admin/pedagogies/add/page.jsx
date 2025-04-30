@@ -111,7 +111,7 @@ function CreatePedagogy() {
     return (
         <div style={{ padding: "2rem" }}>
             <div className="my-4 flex gap-4 items-center">
-                <AdminBackButton addOnPath="/modules" />
+                <AdminBackButton addOnPath="/pedagogies" />
                 <h1 className="text-2xl">Create <span className="text-cyan-500">Pedagogy</span> </h1>
             </div>
             <form style={{ minWidth: "unset", maxWidth: "unset", }} onSubmit={handleSubmit(onSubmit)}>

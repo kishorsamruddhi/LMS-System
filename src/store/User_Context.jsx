@@ -4,7 +4,14 @@ import Cookies from "universal-cookie";
 import { jwtDecode } from "jwt-decode";
 import { cookiesKey } from "@/utils/token";
 import { toast, ToastContainer } from "react-toastify";
-import { redirect } from "next/navigation";
+import { redirect, usePathname } from "next/navigation";
+
+const allowedAuthRoutes = {
+  admin: "/admin",
+  user: "/learner",
+}
+
+const protectedRoutes = ["/admin", "/learner"]
 
 export const UserContext = React.createContext();
 export function decodingToken(token = "") {
@@ -34,12 +41,15 @@ export const UserProvider = ({ children }) => {
   }, []);
 
   const signInHandler = (data, token) => {
-
     updateAuth(data);
     cookies.set(cookiesKey, token, { path: "/" });
-    const isEmailVerified = data?.isEmailVerified || false
-    const business = data?.business_course_id || false
-    const role = data?.role || null
+    getStartedPack(data)
+  };
+
+  function getStartedPack(user) {
+    const isEmailVerified = user?.isEmailVerified || false
+    const business = user?.business_course_id || false
+    const role = user?.role || null
     let route = null
     let isMessage = {
       send: false,
@@ -64,7 +74,6 @@ export const UserProvider = ({ children }) => {
       isMessage.send = true
       isMessage.message = "Please, Verify email to continue"
     }
-
     if (isMessage.send) {
       toast.info(isMessage.message)
     }
@@ -74,13 +83,14 @@ export const UserProvider = ({ children }) => {
         redirect(route)
       }, 1200);
     }
-  };
+  }
 
   const sign_out_handler = () => {
     // toast.success("Logged Out");
     cookies.remove(cookiesKey, { path: "/" });
     window.location.pathname = "/"
     updateAuth(null);
+    redirect("/")
   };
 
   return (

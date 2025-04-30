@@ -11,13 +11,22 @@ const router = express.Router();
 
 router.get("/all_data_counts", async (req, res) => {
   try {
-    const coursesCount = await Course.countDocuments();
-    const modulesCount = await Module.countDocuments();
-    const assessmentsCount = await Assessment.countDocuments();
-    const pedagogyCount = await Pedagogy.countDocuments();
-    const businessCount = await BusinessCourses.countDocuments();
-    const learnersCount = await UserReportCard.countDocuments();
+    const business_id = req.user.business_course_id;
+    const coursesCount = await Course.find({ business_id }).countDocuments();
+    const modulesCount = await Module.find({ business_id }).countDocuments();
+    const assessmentsCount = await Assessment.find({
+      business_id,
+    }).countDocuments();
+    const pedagogyCount = await Pedagogy.find({ business_id }).countDocuments();
+    const learnersCount = await UserReportCard.find({
+      business_course_id: business_id,
+    }).countDocuments();
     const learningTime = await LearningTime.aggregate([
+      {
+        $match: {
+          business_id,
+        },
+      },
       {
         $group: {
           _id: null,
@@ -39,7 +48,6 @@ router.get("/all_data_counts", async (req, res) => {
         pedagogyCount,
         modulesCount,
         assessmentsCount,
-        businessCount,
         learnersCount,
         learningTime: totalTime,
       },
@@ -92,9 +100,15 @@ router.get("/courses", async (req, res) => {
 router.get("/course_list", async (req, res) => {
   try {
     const business_id = req.user.business_course_id;
-    const bus = await BusinessCourses.findById(business_id, {
-      courses: 1,
-    })
+    const bus = await BusinessCourses.findOne(
+      {
+        admin_id: req.user._id,
+        _id: business_id,
+      },
+      {
+        courses: 1,
+      }
+    )
       .populate({ path: "courses", select: "course_name" })
       .lean();
 

@@ -8,6 +8,11 @@ const learningTimeSchema = new mongoose.Schema(
       unique: true,
       ref: "user",
     },
+    business_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Institue",
+      required: true,
+    },
     timeSpent: {
       type: Number,
       required: true,

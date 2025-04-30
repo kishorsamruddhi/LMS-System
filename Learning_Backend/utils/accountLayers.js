@@ -22,4 +22,23 @@ const checkEmailStatus = (req, res, next) => {
   return res.status(403).json({ data: sendMessage, success: false });
 };
 
-module.exports = { checkStartedStatus, checkEmailStatus };
+const checkIsAdmin = (req, res, next) => {
+  const user = req.user;
+  if (user?.isAdmin) {
+    return next();
+  }
+  const sendMessage = "Only admin's can access.";
+  return res.status(403).json({ data: sendMessage, success: false });
+};
+
+// const checkIsBusinessAdmin = (req, res, next) => {
+//   const user = req.user;
+//   if (user?.business_course_id) {
+//     return next();
+//   }
+//   const role = user.role;
+//   const sendMessage = messages[role] || "Resource not available";
+//   return res.status(403).json({ data: sendMessage, success: false });
+// };
+
+module.exports = { checkStartedStatus, checkEmailStatus, checkIsAdmin };

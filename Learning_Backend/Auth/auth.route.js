@@ -41,6 +41,7 @@ router.post("/login", async (req, res) => {
       username: user.username,
       business_course_id: user?.business_course_id || null,
       isEmailVerified: user.isEmailVerified,
+      isAdmin: user.isAdmin,
     };
     const token = jwt.sign(
       {
@@ -91,13 +92,14 @@ router.post("/create-account", async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, saltRounds);
-
+    const isAdmin = role === "admin";
     const account = new User({
       username,
       email,
       password: hashedPassword,
       phoneNumber,
       role,
+      isAdmin,
     });
     await account.save();
 
@@ -108,6 +110,7 @@ router.post("/create-account", async (req, res) => {
       username: account.username,
       business_course_id: account?.business_course_id || null,
       isEmailVerified: account.isEmailVerified,
+      isAdmin: account.isAdmin,
     };
 
     const token = jwt.sign(

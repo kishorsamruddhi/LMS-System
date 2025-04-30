@@ -17,6 +17,11 @@ const userSchema = new mongoose.Schema(
       default: "user",
       require: true,
     },
+    isAdmin: {
+      type: Boolean,
+      default: false,
+      require: true,
+    },
     address: { type: String, maxlength: 60, default: "" },
     password: { type: String, default: "" },
     business_course_id: {

@@ -67,6 +67,7 @@ router.post("/institute", async (req, res) => {
       username: user.username,
       business_course_id: user?.business_course_id || null,
       isEmailVerified: user.isEmailVerified,
+      isAdmin: user.isAdmin,
     };
     const token = jwt.sign(
       {
@@ -244,6 +245,7 @@ router.post("/user", async (req, res) => {
       username: user.username,
       business_course_id: user?.business_course_id || null,
       isEmailVerified: user.isEmailVerified,
+      isAdmin: user.isAdmin,
     };
     const token = jwt.sign(
       {
@@ -381,6 +383,7 @@ router.post("/verify-email-code", async (req, res) => {
       username: user.username,
       business_course_id: user?.business_course_id || null,
       isEmailVerified: user.isEmailVerified,
+      isAdmin: user.isAdmin,
     };
     const token = jwt.sign(
       {
