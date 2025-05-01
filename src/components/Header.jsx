@@ -51,14 +51,9 @@ export default function Header() {
                     {user ?
                         <AuthPopOverMenu {...menuProps} />
                         :
-                        <Link href={"/auth/signin"}>
-                            <Button
-                                variant="solid"
-                                className={"border-2 border-gray-300 hover:border-cyan-600  hover:text-cyan-600"}
-                                size="lg"
-                            >
-                                Get Started
-                            </Button>
+                        <Link href={"/auth/signin"}
+                            className={"border-2 border-gray-300 py-1 px-3  rounded-md hover:border-cyan-600  hover:text-cyan-600"}>
+                            Get Started
                         </Link>
                     }
                 </div>

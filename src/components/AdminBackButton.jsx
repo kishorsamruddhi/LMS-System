@@ -4,7 +4,7 @@ import Link from 'next/link'
 import React from 'react'
 
 const AdminBackButton = ({ addOnPath = "" }) => {
-    return <Button asChild>
+    return <Button asChild className={"border border-gray-100 hover:border-cyan-500 hover:text-cyan-500"}>
         <Link href={"/admin" + addOnPath}>
             <ArrowLeft />
         </Link>
