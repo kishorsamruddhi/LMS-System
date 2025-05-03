@@ -14,7 +14,7 @@ import useUserContext from "@/store/User_Context";
 import { Github, Loader, Mail } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-// import { signIn } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import { Fragment, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -72,7 +72,7 @@ const SignInPage = () => {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {/* <div className="flex gap-2">
+            <div className="flex gap-2">
               <Button
                 onClick={() => signIn("google")}
                 fullWidth
@@ -87,7 +87,7 @@ const SignInPage = () => {
               >
                 <Github className="w-5 h-5" />
               </Button>
-            </div> */}
+            </div>
             {/* 
             <div className="relative my-4">
               <div
