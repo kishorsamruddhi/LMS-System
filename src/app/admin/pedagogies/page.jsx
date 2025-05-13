@@ -10,6 +10,8 @@ import LinkButton from "@/components/LinkButton";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import LoadingSpinner from "@/components/Loading";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 function Page() {
     return <Suspense fallback={<LoadingSpinner />}>
@@ -30,6 +32,7 @@ function PedagogyPage() {
     const [data, setData] = useState(null)
     const [isLoading, setIsLoading] = useState(true)
     const [isError, setIsError] = useState(null)
+    const [model, setModel] = useState(null);
 
     const getTableData = async () => {
         if (!selectedModule) return
@@ -95,10 +98,20 @@ function PedagogyPage() {
     const cols = [
         { header: "Unique Id", field: "_id" },
         { header: "Title", field: "title" },
-        { header: "Description", field: "text" },
+        { header: "Description", field: "text", body: description },
         { header: "Media Url", field: "url" },
         { header: "Pedagogy Type", field: "pedagogy_type" },
     ]
+
+    function handleDialog(data) {
+        setModel(data)
+    }
+
+    function description(rowData) {
+        return <span onClick={() => handleDialog({ title: "Description", value: rowData })}>{ }
+            {rowData}
+        </span>
+    }
 
     function ActionBtns(rowData) {
         const nextUrl = `pedagogies/${rowData?._id}?mode=`
@@ -123,13 +136,20 @@ function PedagogyPage() {
             body: ActionBtns
         },
     }
+
     function courseChangeHandler(val) {
         setSelectedCourse(val)
     }
+
     function moduleChangeHandler(val) {
         setSelectedModule(val)
     }
 
+    function closeModel(val) {
+        if (val === false) {
+            setModel(null)
+        }
+    }
     const modulesList = Array.isArray(courseDropdown) ? courseDropdown.find(val => val._id === selectedCourse)?.modules : []
 
     return (
@@ -137,11 +157,24 @@ function PedagogyPage() {
             <div style={{ margin: "1rem 0" }} className="div">
                 <AdminBackButton style={{ margin: "0" }} />
             </div>
-
             <div className="my-4 flex justify-between items-center">
                 <h1 className="text-2xl">Pedagogies <span className="text-cyan-500">Management</span> </h1>
                 <LinkButton href={"pedagogies/add"}>Create Pedagogy</LinkButton>
             </div>
+
+            <Dialog open={model} onOpenChange={closeModel}>
+                <DialogContent className={"bg-white"}>
+                    <DialogHeader>
+                        <DialogTitle>Are you absolutely sure?</DialogTitle>
+                        <DialogDescription>
+                            This action cannot be undone. This will permanently delete your account
+                            and remove your data from our servers.
+                        </DialogDescription>
+                    </DialogHeader>
+                </DialogContent>
+            </Dialog>
+
+
             <div className="flex gap-4 items-center">
                 {courseDropdown && courseDropdown.length > 0 ? <Dropdown options={courseDropdown}
                     optionLabel={"course_name"}
