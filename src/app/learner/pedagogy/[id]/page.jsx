@@ -15,7 +15,7 @@ import {
     SidebarHeader,
     SidebarProvider,
 } from "@/components/ui/sidebar"
-import { SkipForward } from "lucide-react";
+import { Play, SkipForward } from "lucide-react";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 
 const Pedagogy = ({ params }) => {
@@ -67,13 +67,13 @@ const Pedagogy = ({ params }) => {
     const isLastQuestion = activePedagogy === childArray?.length - 1
 
     const PlayListSection = ({ items }) => {
-        return <div className="testName" >
+        return <div className="videoPlaylist">
             {items.length > 0 && items.map((val, index) => {
-                return <div key={index} className="swiper-card" onClick={() => setActivePedagogy(index)}>
-                    {activePeda._id === val._id && <span className="currentTag">Playing</span>}
+                return <div key={index} className={activePeda._id === val._id ? "listItem bg-green-200" : "listItem"} onClick={() => setActivePedagogy(index)}>
+                    {/* {activePeda._id === val._id && <span className="currentTag"><Play height={12} width={12} /></span>} */}
                     <div className="top">
                         <i className={completedArrayList.includes(val._id) ? "pi pi-check-circle" : "pi pi-circle"}></i>
-                        <h3 className="title">{index + 1}. {val.title}</h3>
+                        <h3 className="title line-clamp-2">{index + 1}. {val.title}</h3>
                     </div>
                     {/* <img height={120} width={120} src="/Icons/play-icon.svg" alt="play-icon" /> */}
                 </div>
@@ -133,9 +133,9 @@ const MobilePlaylistSection = ({ items, activePeda, activePedagogy, completedArr
     if (!upcomingVideo) return null
     return <Fragment>
         <div className="centered">
-            <Button className=" bg-white triggerButton" onClick={() => setVisibleBottom(true)} >
+            <button className=" bg-white triggerButton border-2 border-gray-300 py-1 px-2 text-sm rounded-lg hover:border-cyan-500" onClick={() => setVisibleBottom(true)} >
                 <SkipForward /> Next: {upcomingVideo.title}
-            </Button>
+            </button>
         </div>
         <div className="mac">
             <SidebarProvider>
@@ -149,8 +149,8 @@ const MobilePlaylistSection = ({ items, activePeda, activePedagogy, completedArr
                                 {activePeda._id === val._id && <span className={style.currentTag}>Playing</span>}
                                 <div className="top">
                                     <i className={completedArrayList.includes(val._id) ? "pi pi-check-circle" : "pi pi-circle"}></i>
-                                    <h3 className="title">{index + 1}. {val.title}</h3>
-                                    <p className={style.des}>{val.text}</p>
+                                    <h3 className="title line-clamp-2">{index + 1}. {val.title}</h3>
+                                    {/* <p className={style.des}>{val.text}</p> */}
                                 </div>
                             </SidebarGroup>
                         })}

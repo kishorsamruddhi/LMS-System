@@ -4,6 +4,7 @@ const nextConfig = {
   env: {
     TEST: process.env.TEST,
   },
+  devIndicators: false,
   images: {
     domains: ["github.com", "avatars.githubusercontent.com"],
   },

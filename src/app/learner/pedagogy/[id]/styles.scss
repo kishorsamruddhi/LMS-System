@@ -106,7 +106,7 @@
 
             .DescriptionPanel {
                 width: 100%;
-                max-height: 150px;
+                max-height: 450px;
                 padding-bottom: 2rem;
                 padding-right: 6px;
                 cursor: pointer;
@@ -134,7 +134,7 @@
         padding-right: 2rem;
         grid-template-columns: auto 250px;
 
-        .testName {
+        .videoPlaylist {
             max-height: 70vh;
             overflow-y: auto;
             background-color: #fff;
@@ -156,12 +156,13 @@
                 border-radius: 10px;
             }
 
-            .swiper-card {
+            .listItem {
                 position: relative;
                 border-bottom: 1px solid #dcdc;
                 user-select: none;
                 padding: 10px;
                 transition: background-color .2s ease-in-out;
+                cursor: pointer;
 
                 &:hover {
                     background-color: #00000021
@@ -173,21 +174,25 @@
                     top: 10px;
                     font-size: .7rem;
                     color: #fff;
-                    background-color: #06060696;
+                    background-color: #000000;
                     padding: 3px 6px;
                     border-radius: 4px;
                 }
 
-                .top i {}
+                // .top i {}
 
-                h3 {}
-
+                // h3 {}
                 img {
                     display: block;
                     margin-left: auto;
                     margin-right: auto;
                 }
             }
+        }
+
+        .sidebar-playlist {
+            position: sticky;
+            top: 0;
         }
 
     }
@@ -209,9 +214,6 @@
             width: 70vw;
         }
     }
-
-
-
 
     .actionButtons {
         display: flex;
@@ -251,6 +253,7 @@
     .Pedagogy {
         .sticky-section {
             display: block;
+            padding-right: 0;
 
             .sidebar-playlist {
                 display: none;

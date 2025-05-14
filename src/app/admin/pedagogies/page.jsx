@@ -10,8 +10,7 @@ import LinkButton from "@/components/LinkButton";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import LoadingSpinner from "@/components/Loading";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 function Page() {
     return <Suspense fallback={<LoadingSpinner />}>
@@ -99,7 +98,7 @@ function PedagogyPage() {
         { header: "Unique Id", field: "_id" },
         { header: "Title", field: "title" },
         { header: "Description", field: "text", body: description },
-        { header: "Media Url", field: "url" },
+        { header: "Media Url", field: "url", body: urlHandler },
         { header: "Pedagogy Type", field: "pedagogy_type" },
     ]
 
@@ -108,7 +107,13 @@ function PedagogyPage() {
     }
 
     function description(rowData) {
-        return <span onClick={() => handleDialog({ title: "Description", value: rowData })}>{ }
+        return <span className="cursor-help hover:bg-green-50 line-clamp-2" onClick={() => handleDialog({ title: "Description", text: rowData })}>
+            {rowData}
+        </span>
+    }
+
+    function urlHandler(rowData) {
+        return <span className="cursor-help hover:bg-green-50 line-clamp-2" onClick={() => handleDialog({ title: "Url", text: rowData })}>
             {rowData}
         </span>
     }
@@ -162,19 +167,17 @@ function PedagogyPage() {
                 <LinkButton href={"pedagogies/add"}>Create Pedagogy</LinkButton>
             </div>
 
-            <Dialog open={model} onOpenChange={closeModel}>
+            {model?.title && <Dialog open={model} onOpenChange={closeModel}>
                 <DialogContent className={"bg-white"}>
                     <DialogHeader>
-                        <DialogTitle>Are you absolutely sure?</DialogTitle>
-                        <DialogDescription>
-                            This action cannot be undone. This will permanently delete your account
-                            and remove your data from our servers.
+                        <DialogTitle>{model?.title || "No Title"}</DialogTitle>
+                        <DialogDescription className={"bg-green-50 p-1"}>
+                            {model?.text || "No Text"}
                         </DialogDescription>
                     </DialogHeader>
                 </DialogContent>
             </Dialog>
-
-
+            }
             <div className="flex gap-4 items-center">
                 {courseDropdown && courseDropdown.length > 0 ? <Dropdown options={courseDropdown}
                     optionLabel={"course_name"}

@@ -10,6 +10,7 @@ import LinkButton from "@/components/LinkButton";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import LoadingSpinner from "@/components/Loading";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
 function Page() {
     return <Suspense fallback={<LoadingSpinner />}>
@@ -30,6 +31,7 @@ function AssessmentPage() {
     const [data, setData] = useState(null)
     const [isLoading, setIsLoading] = useState(true)
     const [isError, setIsError] = useState(null)
+    const [model, setModel] = useState(null);
 
     const getTableData = async () => {
         if (!selectedModule) return
@@ -93,8 +95,8 @@ function AssessmentPage() {
 
     const cols = [
         { header: "Unique Id", field: "_id" },
-        { header: "Question", field: "primary_text" },
-        { header: "Correct Option", field: "correct_option", },
+        { header: "Question", field: "primary_text", body: renderQuestion },
+        { header: "Correct Option", field: "correct_option", body: renderCorrectOption },
         { header: "Options", field: "options", body: renderOptions },
         { header: "Answer Type", field: "type" },
     ]
@@ -102,11 +104,30 @@ function AssessmentPage() {
     function renderOptions(options) {
         let value = options
         if (Array.isArray(options)) {
-            const out = options.map((val, index) => `(${index + 1}) ${val.slice(0, 15)}`)
-            value = out.join(", ")
+            const out = options.map((val, index) => `(${index + 1}) ${val}`)
+            value = out.join(",\n ")
         }
-        return value
+        return <span className="cursor-help hover:bg-green-50 line-clamp-2" onClick={() => handleDialog({ title: "Options", text: options })}>
+            {value}
+        </span>
     }
+
+    function handleDialog(data) {
+        setModel(data)
+    }
+
+    function renderQuestion(rowData) {
+        return <span className="cursor-help hover:bg-green-50 line-clamp-2" onClick={() => handleDialog({ title: "Question", text: rowData })}>
+            {rowData}
+        </span>
+    }
+
+    function renderCorrectOption(rowData) {
+        return <span className="cursor-help hover:bg-green-50 line-clamp-2" onClick={() => handleDialog({ title: "Correct Option", text: rowData })}>
+            {rowData}
+        </span>
+    }
+
 
     function ActionBtns(rowData) {
         const nextUrl = `assessments/${rowData?._id}?mode=`
@@ -122,6 +143,18 @@ function AssessmentPage() {
                 </Link>
             </Button>
         </div>
+    }
+
+
+    function handleDialog(data) {
+        setModel(data)
+    }
+
+
+    function closeModel(val) {
+        if (val === false) {
+            setModel(null)
+        }
     }
 
     const tableProps = {
@@ -140,6 +173,20 @@ function AssessmentPage() {
 
     const modulesList = Array.isArray(courseDropdown) ? courseDropdown.find(val => val._id === selectedCourse)?.modules : []
 
+    function renderText(data) {
+        console.log(data)
+        const isOptions = model?.title === "Options" ? true : false;
+        if (!isOptions) {
+            return <p className="bg-green-50">
+                {data}
+            </p>
+        }
+        const out = data?.map((val, index) => <li className="mt-2" key={index}>{val}</li>)
+        return <ul className="bg-green-50 text-sm p-1 list-decimal">
+            {out}
+        </ul>
+    }
+
     return (
         <div className='p-6'>
             <div style={{ margin: "1rem 0" }} className="div">
@@ -150,6 +197,12 @@ function AssessmentPage() {
                 <h1 className="text-2xl">Assessments <span className="text-cyan-500">Management</span> </h1>
                 <LinkButton href={"assessments/add"}>Create Assessments</LinkButton>
             </div>
+            {model?.title && <Dialog open={model} onOpenChange={closeModel}>
+                <DialogContent className={"bg-white"}>
+                    <DialogTitle>{model?.title || "No Title"}</DialogTitle>
+                    {renderText(model?.text || "No Text")}
+                </DialogContent>
+            </Dialog>}
             <div className="flex gap-4 items-center">
                 {courseDropdown && courseDropdown.length > 0 ? <Dropdown options={courseDropdown}
                     optionLabel={"course_name"}
