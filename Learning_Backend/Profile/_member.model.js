@@ -2,6 +2,10 @@ const mongoose = require("mongoose");
 
 const messageSchema = new mongoose.Schema(
   {
+    sendedAt: {
+      type: Date,
+      default: Date.now,
+    },
     text: {
       type: String,
       required: true,
@@ -12,7 +16,7 @@ const messageSchema = new mongoose.Schema(
       required: true,
     },
   },
-  { _id: false, timestamps: true }
+  { _id: false }
 );
 
 const chatSchema = new mongoose.Schema(
@@ -23,10 +27,6 @@ const chatSchema = new mongoose.Schema(
       required: true,
     },
     messages: [messageSchema],
-    allRead: {
-      type: Boolean,
-      default: false,
-    },
   },
   { timestamps: true }
 );

@@ -31,9 +31,9 @@ db.once("open", () => {
 // const formRoute = require("./Test/formRoute");
 const profileAuth = require("./Profile/_auth.route");
 const messageRoute = require("./Profile/_message.route");
-const extractToken = require("./Profile/middleware");
+
 app.use("/profile/auth", profileAuth);
-app.use("/profile/message", extractToken, messageRoute);
+app.use("/profile/message", messageRoute);
 
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
