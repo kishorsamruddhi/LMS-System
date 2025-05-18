@@ -15,6 +15,20 @@ const unknownMessageSchema = new mongoose.Schema(
   { _id: true }
 );
 
+const noteSchema = new mongoose.Schema(
+  {
+    text: {
+      type: String,
+      required: true,
+    },
+    sendedAt: {
+      type: Date,
+      default: Date.now,
+    },
+  },
+  { _id: true }
+);
+
 const connectedToSchema = new mongoose.Schema(
   {
     user: {
@@ -49,6 +63,7 @@ const userSchema = new mongoose.Schema(
     },
     connectedTo: [connectedToSchema],
     unknownChat: [unknownMessageSchema],
+    notes: [noteSchema],
     listeningCode: {
       type: String,
       required: true,

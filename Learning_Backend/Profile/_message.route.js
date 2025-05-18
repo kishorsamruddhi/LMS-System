@@ -36,6 +36,17 @@ router.get("/get", extractToken, async (req, res) => {
       });
     }
 
+    if (user._id.toString() === listener._id.toString()) {
+      const data = await User.findById(user._id, { notes: 1 }).lean();
+      return res.status(200).json({
+        error: false,
+        data: data.notes.map((val) => {
+          val.user = { _id: user._id };
+          return val;
+        }),
+      });
+    }
+
     const haveFriend = user?.connectedTo.length > 0;
     const friends = haveFriend
       ? user?.connectedTo?.find(
@@ -46,7 +57,7 @@ router.get("/get", extractToken, async (req, res) => {
     let chatId = friends?.chat || null;
 
     if (!friends) {
-      res.status(200).json({
+      return res.status(200).json({
         error: false,
         data: [],
       });
@@ -100,7 +111,25 @@ router.post("/send", extractToken, async (req, res) => {
       });
     }
 
+    if (user._id.toString() === listener._id.toString()) {
+      const data = await User.findByIdAndUpdate(
+        user._id,
+        {
+          $push: { notes: { text, user: user._id } },
+        },
+        { new: true }
+      ).lean();
+      return res.status(200).json({
+        error: false,
+        data: data.notes.map((val) => {
+          val.user = { _id: user._id };
+          return val;
+        }),
+      });
+    }
+
     const haveFriend = user?.connectedTo.length > 0;
+
     const friends = haveFriend
       ? user?.connectedTo?.find(
           (doc) => doc.user.toString() === listener._id.toString()
@@ -125,12 +154,12 @@ router.post("/send", extractToken, async (req, res) => {
       .populate({ path: "messages.user", select: "email" })
       .lean();
 
-    res.status(200).json({
+    return res.status(200).json({
       error: false,
-      data: data.messages,
+      data: data?.messages || [],
     });
   } catch (err) {
-    res
+    return res
       .status(500)
       .json({ error: true, data: "Error on Server", message: err.message });
   }
