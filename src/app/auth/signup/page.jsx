@@ -60,7 +60,7 @@ const SignUp = () => {
     setValue("role", val)
   }
 
-  const FormField = ({ label, type, registerKey, options = { required: true }, inputStyle = {} }) => {
+  const FormField = ({ label, type, registerKey, placeholder = "", options = { required: true }, inputStyle = {} }) => {
     return (
       <div className="flex flex-col mb-4">
         <label className="block text-sm font-medium text-gray-600">{label}</label>
@@ -68,6 +68,7 @@ const SignUp = () => {
           disabled={isLoading}
           type={type}
           style={inputStyle}
+          placeholder={placeholder}
           className={`mt-1 block w-full border ${errors[registerKey] ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:ring focus:ring-blue-500`}
           {...register(registerKey, options)}
         />
@@ -83,9 +84,9 @@ const SignUp = () => {
         className="bg-white p-6 rounded-2xl shadow-md w-96"
       >
         <h2 className="text-2xl font-bold mb-4">Sign Up</h2>
-        {FormField({ register: register, errors: errors, label: "Username", type: "text", registerKey: "username", options: Validations.firstName })}
-        {FormField({ register: register, errors: errors, label: "Email", type: "email", registerKey: "email", options: Validations.email })}
-        {FormField({ register: register, errors: errors, label: "Phone Number", type: "number", registerKey: "phoneNumber", options: Validations.phoneNumber })}
+        {FormField({ register, errors, label: "Username", type: "text", registerKey: "username", options: Validations.firstName })}
+        {FormField({ register, errors, label: "Email", type: "email", registerKey: "email", options: Validations.email, placeholder: "example@gmail.com" })}
+        {FormField({ register, errors, label: "Phone Number", type: "number", registerKey: "phoneNumber", options: Validations.phoneNumber, placeholder: "9876543210" })}
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-600">Password</label>
           <PasswordInput register={register} errors={errors} />

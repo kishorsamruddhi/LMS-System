@@ -85,7 +85,7 @@ const _Learners = () => {
                 <AdminBackButton style={{ margin: "0" }} />
             </div>
             <div className="my-4 flex justify-between items-center">
-                <h1 className="text-2xl">Learners Management</h1>
+                <h1 className="text-2xl">Learners  <span className='text-cyan-500'>Management</span>  </h1>
                 <Button
                     className="hover:text-cyan-500"
                 >

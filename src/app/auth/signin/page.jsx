@@ -108,6 +108,7 @@ const SignInPage = () => {
                 <label className="block text-sm font-medium text-gray-700">Email</label>
                 <Input
                   type="email"
+                  placeholder="example@gmail.com"
                   {...register('email', { required: 'Email is required' })}
                   className={`mt-1 block w-full border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm`}
                 />
