@@ -65,13 +65,10 @@ export default function Header() {
 
 function AuthPopOverMenu({ auth, rootLink, sign_out_handler, getStarted, getEmailVerify }) {
     return <DropdownMenu>
-        <DropdownMenuTrigger>
-            <Button
-                variant="solid"
-                className={"border-2 border-gray-300 hover:border-cyan-600  hover:text-cyan-600"}
-                size="lg">
-                <Menu />
-            </Button>
+        <DropdownMenuTrigger
+            variant="solid"
+            className={"border-2 border-gray-300 hover:border-cyan-600  hover:text-cyan-600"}>
+            <Menu />
         </DropdownMenuTrigger>
         <DropdownMenuContent className={"bg-white shadow-2xl border-gray-200 cursor-pointer"}>
             <DropdownMenuLabel>{auth.username} <span className="text-gray-400">({auth.email})</span></DropdownMenuLabel>
