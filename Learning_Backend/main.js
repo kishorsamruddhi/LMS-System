@@ -59,7 +59,6 @@ app.use("/tracking", protectedRoutes, trackingRoutes);
 
 protectedRoutes.push(checkIsAdmin);
 // Admin routes
-// TODO- Setup Middleware for Check that admin CURD opertaion only on admin's Business
 
 app.use("/admin/get", protectedRoutes, adminTestRoute);
 app.use("/admin/reports", protectedRoutes, testRoutes);

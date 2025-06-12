@@ -7,7 +7,6 @@ import { get_pedagoggies_with_status } from '@/api/get'
 import { useQuery } from "@tanstack/react-query"
 import VideoSection from "./VideoPlayer"
 import LoadingSpinner from "@/components/Loading"
-import { Button } from "@/components/ui/button";
 import {
     Sidebar,
     SidebarContent,
@@ -91,11 +90,11 @@ const Pedagogy = ({ params }) => {
                     <Breadcrumb>
                         <BreadcrumbList>
                             <BreadcrumbItem>
-                                <BreadcrumbLink className={"hover:text-cyan-500"} href={"/learner/dashboard"}>My Courses</BreadcrumbLink>
+                                <BreadcrumbLink className={"hover:text-cyan-500"} href={"/learner"}>My Courses</BreadcrumbLink>
                             </BreadcrumbItem>
                             <BreadcrumbSeparator />
                             <BreadcrumbItem>
-                                <BreadcrumbLink className={"hover:text-cyan-500"} href={"/learner/dashboard"}>{module_data.module_name}</BreadcrumbLink>
+                                <BreadcrumbLink className={"hover:text-cyan-500"} href={"/learner"}>{module_data.module_name}</BreadcrumbLink>
                             </BreadcrumbItem>
                             <BreadcrumbSeparator />
                             <BreadcrumbItem className="cursor-default">

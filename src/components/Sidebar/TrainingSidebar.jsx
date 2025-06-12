@@ -92,10 +92,23 @@ const TrainingSidebar = () => {
 };
 
 const DynamicBackButton = ({ children, href, hardURL, ...props }) => {
-    const segments = typeof window !== 'undefined' ? location.pathname.split('/') : [];
-    segments.pop();
-    segments.pop();
-    const newHref = segments.join('/');
+    const pathname = usePathname()
+    const [newHref, setnewHref] = useState(getBackPagePath(pathname))
+    useEffect(() => {
+        setnewHref(getBackPagePath(pathname))
+    }, [pathname])
+
+    function getBackPagePath(url) {
+        let path = url.split('/')
+        path.pop();
+        path.pop();
+        if (path.length < 2) {
+            path = ["", "learner"]
+        }
+        path = path.join("/")
+        return path
+    }
+
     return (
         <Link className="back" href={hardURL || newHref} {...props}>
             {children || "Back"}
