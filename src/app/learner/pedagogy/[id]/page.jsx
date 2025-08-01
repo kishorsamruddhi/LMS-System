@@ -15,7 +15,8 @@ import {
     SidebarProvider,
 } from "@/components/ui/sidebar"
 import { Play, SkipForward } from "lucide-react";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+import ErrorPage from "@/components/ErrorPage";
+import BreadCrumbsRender from "@/components/BreadCrumbsRender";
 
 const Pedagogy = ({ params }) => {
     const { id } = use(params)
@@ -54,7 +55,7 @@ const Pedagogy = ({ params }) => {
     }
 
     if (isError) {
-        return <h1>{error}</h1>
+        return <ErrorPage message={error}></ErrorPage>
     }
 
     const module_data = data.module_id
@@ -72,7 +73,7 @@ const Pedagogy = ({ params }) => {
                     {/* {activePeda._id === val._id && <span className="currentTag"><Play height={12} width={12} /></span>} */}
                     <div className="top">
                         <i className={completedArrayList.includes(val._id) ? "pi pi-check-circle" : "pi pi-circle"}></i>
-                        <h3 className="title line-clamp-2">{index + 1}. {val.title}</h3>
+                        <p className=" line-clamp-2">{index + 1}. {val.title}</p>
                     </div>
                     {/* <img height={120} width={120} src="/Icons/play-icon.svg" alt="play-icon" /> */}
                 </div>
@@ -83,25 +84,16 @@ const Pedagogy = ({ params }) => {
     const propsMobilePlaylistSection = {
         items: childArray, completedArrayList, activePeda, setActivePedagogy, activePedagogy
     }
+    const navLinks = [
+        { id: 1, href: "/learner", title: "My Courses" },
+        { id: 2, href: "/learner", title: module_data.module_name },
+        { id: 3, title: activePeda.title },
+    ]
     return (
         <div className='Pedagogy'>
             <div className="Pedagogy_nav">
                 <div className="">
-                    <Breadcrumb>
-                        <BreadcrumbList>
-                            <BreadcrumbItem>
-                                <BreadcrumbLink className={"hover:text-cyan-500"} href={"/learner"}>My Courses</BreadcrumbLink>
-                            </BreadcrumbItem>
-                            <BreadcrumbSeparator />
-                            <BreadcrumbItem>
-                                <BreadcrumbLink className={"hover:text-cyan-500"} href={"/learner"}>{module_data.module_name}</BreadcrumbLink>
-                            </BreadcrumbItem>
-                            <BreadcrumbSeparator />
-                            <BreadcrumbItem className="cursor-default">
-                                {activePeda.title}
-                            </BreadcrumbItem>
-                        </BreadcrumbList>
-                    </Breadcrumb>
+                    <BreadCrumbsRender list={navLinks} />
                 </div>
                 {/* <BackButton href="/learner/dashboard" /> */}
             </div>
@@ -117,7 +109,6 @@ const Pedagogy = ({ params }) => {
                 <div className="sidebar-playlist">
                     <PlayListSection items={childArray} />
                 </div>
-
             </div>
             {childArray.length > 0 && <div className="mobile-playlist-trigger">
                 <MobilePlaylistSection {...propsMobilePlaylistSection} />
@@ -136,7 +127,7 @@ const MobilePlaylistSection = ({ items, activePeda, activePedagogy, completedArr
                 <SkipForward /> Next: {upcomingVideo.title}
             </button>
         </div>
-        <div className="mac">
+        <div className="mac sticky top-12">
             <SidebarProvider>
                 <Sidebar>
                     <SidebarHeader >Playlist</SidebarHeader>

@@ -86,7 +86,7 @@ const SignUp = () => {
         <h2 className="text-2xl font-bold mb-4">Sign Up</h2>
         {FormField({ register, errors, label: "Username", type: "text", registerKey: "username", options: Validations.firstName })}
         {FormField({ register, errors, label: "Email", type: "email", registerKey: "email", options: Validations.email, placeholder: "example@gmail.com" })}
-        {FormField({ register, errors, label: "Phone Number", type: "number", registerKey: "phoneNumber", options: Validations.phoneNumber, placeholder: "9876543210" })}
+        {FormField({ register, errors, label: "Phone Number (optional)", type: "number", registerKey: "phoneNumber", options: Validations.phoneNumber, placeholder: "9876543210" })}
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-600">Password</label>
           <PasswordInput register={register} errors={errors} />

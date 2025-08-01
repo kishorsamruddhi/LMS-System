@@ -17,19 +17,22 @@ const passwordValidation = {
     message: "Password length cannot exceed 30 characters",
   },
 }
-const PasswordInput = ({ register, errors }) => {
+const PasswordInput = ({ id = "password", register, errors, registerKey = "password" }) => {
   const [showPassword, setShowPassword] = useState(false);
 
   function toggleEye() {
     setShowPassword(pre => !pre)
   }
+  const eyeClass = "cursor-pointer text-neutral-400 h-8 rounded-md hover:text-neutral-800 hover:bg-neutral-300 px-[6px] w-8 mr-[1px]  absolute top-1/2 right-0 translate-y-[-50%] "
+  const Icon =
+    showPassword ? <Eye className={eyeClass} onClick={toggleEye} /> : <EyeOff className={eyeClass} onClick={toggleEye} />
   return (
-    <div className="flex w-full max-w-sm items-center space-x-2">
-      <Input {...register("password", passwordValidation)}
-        id="password"
+    <div className=" relative w-full">
+      <Input {...register(registerKey, passwordValidation)}
+        id={id}
+        className={"border-1  border-neutral-300"}
         type={showPassword ? "text" : "password"} />
-
-      {showPassword ? <Eye onClick={toggleEye} /> : <EyeOff onClick={toggleEye} />}
+      {Icon}
     </div>
   );
 };

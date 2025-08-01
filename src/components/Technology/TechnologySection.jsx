@@ -36,7 +36,7 @@ const Technology_Section = ({ courseList, courses_tracking }) => {
     return (
         <div className='Technology_Section'>
             <div className='dash-course-heading'>
-                <h3 className='text-lg'>My Technology</h3>
+                <h3 className='text-lg font-bold'>My <span className="text-cyan-500">Courses</span> </h3>
             </div>
             {selectedCourse && <div className="subChild">
                 <div className="sub_nav_btns">

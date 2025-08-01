@@ -97,7 +97,7 @@ router.post("/create-account", async (req, res) => {
       username,
       email,
       password: hashedPassword,
-      phoneNumber,
+      phoneNumber: phoneNumber || 1234567890,
       role,
       isAdmin,
     });

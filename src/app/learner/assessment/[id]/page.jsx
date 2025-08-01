@@ -8,8 +8,8 @@ import LearnerCongrats from "./_Complete"
 import LoadingSpinner from "@/components/Loading"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/button"
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { Loader, Shredder } from "lucide-react"
+import BreadCrumbsRender from "@/components/BreadCrumbsRender"
 
 const Assessment = ({ params }) => {
     const { id } = use(params)
@@ -62,25 +62,16 @@ const Assessment = ({ params }) => {
         return <LearnerCongrats totalQuestion={childArray} score={successScore} module={module_data}
         />
     }
+    const navLinks = [
+        { id: 1, href: "/learner", title: "My Courses" },
+        { id: 2, href: "/learner", title: module_data.module_name },
+        { id: 3, title: `Question No. ${currentQuestionIndex + 1}` },
+    ]
     return (
         <div className='Assessment'>
             <div className="Assessment_nav">
                 <div className="">
-                    <Breadcrumb>
-                        <BreadcrumbList>
-                            <BreadcrumbItem>
-                                <BreadcrumbLink className={"hover:text-cyan-500"} href={"/learner"}>My Courses</BreadcrumbLink>
-                            </BreadcrumbItem>
-                            <BreadcrumbSeparator />
-                            <BreadcrumbItem>
-                                <BreadcrumbLink className={"hover:text-cyan-500"} href={"/learner"}>{module_data.module_name}</BreadcrumbLink>
-                            </BreadcrumbItem>
-                            <BreadcrumbSeparator />
-                            <BreadcrumbItem>
-                                Question No. {currentQuestionIndex + 1}
-                            </BreadcrumbItem>
-                        </BreadcrumbList>
-                    </Breadcrumb>
+                    <BreadCrumbsRender list={navLinks} />
                 </div>
                 <p> <span className="text-cyan-500 font-bold"> {currentQuestionIndex + 1}</span> out of {childArray.length} </p>
             </div>

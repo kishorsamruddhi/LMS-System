@@ -23,7 +23,7 @@ import { toast } from "react-toastify";
 const SignInPage = () => {
   const { auth, isAuhtLoading, signInHandler } = useUserContext()
   const [loading, setLoading] = useState(false)
-  const { register, handleSubmit, formState: { errors }, } = useForm();
+  const { register, setValue, handleSubmit, formState: { errors }, } = useForm();
 
   useEffect(() => {
     if (!isAuhtLoading && auth?.role) {
@@ -62,6 +62,13 @@ const SignInPage = () => {
     }
   };
 
+  function testUserCredentials() {
+    setValue("email", "testuser@gmail.com")
+    setValue("password", "12345678")
+  }
+
+  const socialBtnClass = "border-2 border-gray-300 hover:border-cyan-300  flex items-center justify-center space-x-2 rounded"
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
       <Card className="max-w-sm w-full space-y-8 p-6 bg-white border-rose-50 rounded-xl shadow-xl">
@@ -75,18 +82,20 @@ const SignInPage = () => {
             <div className="flex gap-2">
               <Button
                 onClick={() => signIn("google")}
-                fullWidth
-                className="border-2 border-gray-300 hover:border-cyan-300  flex items-center justify-center space-x-2 rounded"
+                className={socialBtnClass}
               >
                 <Mail className="w-5 h-5" />
               </Button>
               <Button
                 onClick={() => signIn("github")}
-                fullWidth
-                className="border-2 border-gray-300 hover:border-cyan-300  flex items-center justify-center space-x-2 rounded"
+                className={socialBtnClass}
               >
                 <Github className="w-5 h-5" />
               </Button>
+
+              <Button
+                onClick={testUserCredentials}
+                className={socialBtnClass}>Use guest creadentials</Button>
             </div>
             {/* 
             <div className="relative my-4">

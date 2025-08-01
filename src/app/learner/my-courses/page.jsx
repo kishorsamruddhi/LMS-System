@@ -81,7 +81,7 @@ const MyTechnology = () => {
 
     return (
         <div className='CoursesPage'>
-            <h1 className='text-3xl '>My <span className='text-cyan-500'>Technology</span> </h1>
+            <h1 className='text-3xl '>My <span className='text-cyan-500'>Courses</span> </h1>
             <div className="CourseList">
                 {courseList && courseList.map(({ _id, course_name, course_desc, color, modules }, cor_ind) => {
                     const isCourseCompleted = completedCourses.find((cor) => cor._id === _id)

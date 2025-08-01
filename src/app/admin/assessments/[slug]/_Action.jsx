@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import AdminBackButton from "@/components/AdminBackButton";
@@ -111,18 +111,22 @@ const Actions = ({ formValues = {} }) => {
         </div>
         <form style={{ minWidth: "unset", maxWidth: "unset", }} onSubmit={handleSubmit(onSubmit)}>
             {FormField({ register, errors, label: "Question:", fieldType: "text", registerKey: "primary_text" })}
+
             <OptionsField  {...optCompProps} />
-            <div className="mt-4">
-                <Button className={"hover:text-cyan-400"} disabled={isLoading || !editMode} type="submit">
-                    {isLoading ? <>
-                        <Loader />
-                        <span className="ml-2">
-                            Updating Assessment
-                        </span>
-                    </>
-                        : "Update Assessment"}
-                </Button>
-            </div>
+            {editMode && <Fragment>
+                <div className="mt-4">
+                    <Button className={"hover:text-cyan-400"} disabled={isLoading || !editMode} type="submit">
+                        {isLoading ? <>
+                            <Loader />
+                            <span className="ml-2">
+                                Updating Assessment
+                            </span>
+                        </>
+                            : "Update Assessment"}
+                    </Button>
+                </div>
+            </Fragment>
+            }
         </form>
     </div>
     );
@@ -182,13 +186,13 @@ const OptionsField = ({ control, errors, setValue, editMode }) => {
                     </div>
                 )
             })}
-            <Button
+            {editMode && <Button
                 type="button"
                 disabled={!editMode}
                 style={{ padding: "6px 12px", marginTop: "2rem" }}
                 onClick={addOption}  >
                 <Plus /> Add Option
-            </Button>
+            </Button>}
             {errors.options && <span>This field is required</span>}
         </div>
     );

@@ -46,7 +46,7 @@ const pinCode = {
   },
 };
 const phoneNumber = {
-  required: "Phone Number is required",
+  required: false,
   maxLength: {
     value: 12,
     message: "Phone Number cannot exceed 12 numbers",

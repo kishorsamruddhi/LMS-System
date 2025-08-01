@@ -64,6 +64,12 @@ export const sendInvitationApi = async ({ email }) => {
   );
 };
 
+export async function updatePassword({ password, new_password }) {
+  return handleRequest(() =>
+    axiosInstance.post("/setup/update-password", { password, new_password })
+  );
+}
+
 // export const setupValidteUserApi = async () => {
 //   return handleRequest(() => axiosInstance.get("/setup/user-validate"));
 // };

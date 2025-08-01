@@ -20,26 +20,32 @@ import { UserContext } from "@/store/User_Context";
 import { Loader } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { redirect } from "next/navigation";
+import LoadingSpinner from "@/components/Loading";
 
+let tm = null
 export default function Page() {
     const { auth, isAuhtLoading, signInHandler } = use(UserContext)
     const [token, setToken] = useState("");
     const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        if (!isAuhtLoading && auth?.role) {
-            if (auth.isEmailVerified) {
-                toast.info("Your Email is Already Verified. Redirecting...")
-                setTimeout(() => {
-                    let link = "/learner"
-                    if (!auth?.business_course_id) {
-                        link = "/learner/get-started"
-                    }
-                    redirect(link)
-                }, 1200);
-            }
-        }
-    }, [isAuhtLoading])
+    if (isAuhtLoading) {
+        return <LoadingSpinner height="calc(100vh - 100px)" />
+    }
+
+    if (!auth?.business_course_id) {
+        link = "/learner/get-started"
+        redirect(link)
+        return null
+    }
+    if (auth?.isEmailVerified) {
+        tm && clearTimeout(tm)
+        tm = setTimeout(() => {
+            toast.info("Your Email is Already Verified. Redirecting...")
+        }, 600)
+        let link = "/learner"
+        redirect(link)
+        return null
+    }
 
     const handleSendCode = async () => {
         setLoading(true);
@@ -81,7 +87,8 @@ export default function Page() {
 
     return (
         <div className="p-6 w-full">
-            <Tabs defaultValue="send" className="mx-auto w-[400px]">
+            <h3 className="text-2xl text-center mb-3 text-cyan-600 font-bold">Email Verification</h3>
+            <Tabs defaultValue="send" className="mx-auto max-w-[400px]">
                 <TabsList className="grid w-full grid-cols-2 border-2 border-gray-500">
                     <TabsTrigger className="shadow-black" value="send">Send Code</TabsTrigger>
                     <TabsTrigger className="shadow-black" value="verify">Verify Code</TabsTrigger>

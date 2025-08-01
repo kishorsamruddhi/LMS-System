@@ -43,7 +43,7 @@ const TrainingSidebar = () => {
     const link_prefix = "/learner";
     const navigations = auth?.business_course_id && auth?.isEmailVerified ? [
         { icon: <Home />, label: "Dashboard", route: "/", },
-        { icon: <Book />, label: "Technologies", route: "/my-courses", },
+        { icon: <Book />, label: "Courses", route: "/my-courses", },
         { icon: <ChartArea />, label: "Reports", route: "/report", },
         { icon: <Trophy />, label: "My Certificates", route: "/certificates" },
     ] : [

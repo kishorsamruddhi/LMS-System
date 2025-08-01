@@ -43,6 +43,20 @@ const moduleSchema = new mongoose.Schema({
     ],
     default: [],
   },
+  invitationsTo: {
+    type: [
+      {
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "user",
+          required: true,
+        },
+        token: String,
+        validation: Number,
+      },
+    ],
+    default: [],
+  },
 });
 
 const BusinessCourses = mongoose.model("Institue", moduleSchema);

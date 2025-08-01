@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, use, useEffect, useState } from "react";
+import { Fragment, use, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
     Card,
@@ -14,33 +14,39 @@ import {
     TabsList,
     TabsTrigger,
 } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
 import { emailVerifyApi, sendEmailVerificationCodeApi } from "@/api/auth";
 import { toast } from "react-toastify";
 import { UserContext } from "@/store/User_Context";
 import { Loader } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { redirect } from "next/navigation";
+import LoadingSpinner from "@/components/Loading";
 
+let tmr = null
 export default function Page() {
     const { auth, isAuhtLoading, signInHandler } = use(UserContext)
     const [token, setToken] = useState("");
     const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        if (!isAuhtLoading && auth?.role) {
-            if (auth.isEmailVerified) {
-                toast.info("Your Email is Already Verified. Redirecting...")
-                setTimeout(() => {
-                    let link = "/admin"
-                    if (!auth?.business_course_id) {
-                        link = "/admin/get-started"
-                    }
-                    redirect(link)
-                }, 1200);
-            }
-        }
-    }, [isAuhtLoading])
+    if (isAuhtLoading) {
+        return <LoadingSpinner height="calc(100vh - 100px)" />
+    }
+
+    if (!auth?.business_course_id) {
+        link = "/admin/get-started"
+        redirect(link)
+        return null
+    }
+    if (auth?.isEmailVerified) {
+        tmr && clearTimeout(tmr)
+        tmr = setTimeout(() => {
+            toast.info("Your Email is Already Verified. Redirecting...")
+        }, 600)
+        let link = "/admin"
+        redirect(link)
+        return null
+    }
+
 
     const handleSendCode = async () => {
         setLoading(true);
@@ -82,7 +88,8 @@ export default function Page() {
 
     return (
         <div className="p-6 w-full">
-            <Tabs defaultValue="send" className="mx-auto w-[400px]">
+            <h3 className="text-2xl text-center mb-3 text-cyan-600 font-bold">Email Verification</h3>
+            <Tabs defaultValue="send" className="mx-auto max-w-[400px]">
                 <TabsList className="grid w-full grid-cols-2 border-2 border-gray-500">
                     <TabsTrigger className="shadow-black" value="send">Send Code</TabsTrigger>
                     <TabsTrigger className="shadow-black" value="verify">Verify Code</TabsTrigger>

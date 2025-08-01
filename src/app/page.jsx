@@ -7,7 +7,7 @@ export default function Home() {
       {/* Hero Section */}
       <section className="text-center mb-16">
         <h1 className="text-5xl font-bold text-gray-900 mb-4">
-          Welcome to Your Learning Management System
+          Welcome to <br /> <span className="text-cyan-500"> Learning Management System</span>
         </h1>
         <p className="text-lg text-gray-600 mb-6">
           Access courses, track your progress, and improve your skills with

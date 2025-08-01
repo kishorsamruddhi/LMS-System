@@ -9,6 +9,8 @@ import { useQuery } from '@tanstack/react-query'
 import LoadingSpinner from '@/components/Loading'
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
+import Image from 'next/image'
+import { cn } from '@/utils/cn'
 
 const fetchCoursesAndModules = async () => {
     const resp = await getCoursesAndModulesWithStats();
@@ -78,41 +80,43 @@ const LearningReportPage = () => {
 
     return (
         <div className='LearningReportPage'>
-            <div className="report-section">
-                <h1 className="title">Reports</h1>
-                <div className="stats-container">
-                    <div className="stat-column">
-                        <div className="stat-item overallScore">
-                            <h3 className="stat-label-text ">Overall Score</h3>
-                            <p className="stat-value-text"> {(totalCompletedChildIds.length * 100 /
+            <div className="py-10">
+                <h3 className="text-4xl font-bold mb-10 text-center text-[#366494]">Reports</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2">
+                    <div className="py-4 mx-auto">
+                        <div className=" flex items-center justify-between gap-4">
+                            <h3 className="font-semibold text-4xl text-[#366494] ">Overall Score</h3>
+                            <p className="text-4xl font-semibold text-green-500"> {(totalCompletedChildIds.length * 100 /
                                 getIdsOfAsmtAndPeda.length).toFixed(0)}%</p>
                         </div>
-                        <div className="stat-item">
-                            <h3 className="stat-label-text">Modules Completed</h3>
-                            <p className="stat-value-text">{idsOfCompletedModules.length}</p>
+                        <div className="mt-8 flex items-center justify-between gap-4">
+                            <h3 className="font-semibold text-2xl">Modules Completed</h3>
+                            <p className="text-2xl font-semibold text-green-500">{idsOfCompletedModules.length}</p>
                         </div>
-                        <div className="stat-item">
-                            <h3 className="stat-label-text">Tests Completed</h3>
-                            <p className="stat-value-text">{idsOfCompletedAsmt.length}</p>
+                        <div className="mt-8 flex items-center justify-between gap-4">
+                            <h3 className="font-semibold text-2xl">Tests Completed</h3>
+                            <p className="text-2xl font-semibold text-green-500">{idsOfCompletedAsmt.length}</p>
                         </div>
                     </div>
-                    <Link style={{ textDecoration: "none" }} href={"/learner/certificates"} className="download-column">
-                        <img className="img" src="/assets/certificate.svg" alt="Certificate" />
-                        <p className="text">Download <br /> Certificates</p>
+                    <Link style={{ textDecoration: "none" }} href={"/learner/certificates"}
+                        className="flex flex-col justify-center py-4  mt-8 ms:mt-0 mx-auto px-8 rounded-2xl items-center gap-4 bg-pink-200">
+                        <Image height={300} width={100} className="h-full" src="/assets/certificate.svg" alt="Certificate" />
+                        <p className="font-semibold text-2xl text-pink-500 hover:text-pink-800">Download <br /> Certificates</p>
                     </Link>
                 </div>
             </div>
 
-            <div className="answer-wrap">
-                <div className="answer-card wrong-answer">
-                    <h3 className="wrong-count">{countOfWrongAssessments.length}</h3>
-                    <p className="answer-label">Wrong Answers</p>
+            <div className="grid grid-cols-2">
+                <div className="py-12 px-6 text-center bg-neutral-100">
+                    <h3 className="text-4xl text-orange-600">{countOfWrongAssessments.length}</h3>
+                    <p className="text-xl">Wrong Answers</p>
                 </div>
-                <div className="answer-card correct-answer">
-                    <h3 className="correct-count">{countOfCorrectAssessments.length}</h3>
-                    <p className="answer-label">Correct Answers</p>
+                <div className="py-12 px-6 text-center bg-neutral-200">
+                    <h3 className="text-4xl text-green-500">{countOfCorrectAssessments.length}</h3>
+                    <p className="text-xl">Correct Answers</p>
                 </div>
             </div>
+
             {incompleteModulesList && <div className="course-slider-section">
                 <Swiper {...moduleCardsConfig}>
                     {incompleteModulesList.map((mod_data, index) => {
@@ -137,11 +141,12 @@ const LearningReportPage = () => {
                     })}
                 </Swiper>
             </div>}
+
             <LearningTime totalSeconds={learningTime?.timeSpent || 0} />
-            <div className="back-to-dashboard-section">
-                <div className="back-button-container">
-                    <Link href="/learner" className="back-button">Back to Dashboard</Link>
-                </div>
+            <div className="my-10">
+                <Link href="/learner" className={cn("mx-auto block w-fit bg-gray-300",
+                    "rounded-4xl text-2xl font-semibold py-3 px-12",
+                    "hover:text-white hover:bg-black transition-colors")}>Back to Dashboard</Link>
             </div>
         </div>
     )
@@ -160,24 +165,21 @@ const LearningTime = ({ totalSeconds }) => {
     };
 
     return (
-        <div className="learning-time-section">
-            <div className="learning-time-container">
-                <div className="note-time">
-                    <i className="pi pi-calendar-clock"></i>
-                    <h3 className="note-time-text">Learning Time</h3>
-                </div>
-                <div className="time-box days-box">
-                    <h3 className="time-value">{learningTime.days}</h3>
-                    <p className="time-label">Days</p>
-                </div>
-                <div className="time-box hours-box">
-                    <h3 className="time-value">{learningTime.hours}</h3>
-                    <p className="time-label">Hours</p>
-                </div>
-                <div className="time-box minutes-box">
-                    <h3 className="time-value">{learningTime.minutes}</h3>
-                    <p className="time-label">Minutes</p>
-                </div>
+        <div className="border-1 mt-8 sm:mt-0 border-neutral-200 grid grid-cols-3 sm:grid-cols-5">
+            <div className=" col-span-3 sm:col-span-2 py-[3rem] flex items-center justify-center">
+                <h3 className="text-4xl text-pink-700 font-bold">Learning Time</h3>
+            </div>
+            <div className="col-span-1 py-[3rem] text-center bg-neutral-200">
+                <h3 className="text-3xl">{learningTime.days}</h3>
+                <p className="text-xl">Days</p>
+            </div>
+            <div className=" col-span-1 py-[3rem] text-center bg-neutral-100">
+                <h3 className="text-3xl">{learningTime.hours}</h3>
+                <p className="text-xl">Hours</p>
+            </div>
+            <div className=" col-span-1 py-[3rem] text-center bg-neutral-200">
+                <h3 className="text-3xl">{learningTime.minutes}</h3>
+                <p className="text-xl">Minutes</p>
             </div>
         </div>
     );

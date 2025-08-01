@@ -1,6 +1,6 @@
 import React from "react";
 
-const DataTable = ({ columns, data, action }) => {
+const DataTable = ({ columns, data, action, minRows = 6 }) => {
     const isEmpty = data.length === 0
     const rowStyle = "px-6 py-3 text-left text-sm font-medium text-gray-700"
     return (
@@ -42,6 +42,9 @@ const DataTable = ({ columns, data, action }) => {
                                     </td>}
                             </tr>
                         ))}
+                    {data.length < minRows && Array.from({ length: minRows - data.length }).map((_, index) => <tr key={data.length + index}>
+                        <td className="px-6 py-4 text-sm text-gray-800 opacity-0">Fill</td>
+                    </tr>)}
                 </tbody>
             </table>
         </div>

@@ -11,6 +11,7 @@ const {
   generateEmailVerification,
 } = require("../utils/email_template");
 const { default: mongoose } = require("mongoose");
+const { changePasswordApi } = require("./user-settings");
 
 const encodeKey = process.env.ENCODE_KEY;
 const user_mail_address = process.env.MAIL_ADDRESS;
@@ -167,6 +168,16 @@ router.post("/institute-invite", async (req, res) => {
 
     // Send email
     // let info = await transporter.sendMail(mailOptions);
+    await BusinessCourses.findByIdAndUpdate(isAlreadySetup._id, {
+      $push: {
+        invitationsTo: {
+          user: isStudent._id,
+          token,
+          validation: Date.now() * 1000 * 60 * 60 * 24 * 7,
+          _id: null,
+        },
+      },
+    }).lean();
 
     return res
       .status(201)
@@ -405,6 +416,8 @@ router.post("/verify-email-code", async (req, res) => {
     return res.status(500).json({ error: true, data: err.message });
   }
 });
+
+router.post("/update-password", changePasswordApi);
 
 function invitationTokenValidator(token) {
   try {
