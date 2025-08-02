@@ -2,13 +2,13 @@
 import { Fragment, useEffect, useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import AdminBackButton from "@/components/AdminBackButton";
 import { Button } from "@/components/ui/button";
-import { CircleCheckBig, Loader, Plus, Trash } from "lucide-react";
+import { CircleCheckBig, Plus, Trash } from "lucide-react";
 import { redirect } from "next/navigation";
 import { Input } from "@/components/ui/input";
-import { formatDate } from "@/utils/timeFormatter";
 import { updateAdmin_Assessment } from "@/api/_admin/updateApi";
+import EditViewPageHeader from "@/components/admin/EditViewPageHeader";
+import { BtnWithLoading } from "@/components/TailwindBtn";
 
 const Actions = ({ formValues = {} }) => {
     const { module_id, course_id, primary_text, correct_option, options, updatedAt } = formValues
@@ -82,15 +82,14 @@ const Actions = ({ formValues = {} }) => {
     }
 
     return (<div style={{ padding: "2rem" }}>
-        <div style={{ width: "100%", }}>
-            <AdminBackButton addOnPath={`/assessments?course_id=${course_id}&module_id=${modId}`} />
-        </div>
-        <div className="my-4 flex justify-between items-center">
-            <h1 className="text-2xl">{editMode ? "Updating" : "Viewing"} <span className="text-cyan-500">Assessment</span> </h1>
-            <Button type="button" onClick={toggleMode}>{editMode ? "Switch To View Mode" : "Switch To Edit Mode"}</Button>
-            <Button>Last update on<span className="text-cyan-400">{formatDate(updatedAt)} </span>
-            </Button>
-        </div>
+        <EditViewPageHeader
+            backBtnPath={`/assessments?course_id=${course_id}&module_id=${modId}`}
+            headText={editMode ? "Updating" : "Viewing"}
+            title={"Assessment"}
+            toggler={toggleMode}
+            time={updatedAt}
+            editMode={editMode}
+        />
         <div className="flex gap-4">
             <div className="flex flex-col mt-4">
                 <label className="text-sm text-gray-600">Course Name:</label>
@@ -115,15 +114,8 @@ const Actions = ({ formValues = {} }) => {
             <OptionsField  {...optCompProps} />
             {editMode && <Fragment>
                 <div className="mt-4">
-                    <Button className={"hover:text-cyan-400"} disabled={isLoading || !editMode} type="submit">
-                        {isLoading ? <>
-                            <Loader />
-                            <span className="ml-2">
-                                Updating Assessment
-                            </span>
-                        </>
-                            : "Update Assessment"}
-                    </Button>
+                    <BtnWithLoading isLoading={isLoading} label={"Update Assessment"} disabled={isLoading || !editMode}
+                        type="submit" loadingLable={"Updating Assessment"} />
                 </div>
             </Fragment>
             }

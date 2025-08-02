@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import Dropdown from "@/components/Prime/Dropdown";
 import ErrorPage from "@/components/ErrorPage";
 import { useSearchParams } from "next/navigation";
+import { tailwindBtnClasses } from "@/components/TailwindBtn";
 
 const Module = () => {
     const searchParams = useSearchParams();
@@ -117,12 +118,7 @@ const Module = () => {
 
             <div className="my-4 flex justify-between items-center">
                 <h1 className="text-2xl">Module <span className="text-cyan-500">Management</span> </h1>
-                <Button
-                    className="hover:text-cyan-500"
-                >
-                    <Link href={"modules/add"}
-                    >Create Module</Link>
-                </Button>
+                <Link className={tailwindBtnClasses} href={"modules/add"}>Create Module</Link>
             </div>
             <div >
                 {courseDropdown && courseDropdown.length > 0 ? <Dropdown options={courseDropdown}

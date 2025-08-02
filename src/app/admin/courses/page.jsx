@@ -6,6 +6,7 @@ import { backendLink, cookiesKey } from "@/utils/token";
 import DataTable from "@/components/Prime/DataTable";
 import { Button } from "@/components/ui/button";
 import { Eye, Pencil } from "lucide-react";
+import { tailwindBtnClasses } from "@/components/TailwindBtn";
 
 const _Courses = async () => {
     try {
@@ -66,15 +67,9 @@ const _Courses = async () => {
                 <div style={{ margin: "1rem 0" }} className="div">
                     <AdminBackButton style={{ margin: "0" }} />
                 </div>
-
                 <div className="my-4 flex justify-between items-center">
                     <h1 className="text-2xl">Courses <span className="text-cyan-500">Management</span> </h1>
-                    <Button
-                        className="hover:text-cyan-500"
-                    >
-                        <Link href={"courses/add"}
-                        >Create Course</Link>
-                    </Button>
+                    <Link className={tailwindBtnClasses} href={"courses/add"}>Create Course</Link>
                 </div>
                 <div className="data-table w-full">
                     <div className="overflow-x-auto">

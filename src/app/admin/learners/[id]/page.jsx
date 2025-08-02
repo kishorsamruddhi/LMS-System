@@ -9,42 +9,27 @@ import { formatDate } from '@/utils/timeFormatter';
 import LoadingSpinner from '@/components/Loading';
 import { getAdmin_view_report_by_learner_id } from '@/api/_admin/getApis';
 import AdminBackButton from '@/components/AdminBackButton';
+import { useQuery } from '@tanstack/react-query';
 
 
 Chart.register(ArcElement, Tooltip, Legend);
 
-const _View_Learner_Report = ({ params }) => {
+export default function Page({ params }) {
   const { id } = use(params);
-  const [isLoading, setIsLoading] = useState(true);
-  const [data, setData] = useState(null);
-
-  const getData = async () => {
-    try {
-      const resp = await getAdmin_view_report_by_learner_id(id);
-      if (!resp.data.error) {
-        setData(resp.data);
-      } else {
-        console.error(resp.data.error);
-      }
-    } catch (error) {
-      console.error(error.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    getData();
-  }, [id]);
+  const { data: res, isLoading, error, isError } = useQuery({
+    queryKey: ["learner-report", id],
+    queryFn: async () => await getAdmin_view_report_by_learner_id(id),
+    staleTime: 15000,
+  });
 
   if (isLoading) {
     return <LoadingSpinner />;
   }
 
-  if (!data) {
+  if (!res || !res?.data) {
     return <div>No data available.</div>;
   }
-
+  const data = res.data
   const { days,
     hours,
     minutes } = learningTime(data.learning_time?.timeSpent || 0)
@@ -69,48 +54,30 @@ const _View_Learner_Report = ({ params }) => {
         <AdminBackButton addOnPath='/learners' />
       </div>
       <div>
-        <h1>{data.user?.firstName} {data.user?.lastName}</h1>
         <p className='text-gray-400'>Email: <span className='text-cyan-500'>{data.user?.email}</span></p>
         <p className='text-gray-400'>Phone Number: <span className='text-cyan-500'>{data.user?.phoneNumber}</span></p>
       </div>
       <div className="big-card">
-        <h2>Summary</h2>
-        <div className="counts-details">
-          <section>
-            <h1>{progressInPercentage}%</h1>
+        <div className="flex gap-10 justify-center my-10">
+          <div className='text-neutral-200 font-semibold '>
+            <h2 className='text-2xl'>Summary</h2>
+            <h2 className='text-4xl text-white'>{progressInPercentage}%</h2>
             <h3>Progress Status</h3>
-          </section>
-          <section className='counts'>
-            <div className='data-counts'>
-              <div className="complete_count">
-                <span className='focus'>{completed_courses}</span> Courses Completed
-              </div>
-              <div className="total_count">
-                <i className="pi pi-circle-fill"></i>
-                Out of <span className='focus'>{total_courses}</span>
-              </div>
-            </div>
-            <div className='data-counts'>
-              <div className="complete_count">
-                <span className='focus'>{completed_modules}</span> Modules Completed
-              </div>
-              <div className="total_count">
-                <i className="pi pi-circle-fill"></i>
-                Out of <span className='focus'>{allModules}</span>
-              </div>
-            </div>
-            <div className='data-counts'>
-              <div className="complete_count">
-                <span className='focus'>{completed_tests}</span> Assessments Completed
-              </div>
-            </div>
-            <div className='data-counts'>
-              <div className="complete_count">
-                <span className='focus'>{days} Days {hours} Hours {minutes} Minutes Spent</span>
-              </div>
-            </div>
-            <span className='time'>Last Activity: {last_activity}</span>
-          </section>
+          </div>
+          {/* Right */}
+          <div className='text-neutral-200 font-semibold '>
+            <p >
+              Courses Status:  <span className='text-white text-lg'>{completed_courses}/{total_courses}</span>
+            </p>
+            <p >
+              Modules Status:  <span className='text-white text-lg'>{completed_modules}/{allModules}</span>
+            </p>
+            <p>
+              Completed Assessments: <span className='text-white text-lg'>{completed_tests}</span>
+            </p>
+            <p >{days} Days {hours} Hours {minutes} Minutes Spent</p>
+            <small className='font-medium text-neutral-300'>Last Activity: {last_activity}</small>
+          </div>
         </div>
       </div>
       <div style={{
@@ -124,7 +91,7 @@ const _View_Learner_Report = ({ params }) => {
   );
 };
 
-const DoughnutChart = ({ allDataResponse, courses, progressData }) => {
+function DoughnutChart({ allDataResponse, courses, progressData }) {
   const objectKeys = Object.keys(progressData)
   const modsProgress = objectKeys.map((val) => progressData[val].completed_modules)
   const yetToBeCompleted = courses.flatMap((cor) => cor.modules).length - allDataResponse.completedModules.length
@@ -186,6 +153,4 @@ function learningTime(totalSeconds = 0) {
 };
 
 
-
-export default _View_Learner_Report
 

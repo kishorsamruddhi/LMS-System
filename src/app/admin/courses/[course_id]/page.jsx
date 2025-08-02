@@ -1,6 +1,6 @@
 import { backendLink, cookiesKey } from '@/utils/token'
 import { cookies } from 'next/headers'
-import React from 'react'
+import React, { Fragment } from 'react'
 import UpdateCourse from './_Action'
 
 const Page = async ({ params }) => {
@@ -21,8 +21,9 @@ const Page = async ({ params }) => {
             throw new Error(resp.data);
         }
         // const { course_name, business_id, color, course_desc, course_status, modules, updatedAt } = resp.data
-        return (
+        return (<Fragment>
             <UpdateCourse formValues={resp.data} />
+        </Fragment>
         );
 
     }

@@ -2,15 +2,13 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import AdminBackButton from "@/components/AdminBackButton";
-import { Button } from "@/components/ui/button";
-import { Loader } from "lucide-react";
 import { redirect } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import Dropdown from "@/components/Prime/Dropdown";
-import { formatDate } from "@/utils/timeFormatter";
 import { Textarea } from "@/components/ui/textarea"
 import { updateAdminModule } from "@/api/_admin/updateApi";
+import EditViewPageHeader from "@/components/admin/EditViewPageHeader";
+import { BtnWithLoading } from "@/components/TailwindBtn";
 
 const Actions = ({ formValues = {} }) => {
     const { module_name, module_code, module_desc, module_type, course_id, updatedAt } = formValues
@@ -76,15 +74,14 @@ const Actions = ({ formValues = {} }) => {
     }
 
     return (<div style={{ padding: "2rem" }}>
-        <div style={{ width: "100%", }}>
-            <AdminBackButton addOnPath={"/modules?course_id=" + course_id._id} />
-        </div>
-        <div className="my-4 flex justify-between items-center">
-            <h1 className="text-2xl">{editMode ? "Updating" : "Viewing"} <span className="text-cyan-500">Module</span> </h1>
-            <Button type="button" onClick={toggleMode}>{editMode ? "Switch To View Mode" : "Switch To Edit Mode"}</Button>
-            <Button>Last update on<span className="text-cyan-400">{formatDate(updatedAt)} </span>
-            </Button>
-        </div>
+        <EditViewPageHeader
+            backBtnPath={"/modules?course_id=" + course_id._id}
+            headText={editMode ? "Updating" : "Viewing"}
+            title={"Module"}
+            toggler={toggleMode}
+            time={updatedAt}
+            editMode={editMode}
+        />
         <div className="flex flex-col mt-4">
             <label className="text-sm text-gray-600">Course Name:</label>
             <Input
@@ -116,15 +113,8 @@ const Actions = ({ formValues = {} }) => {
             </div>
             {/* <FormField register={register} errors={errors} label={"Course Description:"} type="text" registerKey={"course_desc"} /> */}
             <div className="mt-4">
-                <Button className={"hover:text-cyan-400"} disabled={isLoading || !editMode} type="submit">
-                    {isLoading ? <>
-                        <Loader />
-                        <span className="ml-2">
-                            Updating Module
-                        </span>
-                    </>
-                        : "Update Module"}
-                </Button>
+                <BtnWithLoading isLoading={isLoading} label={"Update Module"} disabled={isLoading || !editMode}
+                    type="submit" loadingLable={"Updating Module"} />
             </div>
         </form>
     </div>

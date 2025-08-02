@@ -7,7 +7,7 @@ import { getCompletedCourses } from '@/api/get';
 import LoadingSpinner from '@/components/Loading';
 import ErrorPage from '@/components/ErrorPage';
 import Link from 'next/link';
-import LinkButton from '@/components/LinkButton';
+import { tailwindBtnClasses } from '@/components/TailwindBtn';
 
 const fetchCompletedCourses = async () => {
     const resp = await getCompletedCourses();
@@ -60,15 +60,9 @@ const CoursesCertificates = () => {
                     </Link>
                 ))}
             </div>
-            <GoToCoursesButton />
+            <Link className={tailwindBtnClasses} href={"learner/my-courses"}> Go to Courses Page</Link>
         </div>
     );
 };
-
-const GoToCoursesButton = () => (
-    <LinkButton href="/learner/my-courses">
-        Go to Courses Page
-    </LinkButton>
-);
 
 export default CoursesCertificates;

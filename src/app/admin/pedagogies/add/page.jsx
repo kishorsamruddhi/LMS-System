@@ -4,23 +4,16 @@ import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import AdminBackButton from "@/components/AdminBackButton";
 import { Button } from "@/components/ui/button";
-import { Loader } from "lucide-react";
 import { redirect } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import Dropdown from "@/components/Prime/Dropdown";
 import { createAdmin_Pedagogy } from "@/api/_admin/createApi";
 import { getCourses_and_Modules_list } from "@/api/_admin/getApis";
-import Quill from 'quill';
-import 'quill/dist/quill.snow.css';
-import LoadingSpinner from "@/components/Loading";
+import dynamic from 'next/dynamic'
+import { BtnWithLoading } from "@/components/TailwindBtn";
+const TextQuillField = dynamic(() => import("./Quill"), { ssr: false })
 
-function Page() {
-    return <Suspense fallback={LoadingSpinner}>
-        <CreatePedagogy />
-    </Suspense>
-}
-
-function CreatePedagogy() {
+export default function Page() {
     const ModuleType = "THEORY"
     const [selectedCourse, setSelectedCourse] = useState(null)
     const [courseDropdown, setCourseDropdown] = useState(null)
@@ -32,8 +25,11 @@ function CreatePedagogy() {
         setValue,
     } = useForm();
 
+    useEffect(() => {
+        getCoursesList()
+    }, [])
 
-    const getCoursesList = async () => {
+    async function getCoursesList() {
         try {
             const course_resp = await getCourses_and_Modules_list(ModuleType);
             if (!course_resp?.error) {
@@ -48,12 +44,9 @@ function CreatePedagogy() {
         }
     };
 
-    useEffect(() => {
-        getCoursesList()
-    }, [])
-
-
     async function onSubmit(data) {
+        console.log(data)
+        return
         const { module_id, text, title, url } = data
         if (!module_id) return toast.error("Please Select Module or Create a Theory Module");
         try {
@@ -136,56 +129,21 @@ function CreatePedagogy() {
                 {FormField({ register, errors, label: "Video Url:", fieldType: "text", registerKey: "url" })}
                 <div className="flex flex-col  mt-4">
                     <label className="text-sm text-gray-600">Text:</label>
-                    <TextQuillField setValue={setValue} />
+                    <Suspense fallback={<p>Loading...</p>}>
+                        <TextQuillField setValue={setValue} />
+                    </Suspense>
                     {errors?.text && <span className="text-sm text-red-400">{errors?.text?.message || "This field is required"}</span>}
                 </div>
                 {/* <FormField register={register} errors={errors} label={"Course Description:"} type="text" registerKey={"course_desc"} /> */}
                 <div className="mt-4">
-                    <Button className={"hover:text-cyan-400"} disabled={isLoading} type="submit">
-                        {isLoading ? <>
-                            <Loader />
-                            <span className="ml-2">
-                                Creating Pedagogy
-                            </span>
-                        </>
-                            : "Create Pedagogy"}
-                    </Button>
+                    <BtnWithLoading
+                        isLoading={isLoading}
+                        label={"Create Pedagogy"}
+                        loadingLable={"Creating Pedagogy"}
+                        disabled={isLoading} type="submit" />
                 </div>
             </form>
         </div>
     );
 };
 
-
-function TextQuillField({ setValue }) {
-    const editorRef = useRef(null);
-    const quillRef = useRef(null);
-
-    useEffect(() => {
-        if (editorRef.current && !quillRef.current) {
-            quillRef.current = new Quill(editorRef.current, {
-                theme: 'snow',
-                modules: {
-                    toolbar: [
-                        [{ header: [1, 2, false] }],
-                        ['bold', 'italic', 'underline'],
-                        [{ list: 'ordered' }, { list: 'bullet' }],
-                    ],
-                },
-                formats: ['header', 'bold', 'italic', 'underline', 'list'],
-            });
-
-            quillRef.current.on('text-change', () => {
-                const html = editorRef.current.querySelector('.ql-editor').innerHTML;
-                setValue("text", html);
-            });
-        }
-    }, []);
-
-    return (
-        <div ref={editorRef} />
-    );
-};
-
-
-export default Page;

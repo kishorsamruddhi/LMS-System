@@ -1,16 +1,15 @@
 "use client";
-import { useState } from "react";
+import { useState, } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import AdminBackButton from "@/components/AdminBackButton";
-import { Button } from "@/components/ui/button";
-import { Loader } from "lucide-react";
 import { redirect } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import Dropdown from "@/components/Prime/Dropdown";
-import { formatDate } from "@/utils/timeFormatter";
 import { Textarea } from "@/components/ui/textarea"
 import { updateAdminCourse } from "@/api/_admin/updateApi";
+import { BtnWithLoading } from "@/components/TailwindBtn";
+import EditViewPageHeader from "@/components/admin/EditViewPageHeader";
+
 
 const UpdateCourse = ({ formValues = {} }) => {
     const { course_code, course_name, course_desc, color, course_status, course_seq_no, updatedAt } = formValues
@@ -78,17 +77,16 @@ const UpdateCourse = ({ formValues = {} }) => {
     function statusChange(val) {
         setValue("course_status", val)
     }
-
     return (<div style={{ padding: "2rem" }}>
-        <div style={{ width: "100%", }}>
-            <AdminBackButton addOnPath="/courses" />
-        </div>
-        <div className="my-4 flex justify-between items-center">
-            <h1 className="text-2xl">{editMode ? "Updating" : "Viewing"} <span className="text-cyan-500">Course</span> </h1>
-            <Button type="button" onClick={toggleMode}>{editMode ? "Switch To View Mode" : "Switch To Edit Mode"}</Button>
-            <Button>Last update on<span className="text-cyan-400">{formatDate(updatedAt)} </span>
-            </Button>
-        </div>
+        <EditViewPageHeader
+            backBtnPath={"/courses"}
+            headText={editMode ? "Updating" : "Viewing"}
+            title={"Course"}
+            toggler={toggleMode}
+            time={updatedAt}
+            editMode={editMode}
+        />
+
         <form style={{ minWidth: "unset", maxWidth: "unset" }} onSubmit={handleSubmit(onSubmit)}>
             <FormField register={register} errors={errors} label={"Course Code:"} type="text" registerKey={"course_code"} />
             <FormField register={register} errors={errors} label={"Course Name:"} type="text" registerKey={"course_name"} />
@@ -112,15 +110,8 @@ const UpdateCourse = ({ formValues = {} }) => {
             </div>
             {/* <FormField register={register} errors={errors} label={"Course Description:"} type="text" registerKey={"course_desc"} /> */}
             <div className="mt-4">
-                <Button className={"hover:text-cyan-400"} disabled={isLoading || !editMode} type="submit">
-                    {isLoading ? <>
-                        <Loader />
-                        <span className="ml-2">
-                            Updating Course
-                        </span>
-                    </>
-                        : "Update Course"}
-                </Button>
+                <BtnWithLoading isLoading={isLoading} label={"Update Course"} disabled={isLoading || !editMode}
+                    type="submit" loadingLable={"Updating Course"} />
             </div>
         </form>
     </div>

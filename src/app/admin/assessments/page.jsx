@@ -6,11 +6,11 @@ import { Eye, Pencil } from "lucide-react";
 import { getAdmin_assessments_by_module_id, getCourses_and_Modules_list } from "@/api/_admin/getApis";
 import { Suspense, useEffect, useState } from "react";
 import Dropdown from "@/components/Prime/Dropdown";
-import LinkButton from "@/components/LinkButton";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import LoadingSpinner from "@/components/Loading";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { tailwindBtnClasses } from "@/components/TailwindBtn";
 
 function Page() {
     return <Suspense fallback={<LoadingSpinner />}>
@@ -195,7 +195,7 @@ function AssessmentPage() {
 
             <div className="my-4 flex justify-between items-center">
                 <h1 className="text-2xl">Assessments <span className="text-cyan-500">Management</span> </h1>
-                <LinkButton href={"assessments/add"}>Create Assessments</LinkButton>
+                <Link className={tailwindBtnClasses} href={"assessments/add"}>Create Assessments</Link>
             </div>
             {model?.title && <Dialog open={model} onOpenChange={closeModel}>
                 <DialogContent className={"bg-white"}>

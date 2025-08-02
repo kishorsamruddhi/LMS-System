@@ -7,6 +7,7 @@ import { Eye } from "lucide-react";
 import { getAdmin_learners_report_datatable } from "@/api/_admin/getApis";
 import DataTable from "@/components/Prime/DataTable";
 import AdminBackButton from "@/components/AdminBackButton";
+import { tailwindBtnClasses } from "@/components/TailwindBtn";
 
 const _Learners = () => {
     const [isLoading, setIsLoading] = useState(true);
@@ -86,12 +87,7 @@ const _Learners = () => {
             </div>
             <div className="my-4 flex justify-between items-center">
                 <h1 className="text-2xl">Learners  <span className='text-cyan-500'>Management</span>  </h1>
-                <Button
-                    className="hover:text-cyan-500"
-                >
-                    <Link href={"learners/add"}
-                    >Add New Learner</Link>
-                </Button>
+                <Link className={tailwindBtnClasses} href={"learners/add"}>Add New Module</Link>
             </div>
             {data && <div className="data-table">
                 <div className="overflow-x-auto">

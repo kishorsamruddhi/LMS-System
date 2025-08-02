@@ -1,13 +1,14 @@
-import { Poppins } from "next/font/google"; // Import only Poppins
+import { Poppins } from "next/font/google";
 import "./globals.css";
 import { UserProvider } from "@/store/User_Context";
 import Header from "@/components/Header";
+import { cn } from "@/utils/cn";
 
 // Add Poppins font
 const poppins = Poppins({
   variable: "--font-poppins",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800"], // Specify the weights you need
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 export const metadata = {
@@ -16,14 +17,13 @@ export const metadata = {
 };
 
 export default async function RootLayout({ children }) {
+  const containerSt = "max-w-[1500px] mx-auto";
   return (
     <html lang="en">
-      <body
-        className={`${poppins.variable} antialiased`} // Use only Poppins variable
-      >
+      <body className={`${poppins.variable} antialiased`}>
         <UserProvider>
-          <Header />
-          <div className="mt-[72px]">{children}</div>
+          <Header containerSt={containerSt} />
+          <main className={cn("mt-[72px]", containerSt)}>{children}</main>
         </UserProvider>
       </body>
     </html>

@@ -3,14 +3,13 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import AdminBackButton from "@/components/AdminBackButton";
-import { Button } from "@/components/ui/button";
-import { Loader } from "lucide-react";
 import { redirect } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import Dropdown from "@/components/Prime/Dropdown";
 import { Textarea } from "@/components/ui/textarea"
 import { createAdminModule } from "@/api/_admin/createApi";
 import { getAdmin_Course_List_DropDown } from "@/api/_admin/getApis";
+import { BtnWithLoading } from "@/components/TailwindBtn";
 
 const CreateModule = () => {
     const [selectedCourse, setSelectedCourse] = useState(null)
@@ -142,15 +141,8 @@ const CreateModule = () => {
                 </div>
                 {/* <FormField register={register} errors={errors} label={"Course Description:"} type="text" registerKey={"course_desc"} /> */}
                 <div className="mt-4">
-                    <Button className={"hover:text-cyan-400"} disabled={isLoading} type="submit">
-                        {isLoading ? <>
-                            <Loader />
-                            <span className="ml-2">
-                                Creating Module
-                            </span>
-                        </>
-                            : "Create Module"}
-                    </Button>
+                    <BtnWithLoading isLoading={isLoading} label={"Create Module"} disabled={isLoading}
+                        type="submit" loadingLable={"Creating Module"} />
                 </div>
             </form>
         </div>

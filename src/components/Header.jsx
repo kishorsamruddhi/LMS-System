@@ -14,13 +14,14 @@ import { UserContext } from "@/store/User_Context";
 import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
 import { redirect } from "next/navigation";
 import Image from "next/image";
+import { cn } from "@/utils/cn";
 
 const getRootLink = {
     admin: "/admin/",
     user: "/learner/",
 }
 
-export default function Header() {
+export default function Header({ containerSt }) {
     const { auth, isAuhtLoading, sign_out_handler } = use(UserContext)
     const [rootLink, setRootLink] = useState("/")
 
@@ -62,7 +63,7 @@ export default function Header() {
     }
     return (
         <header className="w-full bg-white shadow-md fixed top-0 left-0 z-50">
-            <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div className={cn("px-6 py-4 flex justify-between items-center", containerSt)}>
                 <div className="text-2xl gap-1 flex items-center font-bold text-cyan-600">
                     {/* <PencilRuler /> */}
                     <Image height={48} width={48} src={"/Icons/school.png"} alt="digi-shiksha-logo" />
