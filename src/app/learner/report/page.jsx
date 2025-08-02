@@ -79,27 +79,27 @@ const LearningReportPage = () => {
     }
 
     return (
-        <div className='LearningReportPage'>
-            <div className="py-10">
+        <div className='LearningReportPage '>
+            <div className="pb-10 pt-6 px-4">
                 <h3 className="text-4xl font-bold mb-10 text-center text-[#366494]">Reports</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2">
-                    <div className="py-4 mx-auto">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="py-4 flex flex-col gap-8 mx-auto bg-neutral-100 w-full h-full px-6 rounded-2xl ">
                         <div className=" flex items-center justify-between gap-4">
                             <h3 className="font-semibold text-4xl text-[#366494] ">Overall Score</h3>
                             <p className="text-4xl font-semibold text-green-500"> {(totalCompletedChildIds.length * 100 /
                                 getIdsOfAsmtAndPeda.length).toFixed(0)}%</p>
                         </div>
-                        <div className="mt-8 flex items-center justify-between gap-4">
+                        <div className="flex items-center justify-between gap-4">
                             <h3 className="font-semibold text-2xl">Modules Completed</h3>
                             <p className="text-2xl font-semibold text-green-500">{idsOfCompletedModules.length}</p>
                         </div>
-                        <div className="mt-8 flex items-center justify-between gap-4">
+                        <div className="flex items-center justify-between gap-4">
                             <h3 className="font-semibold text-2xl">Tests Completed</h3>
                             <p className="text-2xl font-semibold text-green-500">{idsOfCompletedAsmt.length}</p>
                         </div>
                     </div>
                     <Link style={{ textDecoration: "none" }} href={"/learner/certificates"}
-                        className="flex flex-col justify-center py-4  mt-8 ms:mt-0 mx-auto px-8 rounded-2xl items-center gap-4 bg-pink-200">
+                        className="flex flex-col justify-center py-4 w-full h-full px-8 rounded-2xl items-center gap-4 bg-pink-200">
                         <Image height={300} width={100} className="h-full" src="/assets/certificate.svg" alt="Certificate" />
                         <p className="font-semibold text-2xl text-pink-500 hover:text-pink-800">Download <br /> Certificates</p>
                     </Link>
