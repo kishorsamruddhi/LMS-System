@@ -3,11 +3,10 @@
 import axios from "axios";
 // import Cookies from "universal-cookie";
 import Cookies from "universal-cookie";
-import { cookiesKey, dataCookieAuth } from "@/utils/token";
+import { backendLink, cookiesKey, dataCookieAuth } from "@/utils/token";
 
 const axiosInstance = axios.create({
-  // baseURL: ".netlify/",
-  baseURL: "http://localhost:5055/api-training",
+  baseURL: backendLink,
   timeout: 60000,
 });
 

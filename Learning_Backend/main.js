@@ -6,7 +6,7 @@ const mongoose = require("mongoose");
 require("dotenv").config();
 
 const app = express();
-const port = 5055;
+const port = process.env.PORT || 5055;
 
 // Middleware
 app.use(bodyParser.json());
@@ -17,9 +17,13 @@ app.use(cors());
 // MongoDB connection
 const cloudUrl = process.env.CLOUD_URL;
 const localUrl = process.env.LOCAL_URL;
-const dbUrl = localUrl;
+const dbUrl = cloudUrl || localUrl;
 
-mongoose.connect(dbUrl);
+if (dbUrl) {
+  mongoose.connect(dbUrl);
+} else {
+  console.error("No MongoDB connection URL configured.");
+}
 
 const db = mongoose.connection;
 db.on("error", (error) => {
@@ -70,7 +74,10 @@ adminsRoutes.map((route) =>
   app.use(route.path, adminsMdw, require("./AdminRoutes/" + route.file))
 );
 
-// Start the server
-app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
-});
+if (require.main === module) {
+  app.listen(port, () => {
+    console.log(`Server running on http://localhost:${port}`);
+  });
+}
+
+module.exports = app;
