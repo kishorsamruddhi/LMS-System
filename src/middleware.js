@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
+import { jwtDecode } from "jwt-decode";
 import { cookiesKey } from "@/utils/token";
 
 const availableRoutes = {
@@ -26,7 +26,7 @@ export async function middleware(request) {
   }
   if (token) {
     try {
-      const decoded = jwt.decode(token);
+      const decoded = jwtDecode(token);
       const userRole = decoded.user?.role;
       const roleRoute = availableRoutes[userRole];
 
