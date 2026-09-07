@@ -44,35 +44,15 @@ const {
 const userMdw = [extractToken, checkStartedStatus, checkEmailStatus];
 const adminsMdw = [...userMdw, checkIsAdmin];
 
-const baseRoutes = [
-  { path: "/auth", file: "./Auth/auth.route" },
-  { path: "/setup", file: "./Auth/setupAccount", middlewares: [extractToken] },
-];
-
-const userRoutes = [
-  { path: "/get", file: "/get_api.js" },
-  { path: "/progress", file: "/progess.js" },
-  { path: "/tracking", file: "/tracking.js" },
-];
-
-const adminsRoutes = [
-  { path: "/admin/get", file: "/getRoutes" },
-  { path: "/admin/reports", file: "/Report" },
-  { path: "/admin/create", file: "/create.js" },
-  { path: "/admin/update", file: "/updateRoute" },
-];
-
-baseRoutes.map((route) =>
-  app.use(route.path, route?.middlewares || [], require(route.file))
-);
-
-userRoutes.map((route) =>
-  app.use(route.path, userMdw, require("./User/" + route.file))
-);
-
-adminsRoutes.map((route) =>
-  app.use(route.path, adminsMdw, require("./AdminRoutes/" + route.file))
-);
+app.use("/auth", require("./Auth/auth.route"));
+app.use("/setup", extractToken, require("./Auth/setupAccount"));
+app.use("/get", userMdw, require("./User/get_api.js"));
+app.use("/progress", userMdw, require("./User/progess.js"));
+app.use("/tracking", userMdw, require("./User/tracking.js"));
+app.use("/admin/get", adminsMdw, require("./AdminRoutes/getRoutes"));
+app.use("/admin/reports", adminsMdw, require("./AdminRoutes/Report"));
+app.use("/admin/create", adminsMdw, require("./AdminRoutes/create.js"));
+app.use("/admin/update", adminsMdw, require("./AdminRoutes/updateRoute"));
 
 if (require.main === module) {
   app.listen(port, () => {

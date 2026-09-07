@@ -1,5 +1,18 @@
 {
   "version": 2,
-  "builds": [{ "src": "main.js", "use": "@vercel/node" }],
+  "builds": [{
+    "src": "main.js",
+    "use": "@vercel/node",
+    "config": {
+      "includeFiles": [
+        "Auth/**",
+        "User/**",
+        "AdminRoutes/**",
+        "models/**",
+        "utils/**",
+        "LearningModels/**"
+      ]
+    }
+  }],
   "routes": [{ "src": "/(.*)", "dest": "main.js" }]
 }
