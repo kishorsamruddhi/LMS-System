@@ -44,9 +44,7 @@ export default function Page() {
         }
     };
 
-    async function onSubmit(data) {
-        console.log(data)
-        return
+    async function onSubmit(data) {                                             
         const { module_id, text, title, url } = data
         if (!module_id) return toast.error("Please Select Module or Create a Theory Module");
         try {

@@ -40,8 +40,9 @@ const LearnerDashboard = () => {
 
   if (isLoading || isFetching) { return <LoadingSpinner /> }
 
-  if (error || data?.error) {
+  if (error || data?.error|| !data?.data ) {
     return <ErrorPage message={data?.data || error} />
+    
   }
 
   const courseList = data.data
